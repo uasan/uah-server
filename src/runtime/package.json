@@ -1,0 +1,45 @@
+{
+  "name": "@uah/server",
+  "author": "UAH",
+  "description": "API",
+  "version": "1.0.0",
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*",
+    "./bin/*": "./bin/*",
+    "./app.js": "./src/app.js",
+    "./env.js": "./src/env.js"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "imports": {
+    "#db/*": "./src/db/*",
+    "#env": "./src/env.js",
+    "#test/*": "./src/test/*",
+    "#utils/*": "./src/utils/*",
+    "#mocks/*": "./src/mocks/*",
+    "#email/*": "./src/email/*",
+    "#hooks/*": "./src/hooks/*",
+    "#models/*": "./src/models/*",
+    "#server/*": "./src/server/*",
+    "#presets/*": "./src/presets/*",
+    "#storage/*": "./src/storage/*",
+    "#security/*": "./src/security/*",
+    "#services/*": "./src/services/*",
+    "#exceptions/*": "./src/exceptions/*",
+    "#migrations/*": "./src/migrations/*"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "kleur": "latest",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.23.0",
+    "postgres": "^3.3.3",
+    "uuid": "latest"
+  },
+  "devDependencies": {}
+}

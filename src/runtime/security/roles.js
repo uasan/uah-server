@@ -1,0 +1,12 @@
+export const LUDICLOUD_ADMIN = 'ludicloud_admin',
+  SMARTLIBRARY_ADMIN = 'smartlibrary_admin',
+  SMARTPEOPLE_ADMIN = 'smartpeople_admin',
+  SMARTPEOPLE_HR = 'smartpeople_hr',
+  SMARTPEOPLE_MODERATOR = 'smartpeople_moderator',
+  SMARTPEOPLE_USER = 'smartpeople_user',
+  SMARTPLAN_ADMIN = 'smartplan_admin',
+  SMARTPLAN_USER = 'smartplan_user',
+  SUPERUSER = 'ludicloud_superuser',
+  SMARTLIBRARY_USER = 'smartlibrary_user',
+  SMARTDATA_ADMIN = 'smartdata_admin',
+  SMARTDATA_USER = 'smartdata_user';

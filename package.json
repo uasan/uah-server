@@ -1,0 +1,29 @@
+{
+  "name": "@uah/server",
+  "private": true,
+  "author": "UAH",
+  "description": "description",
+  "version": "1.0.0",
+  "license": "ISC",
+  "type": "module",
+  "typings": "index.d.ts",
+  "engines": {
+    "node": ">=20.1.0"
+  },
+  "imports": {
+    "#runtime/*": "./src/runtime/*",
+    "#compiler/*": "./src/compiler/*"
+  },
+  "dependencies": {
+    "typescript": "next",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.30.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-prettier": "latest",
+    "prettier": "latest"
+  }
+}
