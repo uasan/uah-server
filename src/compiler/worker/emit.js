@@ -71,11 +71,12 @@ export function emit() {
         afterEmit.clear();
       }
     }
+
+    host.emitted();
   } catch (error) {
     console.error(error);
+    host.reset();
   }
-
-  host.emitted();
 
   return emitResult;
 }

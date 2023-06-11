@@ -1,4 +1,5 @@
 import process from 'process';
+import { pathToFileURL } from 'url';
 
 export const CWD = process.cwd();
 
@@ -6,6 +7,9 @@ export const LIB_NAME = '@uah/server';
 
 export const PATH_SRC = CWD + '/src/';
 export const PATH_BUILD = CWD + '/build/';
+export const PATH_SRC_APP = PATH_SRC + 'app/';
+
+export const URL_BUILD = pathToFileURL(PATH_BUILD).href;
 
 export const PATH_NODE_MODULES = CWD + '/node_modules/';
 export const PATH_LIB = PATH_NODE_MODULES + LIB_NAME + '/';

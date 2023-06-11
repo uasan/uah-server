@@ -1,9 +1,7 @@
+import { getUrlFromPath } from '../helpers/link.js';
 import { entities, host } from '../host.js';
 
 export class Entity {
-  url = '';
-  assert = '';
-
   constructor(path) {
     this.path = path;
     entities.set(path, this);
@@ -28,11 +26,7 @@ export class Entity {
 
   delete() {
     entities.delete(this.path);
-
-    if (this.url) {
-      host.hooks.deleteFile(this.url);
-    }
-
+    host.hooks.deleteFile(this.url);
     return this;
   }
 
@@ -46,11 +40,7 @@ export class Entity {
     }
 
     this.path = new RegExp(
-      '/' +
-        path
-          .replaceAll('.', '\\.')
-          .replaceAll('**', '.+')
-          .replaceAll('*', '[^/]+') +
+      path.replaceAll('.', '\\.').replaceAll('**', '.+').replaceAll('*', '.+') +
         '$'
     );
   }

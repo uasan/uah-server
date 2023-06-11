@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { host } from '../host.js';
+import { host, transformers } from '../host.js';
 import { makeImportDeclaration } from '../makers/import.js';
 
 const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
@@ -17,6 +17,7 @@ const makers = {
   [SyntaxKind.AsExpression]: returnExpression,
   [SyntaxKind.TypeParameter]: returnUndefined,
   [SyntaxKind.TypeReference]: returnUndefined,
+  [SyntaxKind.AnyKeyword]: returnUndefined,
   [SyntaxKind.StringKeyword]: returnUndefined,
   [SyntaxKind.NumberKeyword]: returnUndefined,
   [SyntaxKind.SymbolKeyword]: returnUndefined,
@@ -30,6 +31,10 @@ const makers = {
 };
 
 export function visit(node) {
+  if (transformers.has(node)) {
+    node = transformers.get(node)(node);
+  }
+
   const action = makers[node.kind];
 
   return action !== undefined

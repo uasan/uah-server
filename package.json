@@ -11,6 +11,7 @@
     "node": ">=20.1.0"
   },
   "imports": {
+    "#config": "./src/config.js",
     "#runtime/*": "./src/runtime/*",
     "#compiler/*": "./src/compiler/*"
   },

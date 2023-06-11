@@ -19,7 +19,7 @@ export const toRelativeURL = (from, to) => {
   const toDirs = to.split('/');
   const count = fromDirs.length - 1;
 
-  for (let i = 1; i <= count; i++)
+  for (let i = 0; i <= count; i++)
     if (fromDirs[i] !== toDirs[i]) {
       return count === i
         ? './' + toDirs.slice(i).join('/')
@@ -29,8 +29,9 @@ export const toRelativeURL = (from, to) => {
   return to;
 };
 
-export const toBuildPath = path =>
-  PATH_BUILD + path.slice(PATH_SRC.length, -3) + '.js';
+export const getUrlFromPath = path => path.slice(PATH_SRC.length, -3) + '.js';
+
+export const toBuildPath = url => PATH_BUILD + url;
 
 export const toRuntimeUrl = path =>
   URL_LIB_RUNTIME + path.slice(PATH_LIB_TYPES.length, -3) + '.js';

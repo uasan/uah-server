@@ -9,7 +9,6 @@ export const setDeclarations = () => {
     const path = symbol.valueDeclaration.getSourceFile().resolvedPath;
 
     declarations.set(symbol, {
-      path,
       url: toRuntimeUrl(path),
     });
   }

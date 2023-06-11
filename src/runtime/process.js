@@ -1,10 +1,9 @@
 import { isMainThread, parentPort } from 'node:worker_threads';
 
-const controller = new globalThis.AbortController();
-
+const controller = new AbortController();
 export const { signal } = controller;
 
-export function abort() {
+function abort() {
   controller.abort();
 }
 
@@ -18,24 +17,16 @@ process.once('uncaughtException', handleException);
 process.once('unhandledRejection', handleException);
 
 if (isMainThread) {
-  process.once('disconnect', abort).once('beforeExit', abort);
-
-  for (const name of [
-    'SIGTSTP',
-    'SIGQUIT',
-    'SIGHUP',
-    'SIGTERM',
-    'SIGINT',
-    'SIGUSR1',
-    'SIGUSR2',
-  ]) {
-    process.once(name, abort);
-  }
+  process
+    .once('SIGTSTP', abort)
+    .once('SIGQUIT', abort)
+    .once('SIGHUP', abort)
+    .once('SIGTERM', abort)
+    .once('SIGINT', abort)
+    .once('SIGUSR1', abort)
+    .once('SIGUSR2', abort)
+    .once('disconnect', abort)
+    .once('beforeExit', abort);
 } else {
-  parentPort.on('message', message => {
-    switch (message) {
-      case 'exit':
-        abort();
-    }
-  });
+  parentPort.once('message', abort);
 }

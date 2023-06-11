@@ -1,9 +1,10 @@
 import { CWD, PATH_NODE_MODULES } from '../../config.js';
 import { entities } from '../host.js';
 
+import { AppRouteEntity } from './routes/entity.js';
 import { AppTsEntity } from './typescript/entity.js';
 
-const classes = [AppTsEntity];
+const classes = [AppRouteEntity, AppTsEntity];
 
 export const factoryEntity = path => {
   if (entities.has(path)) {
@@ -13,9 +14,8 @@ export const factoryEntity = path => {
   } else if (path.startsWith(PATH_NODE_MODULES)) {
     return;
   } else {
-    for (let i = 0; i < classes.length; i++)
-      if (classes[i].path.test(path)) {
-        return new classes[i](path);
-      }
+    for (let i = 0; i < classes.length; i++) {
+      if (classes[i].path.test(path)) return new classes[i](path);
+    }
   }
 };

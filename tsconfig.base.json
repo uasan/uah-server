@@ -1,7 +1,7 @@
 {
   "display": "UAH",
   "compilerOptions": {
-    "lib": ["ESNext", "WebWorker"],
+    "lib": ["ESNext"],
     "types": ["@uah/server"],
     "strict": true,
     "noEmit": true,

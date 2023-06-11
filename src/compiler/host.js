@@ -10,6 +10,7 @@ export const types = {
 export const entities = new Map();
 export const decorators = new WeakMap();
 export const declarations = new WeakMap();
+export const transformers = new WeakMap();
 
 export const beforeEmit = new Set();
 export const afterEmit = new Set();
@@ -69,8 +70,6 @@ export const host = {
   },
 
   reset(options) {
-    initConfig(options);
-
     entities.clear();
     this.hooks.reset();
 

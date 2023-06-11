@@ -4,8 +4,9 @@ import {
   LIBUS_LISTEN_EXCLUSIVE_PORT,
 } from 'uWebSockets.js';
 
-import { signal, abort } from '../process.js';
-import { green, red } from '../console/colors.js';
+import { signal } from '../process.js';
+import { Router } from './router.js';
+import { blue, green, red } from '../console/colors.js';
 
 export const Server = {
   url: '',
@@ -13,11 +14,9 @@ export const Server = {
   port: 0,
   origin: '',
   pathname: '',
-  instance: null,
+  instance: App(),
 
-  start(options) {
-    this.instance = App();
-
+  async start(options) {
     const url = new URL(options.url);
 
     this.url = url.href;
@@ -26,6 +25,8 @@ export const Server = {
     this.host = url.hostname;
     this.pathname = url.pathname;
 
+    await Router.init(this);
+
     this.instance.listen(
       this.host,
       this.port,
@@ -33,14 +34,11 @@ export const Server = {
       token => {
         if (token) {
           signal.addEventListener('abort', () => {
-            console.log('ON_ABORT');
             us_listen_socket_close(token);
           });
-          console.log(green('Server listen on port ') + this.port);
-
-          //abort();
+          console.log(green('Server start ') + blue(this.url) + '\n');
         } else {
-          console.error(new Error(red('Server listen on port ' + this.port)));
+          console.error(new Error(red('Server start ' + this.url)));
         }
       }
     );

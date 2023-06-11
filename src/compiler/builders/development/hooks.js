@@ -3,6 +3,7 @@ import { Worker } from 'node:worker_threads';
 
 import { writeFile } from '../../worker/system.js';
 import { PATH_BUILD } from '../../../config.js';
+import { toBuildPath } from '../../helpers/link.js';
 
 export const developmentAPI = {
   worker: null,
@@ -14,16 +15,16 @@ export const developmentAPI = {
   },
 
   beforeEmit() {
-    this.worker?.postMessage('exit');
+    this.worker?.postMessage('');
   },
 
-  saveFile(path, data) {
-    writeFile(path, data);
+  saveFile(url, data) {
+    writeFile(toBuildPath(url), data);
   },
 
-  deleteFile(path) {
-    if (existsSync(path)) {
-      rmSync(path);
+  deleteFile(url) {
+    if (existsSync(toBuildPath(url))) {
+      rmSync(toBuildPath(toBuildPath(url)));
     }
   },
 
@@ -31,4 +32,6 @@ export const developmentAPI = {
     this.worker?.terminate();
     this.worker = new Worker('./build/bin/start.js').on('error', console.error);
   },
+
+  reset() {},
 };
