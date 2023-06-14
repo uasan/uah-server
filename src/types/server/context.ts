@@ -7,9 +7,13 @@ interface CookieOptions{
 }
 
 export declare class ContextRequest {
+  status:number;
+  connected:boolean;
+  cookies:Map<string, string>;
+
   sql(strings: TemplateStringsArray, ...params: any[]): Promise<any>;
 
 
-  setHeader(name: string, value: string): void;
-  setCookie(name: string, value: string, options?: CookieOptions): void;
+  sendHeader(name: string, value: string): void;
+  sendCookie(name: string, value: string, options?: CookieOptions): void;
 }

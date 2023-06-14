@@ -7,6 +7,7 @@ import {
 import { signal } from '../process.js';
 import { Router } from './router.js';
 import { blue, green, red } from '../console/colors.js';
+import { connections } from './request.js';
 
 export const Server = {
   url: '',
@@ -35,6 +36,7 @@ export const Server = {
         if (token) {
           signal.addEventListener('abort', () => {
             us_listen_socket_close(token);
+            for (const connection of connections) connection.close();
           });
           console.log(green('Server start ') + blue(this.url) + '\n');
         } else {

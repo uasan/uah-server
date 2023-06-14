@@ -15,7 +15,7 @@ export const developmentAPI = {
   },
 
   beforeEmit() {
-    this.worker?.postMessage('');
+    this.worker?.postMessage(0);
   },
 
   saveFile(url, data) {
@@ -24,7 +24,7 @@ export const developmentAPI = {
 
   deleteFile(url) {
     if (existsSync(toBuildPath(url))) {
-      rmSync(toBuildPath(toBuildPath(url)));
+      rmSync(toBuildPath(url));
     }
   },
 

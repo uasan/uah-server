@@ -13,8 +13,11 @@ function handleException(error) {
   abort();
 }
 
-process.once('uncaughtException', handleException);
-process.once('unhandledRejection', handleException);
+process
+  .once('disconnect', abort)
+  .once('beforeExit', abort)
+  .once('uncaughtException', handleException)
+  .once('unhandledRejection', handleException);
 
 if (isMainThread) {
   process
@@ -24,9 +27,7 @@ if (isMainThread) {
     .once('SIGTERM', abort)
     .once('SIGINT', abort)
     .once('SIGUSR1', abort)
-    .once('SIGUSR2', abort)
-    .once('disconnect', abort)
-    .once('beforeExit', abort);
+    .once('SIGUSR2', abort);
 } else {
   parentPort.once('message', abort);
 }

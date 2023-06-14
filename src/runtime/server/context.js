@@ -1,3 +1,5 @@
+import { setCookie } from './cookies.js';
+import { createContext } from './request.js';
 import { Router } from './router.js';
 
 const arrayFreezed = Object.freeze([]);
@@ -5,41 +7,21 @@ const arrayFreezed = Object.freeze([]);
 export class ContextRequest {
   static router = Router;
 
-  cookies = null;
+  status = 0;
   headers = null;
+  cookies = new Map();
   connected = true;
 
-  setHeader(name, value) {
-    if (this.headers) {
-      this.headers.push(name, value);
-    } else {
-      this.headers = [name, value];
-    }
+  sendHeader(name, value) {
+    if (this.headers === null) this.headers = [name, value];
+    else this.headers.push(name, value);
   }
 
-  setCookie(name, value, options) {
-    value = name + '=' + value;
-    value += '; path=' + (options?.path || '/');
-
-    if (options?.maxAge != null) {
-      value += '; max-age=' + options.maxAge;
-    } else if (options?.expires) {
-      value += '; expires=' + options.expires.toGMTString();
-    }
-
-    if (options?.httpOnly) value += '; httponly';
-    if (options?.sameSite) value += '; samesite=' + options.sameSite;
-
-    this.setHeader('set-cookie', value);
+  sendCookie(name, value, options) {
+    this.sendHeader('set-cookie', setCookie(name, value, options));
   }
 
   static request(req, res) {
-    const context = new this();
-
-    res.onAborted(() => {
-      context.connected = false;
-    });
-
-    return context;
+    return createContext(this, req, res);
   }
 }
