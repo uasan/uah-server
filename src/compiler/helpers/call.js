@@ -21,3 +21,8 @@ export const factoryCallMethod = (object, name, params) =>
     undefined,
     params
   );
+
+export const factoryCallMethodStatement = (object, name, params) =>
+  host.factory.createExpressionStatement(
+    factoryCallMethod(object, name, params)
+  );

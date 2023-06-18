@@ -2,10 +2,10 @@ import ts from 'typescript';
 
 import { factoryClassStaticBlock } from '../../helpers/class.js';
 import { afterEmit, host, transformers } from '../../host.js';
-import { factoryThisChain } from '../../helpers/object.js';
-import { factoryIdentifier, factoryString } from '../../helpers/expression.js';
-import { factoryCall, factoryCallStatement } from '../../helpers/call.js';
+import { factoryString } from '../../helpers/expression.js';
 import { factoryRouteFunction } from '../../helpers/function.js';
+import { internals } from '../../helpers/internals.js';
+import { makeRouteStatements } from './handler.js';
 
 const { MethodDeclaration } = ts.SyntaxKind;
 
@@ -28,18 +28,11 @@ function makeImportRoutes() {
 }
 
 function addRouteMethod(node) {
-  let { routePath } = host.entity;
-
-  return factoryCallStatement(factoryThisChain('router', 'set'), [
+  return internals.setRoute(
     methods.get(node.name.escapedText),
-    factoryString(routePath),
-    factoryRouteFunction([
-      factoryCall(factoryThisChain('request'), [
-        factoryIdentifier('req'),
-        factoryIdentifier('res'),
-      ]),
-    ]),
-  ]);
+    factoryString(host.entity.routePath),
+    factoryRouteFunction(makeRouteStatements(node))
+  );
 }
 
 function setRouteClassDeclaration(node) {
@@ -56,7 +49,7 @@ function setRouteClassDeclaration(node) {
     }
   }
 
-  console.info(statements);
+  //console.info(statements);
 
   return host.factory.updateClassDeclaration(
     node,

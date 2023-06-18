@@ -163,23 +163,9 @@ export const factoryIfConditions = (conditions, statements) =>
     undefined
   );
 
-export const updateBinaryExpression = (node, left, right) =>
-  host.factory.updateBinaryExpression(node, left, node.operatorToken, right);
+export const factoryAwait = node => host.factory.createAwaitExpression(node);
 
-export const reduceBinaryComma = (node, noLast = false) => {
-  if (isBinaryComma(node.left)) {
-    const left = reduceBinaryComma(node.left, true);
-
-    if (left === node.left) {
-      return node;
-    } else if (left) {
-      return noLast && isRefStatic(node.right)
-        ? left
-        : updateBinaryExpression(node, left, node.right);
-    }
-  } else if (isRefStatic(node.left) === false) {
-    return node;
-  }
-
-  return noLast && isRefStatic(node.right) ? undefined : node.right;
-};
+export const factoryAwaitParenthesized = node =>
+  host.factory.createParenthesizedExpression(
+    host.factory.createAwaitExpression(node)
+  );

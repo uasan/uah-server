@@ -6,7 +6,7 @@ interface CookieOptions{
   sameSite?: 'None' | 'Lax' | 'Strict'
 }
 
-export declare class ContextRequest {
+export declare class RequestContext {
   status:number;
   connected:boolean;
   cookies:Map<string, string>;

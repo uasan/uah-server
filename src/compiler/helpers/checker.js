@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { host, types } from '../host.js';
+import { host } from '../host.js';
 
 export const {
   Any: flagAny,
@@ -18,14 +18,8 @@ export const {
   ObjectFlagsType,
 } = ts.TypeFlags;
 
-const {
-  TrueKeyword,
-  FalseKeyword,
-  NumericLiteral,
-  DeclareKeyword,
-  SourceFile,
-  ExportAssignment,
-} = ts.SyntaxKind;
+const { TrueKeyword, FalseKeyword, NumericLiteral, DeclareKeyword } =
+  ts.SyntaxKind;
 
 const { Readonly: CheckFlagReadonly } = ts.CheckFlags;
 const { Readonly: ModifierFlagReadonly } = ts.ModifierFlags;
@@ -82,12 +76,17 @@ export const isNullableType = type =>
   (type.flags & flagVoidLike) !== 0 ||
   type !== host.checker.getNonNullableType(type);
 
+export const isVoidLikeType = type => (type.flags & flagVoidLike) !== 0;
+
 export const isReadonlySymbol = symbol =>
   (getCheckFlags(symbol) & CheckFlagReadonly) !== 0 ||
   (getDeclarationModifierFlagsFromSymbol(symbol) & ModifierFlagReadonly) !== 0;
 
 export const isReadonly = node =>
   isReadonlySymbol(host.checker.getSymbolAtLocation(node));
+
+export const isDeclareSymbol = symbol =>
+  symbol.valueDeclaration.modifiers?.some(isDeclareKeyword) === true;
 
 export const getSymbolOfNode = node => host.checker.getSymbolAtLocation(node);
 
@@ -130,16 +129,9 @@ export const getFullName = symbol =>
 export const getTypeOfNode = node => host.checker.getTypeAtLocation(node);
 export const getTypeOfSymbol = symbol => host.checker.getTypeOfSymbol(symbol);
 
-export const isObservableType = type =>
-  types.Observable === type.symbol ||
-  some(type.types, isObservableType) ||
-  some(type.typeArguments, isObservableType);
+export const getReturnType = node =>
+  host.checker.getReturnTypeOfSignature(
+    host.checker.getSignatureFromDeclaration(node)
+  );
 
-export const isObservableSymbol = symbol =>
-  isObservableType(getTypeOfSymbol(symbol));
-
-export const isObservableNode = node =>
-  isObservableType(host.checker.getTypeAtLocation(node));
-
-export const isModuleScope = ({ parent }) =>
-  parent.kind === SourceFile || parent.kind === ExportAssignment;
+export const getAwaitedType = type => host.checker.getAwaitedType(type);

@@ -8,6 +8,7 @@ export function createContext(classContext, req, res) {
   connections.add(res);
 
   res.onAborted(() => {
+    console.log('ABORTED', connections.delete(res));
     connections.delete(res);
     context.connected = false;
   });

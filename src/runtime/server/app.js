@@ -6,8 +6,8 @@ import {
 
 import { signal } from '../process.js';
 import { Router } from './router.js';
-import { blue, green, red } from '../console/colors.js';
 import { connections } from './request.js';
+import { blue, green, red } from '../console/colors.js';
 
 export const Server = {
   url: '',
@@ -32,17 +32,21 @@ export const Server = {
       this.host,
       this.port,
       LIBUS_LISTEN_EXCLUSIVE_PORT,
-      token => {
-        if (token) {
-          signal.addEventListener('abort', () => {
-            us_listen_socket_close(token);
-            for (const connection of connections) connection.close();
-          });
-          console.log(green('Server start ') + blue(this.url) + '\n');
-        } else {
-          console.error(new Error(red('Server start ' + this.url)));
-        }
-      }
+      onListen
     );
   },
 };
+
+function onListen(token) {
+  if (token) {
+    signal.addEventListener('abort', () => {
+      us_listen_socket_close(token);
+      for (const connection of connections) {
+        connection.close();
+      }
+    });
+    console.log(green('Server start ') + blue(Server.url) + '\n');
+  } else {
+    console.error(new Error(red('Server start ' + Server.url)));
+  }
+}

@@ -1,7 +1,7 @@
 import { CWD, PATH_NODE_MODULES } from '../../config.js';
 import { entities } from '../host.js';
 
-import { AppRouteEntity } from './routes/entity.js';
+import { AppRouteEntity } from './api/entity.js';
 import { AppTsEntity } from './typescript/entity.js';
 
 const classes = [AppRouteEntity, AppTsEntity];

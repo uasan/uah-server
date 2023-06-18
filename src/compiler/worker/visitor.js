@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import { host, transformers } from '../host.js';
 import { makeImportDeclaration } from '../makers/import.js';
+import { makeDecorator } from '../makers/decorators.js';
 
 const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
 
@@ -9,6 +10,7 @@ const returnExpression = node => host.visit(node.expression);
 
 const makers = {
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
+  [SyntaxKind.Decorator]: makeDecorator,
 
   [SyntaxKind.ArrayType]: returnUndefined,
   [SyntaxKind.UnionType]: returnUndefined,

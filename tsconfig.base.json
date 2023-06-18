@@ -2,7 +2,7 @@
   "display": "UAH",
   "compilerOptions": {
     "lib": ["ESNext"],
-    "types": ["@uah/server"],
+    "types": ["@uah/server", "@types/node"],
     "strict": true,
     "noEmit": true,
     "allowJs": false,
