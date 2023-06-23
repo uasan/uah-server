@@ -15,6 +15,7 @@ export const {
   StringLike: flagStringLike,
   NumberLike: flagNumberLike,
   BooleanLike: flagBooleanLike,
+  BigIntLike: flagBigIntLike,
   ObjectFlagsType,
 } = ts.TypeFlags;
 
@@ -51,6 +52,9 @@ export const isStringType = ({ flags, types }) =>
 export const isBooleanType = ({ flags, types }) =>
   (flags & flagBooleanLike) !== 0 || some(types, isBooleanType);
 
+export const isBigIntType = ({ flags, types }) =>
+  (flags & flagBigIntLike) !== 0 || some(types, isBigIntType);
+
 export const isObjectNode = node =>
   isObjectType(host.checker.getTypeAtLocation(node));
 
@@ -86,24 +90,12 @@ export const isReadonly = node =>
   isReadonlySymbol(host.checker.getSymbolAtLocation(node));
 
 export const isDeclareSymbol = symbol =>
-  symbol.valueDeclaration.modifiers?.some(isDeclareKeyword) === true;
+  symbol.valueDeclaration?.modifiers?.some(isDeclareKeyword) === true;
 
 export const getSymbolOfNode = node => host.checker.getSymbolAtLocation(node);
 
-export const getParamFromSymbol = symbol => {
-  const type = host.checker.getTypeAtLocation(symbol.valueDeclaration);
-  return {
-    type,
-    symbol,
-    isNullableType: isNullableType(type),
-  };
-};
-
-export const getParamsFromTypeNode = node =>
-  host.checker
-    .getTypeFromTypeNode(node)
-    .getApparentProperties()
-    .map(getParamFromSymbol);
+export const getApparentProperties = node =>
+  host.checker.getTypeAtLocation(node).getApparentProperties();
 
 export const isTypeSymbol = symbol => (symbol.flags & Type) !== 0;
 export const isAliasSymbol = symbol => (symbol.flags & Alias) !== 0;
@@ -128,10 +120,10 @@ export const getFullName = symbol =>
 
 export const getTypeOfNode = node => host.checker.getTypeAtLocation(node);
 export const getTypeOfSymbol = symbol => host.checker.getTypeOfSymbol(symbol);
+export const getBaseType = type => host.checker.getBaseTypeOfLiteralType(type);
+export const getAwaitedType = type => host.checker.getAwaitedType(type);
 
 export const getReturnType = node =>
   host.checker.getReturnTypeOfSignature(
     host.checker.getSignatureFromDeclaration(node)
   );
-
-export const getAwaitedType = type => host.checker.getAwaitedType(type);

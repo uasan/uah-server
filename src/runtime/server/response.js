@@ -1,5 +1,3 @@
-import { connections } from './request.js';
-
 const { stringify } = JSON;
 
 function sendBlob(res, ctx, data) {
@@ -33,12 +31,14 @@ export function respondJson(res, ctx, data) {
 }
 
 export function respondError(res, error) {
+  if (error == null) return;
+
   let status = error.status || 500;
 
-  if (connections.has(res)) {
+  if (res.context.connected) {
     const data = {
       status,
-      error: error.constructor?.name || 'Error',
+      type: error.constructor?.name || 'Error',
       message: error.message,
       ...error,
     };

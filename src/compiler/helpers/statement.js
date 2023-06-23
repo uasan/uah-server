@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { host } from '../host.js';
-import { factoryIfConditions, factoryNotExpressions } from './expression.js';
+import { factoryIfConditions, factoryNotExpression } from './expression.js';
 
 const {
   FirstStatement,
@@ -86,7 +86,7 @@ export const setIfReadyObservers = handler => {
   if (count > 1 && refs.size)
     handler.statements = [
       factoryIfConditions(
-        [...refs].map(factoryNotExpressions),
+        [...refs].map(factoryNotExpression),
         handler.statements
       ),
     ];

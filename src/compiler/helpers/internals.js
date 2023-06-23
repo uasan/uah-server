@@ -42,8 +42,8 @@ export const internals = {
       args
     ),
 
-  createRequestContext: (...args) =>
-    factoryCall(getInternalImport('server/request', 'createContext'), args),
+  readBody: (...args) =>
+    factoryCall(getInternalImport('server/request', 'readBody'), args),
 
   respondJson: (...args) =>
     factoryCallStatement(
@@ -59,4 +59,16 @@ export const internals = {
 
   respondError: (...args) =>
     factoryCall(getInternalImport('server/response', 'respondError'), args),
+
+  tryToNumber: (...args) =>
+    factoryCall(getInternalImport('types/converters', 'tryToNumber'), args),
+
+  tryToBoolean: (...args) =>
+    factoryCall(getInternalImport('types/converters', 'tryToBoolean'), args),
+
+  tryParseJson: (...args) =>
+    factoryCall(getInternalImport('types/converters', 'tryParseJson'), args),
+
+  decodeJSON: (...args) =>
+    factoryCall(getInternalImport('types/converters', 'decodeJSON'), args),
 };

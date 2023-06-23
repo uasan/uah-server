@@ -14,6 +14,6 @@ export declare class RequestContext {
   sql(strings: TemplateStringsArray, ...params: any[]): Promise<any>;
 
 
-  sendHeader(name: string, value: string): void;
-  sendCookie(name: string, value: string, options?: CookieOptions): void;
+  setHeader(name: string, value: string): void;
+  setCookie(name: string, value: string, options?: CookieOptions): void;
 }

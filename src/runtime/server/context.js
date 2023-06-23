@@ -1,4 +1,4 @@
-import { setCookie } from './cookies.js';
+import { parseCookies, setCookie } from './cookies.js';
 
 export class RequestContext {
   status = 0;
@@ -6,11 +6,27 @@ export class RequestContext {
   cookies = new Map();
   connected = true;
 
-  sendHeader(name, value) {
+  setHeader(name, value) {
     this.headers.push(name, value);
   }
 
-  sendCookie(name, value, options) {
+  setCookie(name, value, options) {
     this.headers.push('set-cookie', setCookie(name, value, options));
+  }
+
+  onAborted() {}
+
+  static create(req, res) {
+    const context = new this();
+    res.context = context;
+
+    res.onAborted(() => {
+      context.connected = false;
+      context.onAborted();
+    });
+
+    parseCookies(context.cookies, req.getHeader('cookie'));
+
+    return context;
   }
 }

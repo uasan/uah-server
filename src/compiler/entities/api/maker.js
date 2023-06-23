@@ -2,18 +2,10 @@ import ts from 'typescript';
 
 import { factoryClassStaticBlock } from '../../helpers/class.js';
 import { afterEmit, host, transformers } from '../../host.js';
-import { factoryString } from '../../helpers/expression.js';
-import { factoryRouteFunction } from '../../helpers/function.js';
-import { internals } from '../../helpers/internals.js';
-import { makeRouteStatements } from './handler.js';
+import { makeRouteMethod } from './handler.js';
+import { methods } from './constants.js';
 
 const { MethodDeclaration } = ts.SyntaxKind;
-
-const methods = new Map()
-  .set('get', factoryString('get'))
-  .set('put', factoryString('put'))
-  .set('post', factoryString('post'))
-  .set('delete', factoryString('del'));
 
 const routes = new Set();
 
@@ -27,29 +19,19 @@ function makeImportRoutes() {
   host.hooks.saveFile('api.js', source);
 }
 
-function addRouteMethod(node) {
-  return internals.setRoute(
-    methods.get(node.name.escapedText),
-    factoryString(host.entity.routePath),
-    factoryRouteFunction(makeRouteStatements(node))
-  );
-}
-
 function setRouteClassDeclaration(node) {
   const statements = [];
   const { members } = node;
 
-  for (let i = 0; i < members.length; i++) {
-    switch (members[i].kind) {
+  for (const member of members) {
+    switch (member.kind) {
       case MethodDeclaration:
-        if (methods.has(members[i].name.escapedText))
-          statements.push(addRouteMethod(members[i]));
+        if (methods.has(member.name.escapedText))
+          statements.push(makeRouteMethod(member.name.escapedText, member));
 
         break;
     }
   }
-
-  //console.info(statements);
 
   return host.factory.updateClassDeclaration(
     node,

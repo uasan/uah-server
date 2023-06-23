@@ -6,7 +6,6 @@ import {
 
 import { signal } from '../process.js';
 import { Router } from './router.js';
-import { connections } from './request.js';
 import { blue, green, red } from '../console/colors.js';
 
 export const Server = {
@@ -16,6 +15,8 @@ export const Server = {
   origin: '',
   pathname: '',
   instance: App(),
+
+  maxByteLengthBody: 65_535,
 
   async start(options) {
     const url = new URL(options.url);
@@ -39,12 +40,13 @@ export const Server = {
 
 function onListen(token) {
   if (token) {
-    signal.addEventListener('abort', () => {
+    const onAbort = () => {
       us_listen_socket_close(token);
-      for (const connection of connections) {
-        connection.close();
-      }
-    });
+      Server.instance.close();
+    };
+
+    signal.addEventListener('abort', onAbort);
+
     console.log(green('Server start ') + blue(Server.url) + '\n');
   } else {
     console.error(new Error(red('Server start ' + Server.url)));

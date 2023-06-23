@@ -1,1 +1,1 @@
-export declare function Permission(rules: Function[]): (target: Function, context: ClassMethodDecoratorContext) => void;
+export declare function Permission(rule: Function[] | true): (target: Function, context: ClassMethodDecoratorContext) => void;

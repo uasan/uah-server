@@ -3,11 +3,8 @@ import { initConfig } from '../config.js';
 
 const { visitEachChild, nullTransformationContext } = ts;
 
-export const decorators = {
-  Permission: null,
-};
-
 export const entities = new Map();
+export const decorators = new WeakMap();
 export const declarations = new WeakMap();
 export const transformers = new WeakMap();
 

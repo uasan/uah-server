@@ -1,4 +1,4 @@
-import { isMainThread, parentPort } from 'node:worker_threads';
+import { isMainThread, parentPort, workerData } from 'node:worker_threads';
 
 const controller = new AbortController();
 export const { signal } = controller;

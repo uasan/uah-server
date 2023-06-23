@@ -149,8 +149,11 @@ export const factoryAndExpressions = (left, right) =>
     right
   );
 
-export const factoryNotExpressions = node =>
+export const factoryNotExpression = node =>
   host.factory.createPrefixUnaryExpression(ExclamationToken, node);
+
+export const factoryPlusExpression = node =>
+  host.factory.createPrefixUnaryExpression(PlusToken, node);
 
 export const factoryIfConditions = (conditions, statements) =>
   host.factory.createIfStatement(
@@ -167,5 +170,10 @@ export const factoryAwait = node => host.factory.createAwaitExpression(node);
 
 export const factoryAwaitParenthesized = node =>
   host.factory.createParenthesizedExpression(
+    host.factory.createAwaitExpression(node)
+  );
+
+export const factoryAwaitStatement = node =>
+  host.factory.createExpressionStatement(
     host.factory.createAwaitExpression(node)
   );

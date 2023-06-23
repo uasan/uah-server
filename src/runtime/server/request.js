@@ -1,19 +1,33 @@
-import { parseCookies } from './cookies.js';
+import { Server } from './app.js';
+import { ContentTooLarge } from '../exceptions/ContentTooLarge.js';
+import { LengthRequired } from '../exceptions/LengthRequired.js';
 
-export const connections = new Set();
+export function readBody(req, res, maxLength = Server.maxByteLengthBody) {
+  let offset = 0;
+  let buffer = null;
+  let length = +req.getHeader('content-length');
 
-export function createContext(classContext, req, res) {
-  const context = new classContext();
+  if (isNaN(length)) {
+    throw new LengthRequired();
+  }
 
-  connections.add(res);
+  if (length > maxLength) {
+    throw new ContentTooLarge(maxLength);
+  }
 
-  res.onAborted(() => {
-    console.log('ABORTED', connections.delete(res));
-    connections.delete(res);
-    context.connected = false;
+  return new Promise((resolve, reject) => {
+    res.context.onAborted = reject;
+
+    res.onData((chunk, done) => {
+      if (chunk.byteLength === length) {
+        resolve(new Uint8Array(chunk.slice(0)));
+      } else {
+        buffer ??= new Uint8Array(length);
+        buffer.set(new Uint8Array(chunk), offset);
+
+        if (done) resolve(buffer);
+        else offset += chunk.byteLength;
+      }
+    });
   });
-
-  parseCookies(context.cookies, req.getHeader('cookie'));
-
-  return context;
 }
