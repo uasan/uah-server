@@ -5,14 +5,15 @@ import { getOriginSymbolOfNode } from './checker.js';
 
 const { Decorator, CallExpression } = ts.SyntaxKind;
 
+export const getSymbolDecorator = node =>
+  getOriginSymbolOfNode(node.kind === CallExpression ? node.expression : node);
+
 export function getInternalDecorators({ modifiers }) {
   const map = new Map();
 
   for (const { kind, expression } of modifiers)
     if (kind === Decorator) {
-      const symbol = getOriginSymbolOfNode(
-        expression.kind === CallExpression ? expression.expression : expression
-      );
+      const symbol = getSymbolDecorator(expression);
 
       if (decorators.has(symbol)) {
         map.set(symbol.name, decorators.get(symbol).meta(expression));

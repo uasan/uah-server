@@ -7,10 +7,16 @@ export class AppRouteEntity extends AppTsEntity {
     this.init({ path: PATH_SRC_APP + '*/api/**.ts' });
   }
 
-  routePath = makeRoutePath(this);
+  route = {
+    class: '',
+    members: [],
+    methods: [],
+    url: this.url,
+    path: makeRoutePath(this),
+  };
 
   emitting(file) {
-    return addRoute(this, file);
+    return addRoute(this, super.emitting(file));
   }
 
   delete() {

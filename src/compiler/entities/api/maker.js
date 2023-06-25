@@ -1,47 +1,46 @@
 import ts from 'typescript';
 
-import { factoryClassStaticBlock } from '../../helpers/class.js';
 import { afterEmit, host, transformers } from '../../host.js';
 import { makeRouteMethod } from './handler.js';
 import { methods } from './constants.js';
+import { addTransformer } from '../../helpers/ast.js';
+import { getExportsOfModule, isStaticKeyword } from '../../helpers/checker.js';
+import { URL_LIB_RUNTIME } from '../../../config.js';
 
-const { MethodDeclaration } = ts.SyntaxKind;
+const { ClassDeclaration, MethodDeclaration } = ts.SyntaxKind;
 
 const routes = new Set();
 
 function makeImportRoutes() {
-  let source = '';
+  let source = `import { Router } from '${URL_LIB_RUNTIME}server/router.js';\n`;
 
-  for (const { url } of routes) {
-    source += `import './${url}';\n`;
+  for (const route of routes) {
+    source += `import ('./${route.url}').then(m => {`;
+
+    for (const method of route.methods) {
+      source += 'Router.set(';
+      source += "'" + route.path + method.params + "',";
+      source += 'm.' + route.class + '.' + method.name + ');';
+    }
+
+    source += '});\n';
   }
 
   host.hooks.saveFile('api.js', source);
 }
 
-function setRouteClassDeclaration(node) {
-  const statements = [];
-  const { members } = node;
-
-  for (const member of members) {
-    switch (member.kind) {
-      case MethodDeclaration:
-        if (methods.has(member.name.escapedText))
-          statements.push(makeRouteMethod(member.name.escapedText, member));
-
-        break;
-    }
-  }
-
-  return host.factory.updateClassDeclaration(
-    node,
-    node.modifiers,
-    node.name,
-    undefined,
-    node.heritageClauses,
-    [...node.members, factoryClassStaticBlock(statements)]
-  );
-}
+const classTransformer = {
+  transform(node) {
+    return host.factory.updateClassDeclaration(
+      node,
+      node.modifiers,
+      node.name,
+      undefined,
+      node.heritageClauses,
+      [...node.members, ...host.entity.route.members]
+    );
+  },
+};
 
 export function makeRoutePath({ url }) {
   const [moduleName, submoduleName, , filename] = url.slice(4, -3).split('/');
@@ -50,22 +49,38 @@ export function makeRoutePath({ url }) {
     : moduleName + '/' + submoduleName + '/' + filename;
 }
 
-export function addRoute(entity, file) {
-  if (routes.has(entity) === false) {
-    routes.add(entity);
-    afterEmit.add(makeImportRoutes);
+const isContextClass = symbol =>
+  symbol.valueDeclaration.kind === ClassDeclaration;
+
+export function addRoute({ route }, file) {
+  if (routes.has(route)) {
+    route.members.length = 0;
+    route.methods.length = 0;
+  } else {
+    routes.add(route);
   }
 
-  transformers.set(
-    host.checker.getExportsOfModule(file.symbol)[0].valueDeclaration,
-    setRouteClassDeclaration
-  );
+  const node = getExportsOfModule(file).find(isContextClass).valueDeclaration;
+
+  route.class = node.name?.escapedText ?? 'default';
+
+  for (const member of node.members) {
+    if (member.modifiers.some(isStaticKeyword)) {
+      continue;
+    } else if (member.kind === MethodDeclaration) {
+      if (methods.has(member.name.escapedText))
+        route.members.push(makeRouteMethod(member.name.escapedText, member));
+    }
+  }
+
+  afterEmit.add(makeImportRoutes);
+  addTransformer(node, classTransformer);
 
   return file;
 }
 
 export function deleteRoute(entity) {
-  routes.delete(entity);
+  routes.delete(entity.route);
   afterEmit.add(makeImportRoutes);
   return entity;
 }

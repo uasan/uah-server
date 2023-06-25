@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { host } from '../host.js';
 import { isStatement, toStatement } from './statement.js';
-import { isBinaryComma, isRefStatic, isPrecedenceToRight } from './operator.js';
+import { isPrecedenceToRight } from './operator.js';
 
 const tokens = Object.create(null);
 const bigints = Object.create(null);
@@ -50,6 +50,10 @@ export const factoryBigInt = string =>
 
 export const factoryIdentifier = string =>
   (identifiers[string] ??= host.factory.createIdentifier(string));
+
+export const factoryNull = () => host.factory.createNull();
+export const factoryTrue = () => host.factory.createTrue();
+export const factoryFalse = () => host.factory.createFalse();
 
 export const getSingleExpression = node =>
   node?.kind === ParenthesizedExpression ? node.expression : node;

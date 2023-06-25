@@ -13,8 +13,12 @@ export class AppTsEntity extends Entity {
 
   url = getUrlFromPath(this.path);
 
-  emit(file) {
+  emitting(file) {
     new ModuleScope(file);
+    return file;
+  }
+
+  emit(file) {
     return visit(file);
   }
 

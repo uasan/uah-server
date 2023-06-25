@@ -4,6 +4,7 @@ import { initConfig } from '../config.js';
 const { visitEachChild, nullTransformationContext } = ts;
 
 export const entities = new Map();
+export const types = new WeakMap();
 export const decorators = new WeakMap();
 export const declarations = new WeakMap();
 export const transformers = new WeakMap();

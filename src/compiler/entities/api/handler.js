@@ -22,9 +22,13 @@ import {
 import {
   getAwaitedType,
   getReturnType,
+  getTypeOfNode,
   isVoidLikeType,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
+import { addTransformer } from '../../helpers/ast.js';
+import { payloadValidator } from '../../helpers/validator.js';
+import { factoryStaticProperty } from '../../helpers/class.js';
 
 export function makeRouteMethod(name, node) {
   const statements = [];
@@ -32,28 +36,32 @@ export function makeRouteMethod(name, node) {
   const req = factoryIdentifier('req');
   const res = factoryIdentifier('res');
   const ctx = factoryIdentifier('ctx');
-  const self = host.factory.createThis();
 
   const decors = getInternalDecorators(node);
   const returnType = getAwaitedType(getReturnType(node));
+  const payloadType = node.parameters.length
+    ? getTypeOfNode(node.parameters[0])
+    : null;
 
   let ast = ctx;
   let payload;
-  let paramsPath = '';
+  let pathParameters = '';
 
   statements.push(
     factoryConstant(ctx, factoryCallThisMethod('create', [req, res]))
   );
 
-  if (node.parameters.length) {
+  if (payloadType) {
+    addTransformer(node, payloadValidator);
+
     if (name === 'get') {
       payload = factoryIdentifier('data');
-      const query = makePayloadFromQuery(node.parameters[0]);
+      const query = makePayloadFromQuery(payloadType);
 
-      paramsPath = query.path;
+      pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));
     } else {
-      const body = makePayloadFromBody(node.parameters[0]);
+      const body = makePayloadFromBody();
 
       payload = body.data;
       statements.push(factoryConstant(factoryIdentifier('data'), body.init));
@@ -75,9 +83,13 @@ export function makeRouteMethod(name, node) {
     statements.push(internals.respondJson(res, ctx, ast));
   }
 
-  return internals.setRoute(
-    methods.get(name),
-    factoryString(host.entity.routePath + paramsPath),
+  host.entity.route.methods.push({
+    name: methods.get(name),
+    params: pathParameters,
+  });
+
+  return factoryStaticProperty(
+    factoryIdentifier(methods.get(name)),
     factoryRouteFunction([
       factoryTryStatement(statements, factoryIdentifier('e'), [
         internals.respondError(res, factoryIdentifier('e')),

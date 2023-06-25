@@ -14,7 +14,7 @@ export const URL_BUILD = pathToFileURL(PATH_BUILD).href;
 export const PATH_NODE_MODULES = CWD + '/node_modules/';
 export const PATH_LIB = PATH_NODE_MODULES + LIB_NAME + '/';
 export const PATH_LIB_SRC = PATH_LIB + 'src/';
-export const PATH_LIB_TYPES = PATH_LIB_SRC + 'types/';
+export const PATH_LIB_TYPES = PATH_LIB_SRC + 'interfaces/';
 
 export const URL_LIB_RUNTIME = LIB_NAME + '/src/runtime/';
 

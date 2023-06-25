@@ -7,6 +7,7 @@ export const {
   Identifier,
   EqualsToken,
   StringLiteral,
+  ExportKeyword,
   OmittedExpression,
   BinaryExpression,
   VariableDeclaration,
@@ -14,9 +15,11 @@ export const {
   ObjectBindingPattern,
 } = ts.SyntaxKind;
 
-export const factoryConstStatement = params =>
+export const filterModifiers = ({ kind }) => kind === ExportKeyword;
+
+export const factoryConstStatement = (params, modifiers) =>
   host.factory.createVariableStatement(
-    undefined,
+    modifiers,
     host.factory.createVariableDeclarationList(params, Const)
   );
 
@@ -29,8 +32,8 @@ export const factoryLetStatement = params =>
 export const factoryVarDeclaration = (name, value) =>
   host.factory.createVariableDeclaration(name, undefined, undefined, value);
 
-export const factoryConstant = (name, value) =>
-  factoryConstStatement([factoryVarDeclaration(name, value)]);
+export const factoryConstant = (name, value, modifiers) =>
+  factoryConstStatement([factoryVarDeclaration(name, value)], modifiers);
 
 export const factoryAssign = (left, right) =>
   host.factory.createBinaryExpression(left, factoryToken(EqualsToken), right);

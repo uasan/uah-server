@@ -14,7 +14,7 @@ export const Server = {
   port: 0,
   origin: '',
   pathname: '',
-  instance: App(),
+  instance: null,
 
   maxByteLengthBody: 65_535,
 
@@ -26,6 +26,8 @@ export const Server = {
     this.origin = url.origin;
     this.host = url.hostname;
     this.pathname = url.pathname;
+
+    this.instance = App();
 
     await Router.init(this);
 

@@ -3,9 +3,9 @@ import {
   isNullableType,
   getTypeOfSymbol,
   isNumberType,
-  getApparentProperties,
   isBooleanType,
   isObjectType,
+  hasStringType,
 } from '../../helpers/checker.js';
 import {
   factoryString,
@@ -16,13 +16,13 @@ import {
 import { internals } from '../../helpers/internals.js';
 import { factoryProperty, factoryObjectLiteral } from '../../helpers/object.js';
 
-export function makePayloadFromQuery(node) {
+export function makePayloadFromQuery(type) {
   let index = 0;
   let path = '';
 
   const nodes = [];
 
-  for (const symbol of getApparentProperties(node)) {
+  for (const symbol of type.getApparentProperties()) {
     let value;
     const name = symbol.escapedName;
 
@@ -37,12 +37,8 @@ export function makePayloadFromQuery(node) {
       value = factoryCallMethod(req, 'getParameter', [factoryNumber(++index)]);
     }
 
-    if (isObjectType(type)) {
+    if (hasStringType(type) === false) {
       value = internals.tryParseJson(value);
-    } else if (isNumberType(type)) {
-      value = internals.tryToNumber(value);
-    } else if (isBooleanType(type)) {
-      value = internals.tryToBoolean(value);
     }
 
     nodes.push(factoryProperty(name, value));

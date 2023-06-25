@@ -13,7 +13,7 @@ export const Router = {
     instance.any('/*', notImplemented);
   },
 
-  set(method, path, action) {
-    this.instance[method](this.pathname + path, action);
+  set(path, method) {
+    this.instance[method.name](this.pathname + path, method);
   },
 };

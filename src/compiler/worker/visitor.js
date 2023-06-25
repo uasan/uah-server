@@ -2,6 +2,7 @@ import ts from 'typescript';
 import { host, transformers } from '../host.js';
 import { makeImportDeclaration } from '../makers/import.js';
 import { makeDecorator } from '../makers/decorators.js';
+import { makeEnumDeclaration } from '../makers/enum.js';
 
 const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
 
@@ -9,6 +10,7 @@ const returnUndefined = node => undefined;
 const returnExpression = node => host.visit(node.expression);
 
 const makers = {
+  [SyntaxKind.EnumDeclaration]: makeEnumDeclaration,
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.Decorator]: makeDecorator,
 
@@ -24,7 +26,6 @@ const makers = {
   [SyntaxKind.NumberKeyword]: returnUndefined,
   [SyntaxKind.SymbolKeyword]: returnUndefined,
   [SyntaxKind.BooleanKeyword]: returnUndefined,
-  [SyntaxKind.EnumDeclaration]: returnUndefined,
   [SyntaxKind.IntersectionType]: returnUndefined,
   [SyntaxKind.ModuleDeclaration]: returnUndefined,
   [SyntaxKind.TypeAliasDeclaration]: returnUndefined,
@@ -33,15 +34,20 @@ const makers = {
 };
 
 export function visit(node) {
-  if (transformers.has(node)) {
-    node = transformers.get(node)(node);
-  }
-
   const action = makers[node.kind];
 
-  return action !== undefined
-    ? action(node)
-    : visitEachChild(node, visit, nullTransformationContext);
+  let result =
+    action !== undefined
+      ? action(node)
+      : visitEachChild(node, visit, nullTransformationContext);
+
+  if (transformers.has(node)) {
+    for (const transformer of transformers.get(node))
+      result = transformer.transform(result);
+    transformers.delete(node);
+  }
+
+  return result;
 }
 
 host.visit = visit;

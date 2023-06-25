@@ -1,4 +1,6 @@
 import { isTrueKeyword } from '../helpers/checker.js';
+import { getSymbolDecorator } from '../helpers/decorators.js';
+import { decorators, host } from '../host.js';
 
 export const Permission = {
   meta(node) {
@@ -13,5 +15,11 @@ export const Permission = {
 };
 
 export const makeDecorator = node => {
-  return;
+  const symbol = getSymbolDecorator(node.expression);
+
+  if (decorators.has(symbol)) {
+    // console.info(node.parent);
+  } else {
+    return host.visitEachChild(node);
+  }
 };

@@ -42,7 +42,7 @@
     "forceConsistentCasingInFileNames": true,
     "assumeChangesOnlyAffectDirectDependencies": false,
     "moduleResolution": "bundler",
-    "verbatimModuleSyntax": false,
+    "verbatimModuleSyntax": true,
     "allowImportingTsExtensions": true,
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,

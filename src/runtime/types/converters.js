@@ -3,11 +3,6 @@ import { UnProcessable } from '../exceptions/UnProcessable.js';
 const { parse } = JSON;
 const { utf8Slice } = Buffer.prototype;
 
-export const tryToNumber = value => (isNaN(+value) ? value : +value);
-
-export const tryToBoolean = value =>
-  value === 'true' ? true : value === 'false' ? false : value;
-
 export function tryParseJson(value) {
   try {
     return value && parse(value);

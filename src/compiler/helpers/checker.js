@@ -4,6 +4,7 @@ import { host } from '../host.js';
 export const {
   Any: flagAny,
   Null: flagNull,
+  Unit: flagUnit,
   Never: flagNever,
   Object: flagObject,
   String: flagString,
@@ -12,6 +13,7 @@ export const {
   Unknown: flagUnknown,
   Undefined: flagUndefined,
   VoidLike: flagVoidLike,
+  EnumLike: flagEnumLike,
   StringLike: flagStringLike,
   NumberLike: flagNumberLike,
   BooleanLike: flagBooleanLike,
@@ -19,57 +21,63 @@ export const {
   ObjectFlagsType,
 } = ts.TypeFlags;
 
-const { TrueKeyword, FalseKeyword, NumericLiteral, DeclareKeyword } =
-  ts.SyntaxKind;
+export const {
+  TrueKeyword,
+  FalseKeyword,
+  StaticKeyword,
+  NumericLiteral,
+  DeclareKeyword,
+} = ts.SyntaxKind;
 
 const { Readonly: CheckFlagReadonly } = ts.CheckFlags;
 const { Readonly: ModifierFlagReadonly } = ts.ModifierFlags;
 const { Const } = ts.NodeFlags;
-const { Alias, Type, ExportValue } = ts.SymbolFlags;
+const { Interface, TypeAlias, Alias, ExportValue } = ts.SymbolFlags;
 const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } =
   ts;
-
-export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;
-export const isFalseKeyword = ({ kind }) => kind === FalseKeyword;
-export const isDeclareKeyword = ({ kind }) => kind === DeclareKeyword;
 
 export const { isLiteralExpression, isStringLiteralLike } = ts;
 
 export const isVarConst = ({ flags }) => (flags & Const) !== 0;
+export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;
+export const isFalseKeyword = ({ kind }) => kind === FalseKeyword;
+export const isStaticKeyword = ({ kind }) => kind === StaticKeyword;
+export const isDeclareKeyword = ({ kind }) => kind === DeclareKeyword;
 
+export const isAnyType = ({ flags }) => (flags & flagAny) !== 0;
+export const isNullType = ({ flags }) => (flags & flagNull) !== 0;
+export const isUnitType = ({ flags }) => (flags & flagUnit) !== 0;
+export const isEnumType = ({ flags }) => (flags & flagEnumLike) !== 0;
+export const isNumberType = ({ flags }) => (flags & flagNumberLike) !== 0;
+export const isStringType = ({ flags }) => (flags & flagStringLike) !== 0;
+export const isBooleanType = ({ flags }) => (flags & flagBooleanLike) !== 0;
+export const isBigIntType = ({ flags }) => (flags & flagBigIntLike) !== 0;
 export const isObjectType = ({ flags, types }) =>
   (flags & ObjectFlagsType) !== 0 &&
   (flags & flagAny) === 0 &&
   (flags & flagNull) === 0 &&
   (!types || every(types, isObjectType));
 
-export const isNumberType = ({ flags, types }) =>
-  (flags & flagNumberLike) !== 0 || some(types, isNumberType);
+export const hasAnyType = type =>
+  isAnyType(type) || some(type.types, hasAnyType);
+export const hasNullType = type =>
+  isNullType(type) || some(type.types, hasNullType);
+export const hasNumberType = type =>
+  isNumberType(type) || some(type.types, hasNumberType);
+export const hasStringType = type =>
+  isStringType(type) || some(type.types, hasStringType);
+export const hasBooleanType = type =>
+  isBooleanType(type) || some(type.types, hasBooleanType);
+export const hasBigIntType = type =>
+  isBigIntType(type) || some(type.types, hasBigIntType);
 
-export const isStringType = ({ flags, types }) =>
-  (flags & flagStringLike) !== 0 || some(types, isStringType);
+export const hasOnlyUnitsType = ({ types }) =>
+  !!types && every(types, isUnitType);
 
-export const isBooleanType = ({ flags, types }) =>
-  (flags & flagBooleanLike) !== 0 || some(types, isBooleanType);
-
-export const isBigIntType = ({ flags, types }) =>
-  (flags & flagBigIntLike) !== 0 || some(types, isBigIntType);
+export const isArrayLikeType = type => host.checker.isArrayLikeType(type);
 
 export const isObjectNode = node =>
   isObjectType(host.checker.getTypeAtLocation(node));
-
-export const isNumberNode = node =>
-  node.kind === NumericLiteral ||
-  isNumberType(host.checker.getTypeAtLocation(node));
-
-export const isStringNode = node =>
-  isStringLiteralLike(node) ||
-  isStringType(host.checker.getTypeAtLocation(node));
-
-export const isBooleanNode = node =>
-  isTrueKeyword(node) ||
-  isFalseKeyword(node) ||
-  isBooleanType(host.checker.getTypeAtLocation(node));
 
 export const isNullableType = type =>
   (type.flags & flagAny) !== 0 ||
@@ -81,6 +89,8 @@ export const isNullableType = type =>
   type !== host.checker.getNonNullableType(type);
 
 export const isVoidLikeType = type => (type.flags & flagVoidLike) !== 0;
+export const hasUndefinedType = ({ flags, types }) =>
+  (flags & flagUndefined) !== 0 || some(types, hasUndefinedType);
 
 export const isReadonlySymbol = symbol =>
   (getCheckFlags(symbol) & CheckFlagReadonly) !== 0 ||
@@ -90,14 +100,13 @@ export const isReadonly = node =>
   isReadonlySymbol(host.checker.getSymbolAtLocation(node));
 
 export const isDeclareSymbol = symbol =>
-  symbol.valueDeclaration?.modifiers?.some(isDeclareKeyword) === true;
+  some(symbol.valueDeclaration?.modifiers, isDeclareKeyword);
 
 export const getSymbolOfNode = node => host.checker.getSymbolAtLocation(node);
 
-export const getApparentProperties = node =>
-  host.checker.getTypeAtLocation(node).getApparentProperties();
+export const isTypeSymbol = ({ flags }) =>
+  (flags & TypeAlias) !== 0 || (flags & Interface) !== 0;
 
-export const isTypeSymbol = symbol => (symbol.flags & Type) !== 0;
 export const isAliasSymbol = symbol => (symbol.flags & Alias) !== 0;
 export const isExportSymbol = symbol => (symbol.flags & ExportValue) !== 0;
 
@@ -122,6 +131,18 @@ export const getTypeOfNode = node => host.checker.getTypeAtLocation(node);
 export const getTypeOfSymbol = symbol => host.checker.getTypeOfSymbol(symbol);
 export const getBaseType = type => host.checker.getBaseTypeOfLiteralType(type);
 export const getAwaitedType = type => host.checker.getAwaitedType(type);
+export const getNonNullableType = type => host.checker.getNonNullableType(type);
+
+export const getTypeSymbolOfSymbol = symbol => {
+  // console.log(
+  //   host.checker.typeToString(host.checker.getDeclaredTypeOfSymbol(symbol)),
+  //   host.checker.typeToString(getTypeOfSymbol(symbol))
+  // );
+  return host.checker.getDeclaredTypeOfSymbol(symbol);
+};
+
+export const getExportsOfModule = node =>
+  host.checker.getExportsOfModule(getSymbolOfNode(node));
 
 export const getReturnType = node =>
   host.checker.getReturnTypeOfSignature(

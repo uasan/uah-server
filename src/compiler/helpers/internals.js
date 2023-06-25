@@ -1,11 +1,7 @@
 import { URL_LIB_RUNTIME } from '../../config.js';
 import { host } from '../host.js';
 import { factoryIdentifier } from './expression.js';
-import {
-  factoryCall,
-  factoryCallMethodStatement,
-  factoryCallStatement,
-} from './call.js';
+import { factoryCall, factoryCallStatement, factoryNew } from './call.js';
 
 function getInternalImport(url, name) {
   if (host.module.internalImports.has(url) === false) {
@@ -35,13 +31,6 @@ function getInternalImport(url, name) {
 }
 
 export const internals = {
-  setRoute: (...args) =>
-    factoryCallMethodStatement(
-      getInternalImport('server/router', 'Router'),
-      'set',
-      args
-    ),
-
   readBody: (...args) =>
     factoryCall(getInternalImport('server/request', 'readBody'), args),
 
@@ -60,15 +49,12 @@ export const internals = {
   respondError: (...args) =>
     factoryCall(getInternalImport('server/response', 'respondError'), args),
 
-  tryToNumber: (...args) =>
-    factoryCall(getInternalImport('types/converters', 'tryToNumber'), args),
-
-  tryToBoolean: (...args) =>
-    factoryCall(getInternalImport('types/converters', 'tryToBoolean'), args),
-
   tryParseJson: (...args) =>
     factoryCall(getInternalImport('types/converters', 'tryParseJson'), args),
 
   decodeJSON: (...args) =>
     factoryCall(getInternalImport('types/converters', 'decodeJSON'), args),
+
+  newValidator: (...args) =>
+    factoryNew(getInternalImport('types/validator', 'Validator'), args),
 };
