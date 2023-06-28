@@ -1,6 +1,6 @@
 import { UnProcessable } from '../exceptions/UnProcessable.js';
 
-const { parse } = JSON;
+export const { parse, stringify } = JSON;
 const { utf8Slice } = Buffer.prototype;
 
 export function tryParseJson(value) {

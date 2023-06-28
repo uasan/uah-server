@@ -5,9 +5,11 @@ export const CWD = process.cwd();
 
 export const LIB_NAME = '@uah/server';
 
+export const DIR_BUILD = 'build';
+
 export const PATH_SRC = CWD + '/src/';
-export const PATH_BUILD = CWD + '/build/';
 export const PATH_SRC_APP = PATH_SRC + 'app/';
+export const PATH_BUILD = CWD + '/' + DIR_BUILD + '/';
 
 export const URL_BUILD = pathToFileURL(PATH_BUILD).href;
 

@@ -1,7 +1,6 @@
 import ts from 'typescript';
 import { host } from '../host.js';
 import { isStatement, toStatement } from './statement.js';
-import { isPrecedenceToRight } from './operator.js';
 
 const tokens = Object.create(null);
 const bigints = Object.create(null);
@@ -55,48 +54,38 @@ export const factoryNull = () => host.factory.createNull();
 export const factoryTrue = () => host.factory.createTrue();
 export const factoryFalse = () => host.factory.createFalse();
 
-export const getSingleExpression = node =>
-  node?.kind === ParenthesizedExpression ? node.expression : node;
-
-export const getParentExpression = node => {
-  const { realm } = host;
-
-  while (node !== realm && node.parent) {
-    switch (node.parent.kind) {
-      case JsxExpression:
-      case ArrowFunction:
-      case VariableDeclaration:
-      case Parameter:
-      case BindingElement:
-      case ObjectBindingPattern:
-        return node;
-
-      case AwaitExpression:
-        return node.parent;
-
-      default:
-        if (isStatement(node.parent) || isStatement(node)) return node;
-    }
-    node = node.parent;
+export function factoryLiteral(value) {
+  switch (typeof value) {
+    case 'string':
+      return factoryString(value);
+    case 'number':
+      return factoryNumber(value);
+    case 'boolean':
+      return value ? factoryTrue() : factoryFalse();
   }
-  return node;
-};
 
-export const factoryNullish = (left, right = factoryString('')) =>
-  host.factory.createBinaryExpression(
-    isPrecedenceToRight(left.kind)
-      ? host.factory.createParenthesizedExpression(left)
-      : left,
-    factoryToken(QuestionQuestionToken),
-    right
-  );
+  if (value === null) return factoryNull();
+}
 
-export const factoryIsEqual = (left, right) =>
-  host.factory.createBinaryExpression(
-    left,
-    factoryToken(EqualsEqualsEqualsToken),
-    right
-  );
+export const getConstantLiteral = node =>
+  factoryLiteral(host.checker.getConstantValue(node));
+
+export function getValueOfLiteral(node) {
+  switch (node.kind) {
+    case StringLiteral:
+      return node.text;
+    case NumericLiteral:
+      return Number(node.text);
+    case NullKeyword:
+      return null;
+    case TrueKeyword:
+      return true;
+    case FalseKeyword:
+      return false;
+    case BigIntLiteral:
+      return node.text;
+  }
+}
 
 export const factoryIfEqual = (
   left,
@@ -113,62 +102,23 @@ export const factoryIfEqual = (
     undefined
   );
 
-export const getLiteralValue = node => {
+export const getLiteralNode = node => {
   switch (node.kind) {
     case StringLiteral:
-      return factoryString(node.text);
-
     case NumericLiteral:
-      return factoryNumber(node.text);
-
     case NullKeyword:
     case TrueKeyword:
     case FalseKeyword:
-      return factoryString(node.getText());
-
     case BigIntLiteral:
-      return factoryString(node.getText().slice(0, -1));
-
-    case Identifier:
-      if (node.escapedText === 'undefined') return factoryString('undefined');
+      return node;
   }
 };
-
-export const factoryStringConcat = (left, right) =>
-  host.factory.createBinaryExpression(left, factoryToken(PlusToken), right);
-
-export const factoryTernary = (condition, whenTrue, whenFalse) =>
-  host.factory.createConditionalExpression(
-    condition,
-    factoryToken(QuestionToken),
-    whenTrue,
-    factoryToken(ColonToken),
-    whenFalse
-  );
-
-export const factoryAndExpressions = (left, right) =>
-  host.factory.createBinaryExpression(
-    left,
-    factoryToken(AmpersandAmpersandToken),
-    right
-  );
 
 export const factoryNotExpression = node =>
   host.factory.createPrefixUnaryExpression(ExclamationToken, node);
 
 export const factoryPlusExpression = node =>
   host.factory.createPrefixUnaryExpression(PlusToken, node);
-
-export const factoryIfConditions = (conditions, statements) =>
-  host.factory.createIfStatement(
-    conditions.length === 1
-      ? conditions[0]
-      : conditions.reduce(factoryAndExpressions),
-    statements.length === 1
-      ? statements[0]
-      : host.factory.createBlock(statements, false),
-    undefined
-  );
 
 export const factoryAwait = node => host.factory.createAwaitExpression(node);
 

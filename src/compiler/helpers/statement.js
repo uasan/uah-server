@@ -1,6 +1,5 @@
 import ts from 'typescript';
 import { host } from '../host.js';
-import { factoryIfConditions, factoryNotExpression } from './expression.js';
 
 const {
   FirstStatement,
@@ -70,24 +69,3 @@ export const factoryIfReturn = (isValue, returnValue) =>
     host.factory.createReturnStatement(returnValue),
     undefined
   );
-
-export const setIfReadyObservers = handler => {
-  let count = 0;
-  const refs = new Set();
-
-  for (const { isObservable, promises } of handler.observers)
-    if (promises) {
-      count++;
-      for (const { ref } of promises) refs.add(ref);
-    } else if (isObservable) {
-      count++;
-    }
-
-  if (count > 1 && refs.size)
-    handler.statements = [
-      factoryIfConditions(
-        [...refs].map(factoryNotExpression),
-        handler.statements
-      ),
-    ];
-};

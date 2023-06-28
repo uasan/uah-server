@@ -4,16 +4,16 @@ import { host } from '../host.js';
 export const {
   Any: flagAny,
   Null: flagNull,
-  Unit: flagUnit,
   Never: flagNever,
   Object: flagObject,
   String: flagString,
   Number: flagNumber,
   Boolean: flagBoolean,
   Unknown: flagUnknown,
-  Undefined: flagUndefined,
+  Literal: flagLiteral,
   VoidLike: flagVoidLike,
   EnumLike: flagEnumLike,
+  Undefined: flagUndefined,
   StringLike: flagStringLike,
   NumberLike: flagNumberLike,
   BooleanLike: flagBooleanLike,
@@ -46,8 +46,8 @@ export const isDeclareKeyword = ({ kind }) => kind === DeclareKeyword;
 
 export const isAnyType = ({ flags }) => (flags & flagAny) !== 0;
 export const isNullType = ({ flags }) => (flags & flagNull) !== 0;
-export const isUnitType = ({ flags }) => (flags & flagUnit) !== 0;
 export const isEnumType = ({ flags }) => (flags & flagEnumLike) !== 0;
+export const isLiteralType = ({ flags }) => (flags & flagLiteral) !== 0;
 export const isNumberType = ({ flags }) => (flags & flagNumberLike) !== 0;
 export const isStringType = ({ flags }) => (flags & flagStringLike) !== 0;
 export const isBooleanType = ({ flags }) => (flags & flagBooleanLike) !== 0;
@@ -71,8 +71,8 @@ export const hasBooleanType = type =>
 export const hasBigIntType = type =>
   isBigIntType(type) || some(type.types, hasBigIntType);
 
-export const hasOnlyUnitsType = ({ types }) =>
-  !!types && every(types, isUnitType);
+export const isOnlyLiteralTypes = ({ types }) =>
+  !!types && every(types, isLiteralType);
 
 export const isArrayLikeType = type => host.checker.isArrayLikeType(type);
 

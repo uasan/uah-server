@@ -52,3 +52,6 @@ export const createImportClause = (name, elements) =>
     name,
     elements?.length && host.factory.createNamedImports(elements)
   );
+
+export const factoryImportSpecifier = (name, propertyName) =>
+  host.factory.createImportSpecifier(false, propertyName, name);

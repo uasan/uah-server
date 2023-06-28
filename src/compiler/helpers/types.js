@@ -1,91 +1,83 @@
 import ts from 'typescript';
-import { typeNames } from '../makers/declaration.js';
-import { host } from '../host.js';
+import { typeNames } from '../makers/types/names.js';
 import { factoryElementAccess, factoryPropertyAccess } from './object.js';
 import {
   factoryIdentifier,
   factoryNumber,
   factoryString,
+  getConstantLiteral,
 } from './expression.js';
+import { host, types } from '../host.js';
+import { getOriginSymbolOfNode } from './checker.js';
+import { getRefValue } from './refs.js';
 
 const {
+  TypeQuery,
+  TypeOperator,
+  UnionType,
   LiteralType,
-  QualifiedName,
   TypeReference,
-  StringLiteral,
-  NumericLiteral,
+  IntersectionType,
   IndexedAccessType,
 } = ts.SyntaxKind;
 
-const isTypeName = ({ typeName }) => !!typeName;
+export const getValueOfLiteralType = type =>
+  type.value ??
+  (type === host.checker.getTrueType()
+    ? true
+    : type === host.checker.getFalseType()
+    ? false
+    : type === host.checker.getNullType()
+    ? null
+    : undefined);
 
-export const getTypeNameOfSymbol = ({ valueDeclaration: { type } }) =>
-  type.typeName ?? type.types.find(isTypeName).typeName;
+export const getRefForLiteralTypes = ({ types }) =>
+  getRefValue(types.map(getValueOfLiteralType).sort());
 
-export function getLiteralValue(node) {
-  switch (node.kind) {
-    case StringLiteral:
-    case NumericLiteral:
-      return node;
-  }
-
-  const value = host.checker.getConstantValue(node.parent);
-
-  switch (typeof value) {
-    case 'string':
-      return factoryString(value);
-    case 'number':
-      return factoryNumber(value);
-  }
-
-  return node;
-}
-
-function toPropertyAccess(node) {
-  switch (node.kind) {
-    case TypeReference:
-      return toPropertyAccess(node.typeName);
-
-    case QualifiedName:
-      return factoryPropertyAccess(node.left, node.right);
-
-    case IndexedAccessType:
-      const name = node.indexType.literal;
-      const expression = toPropertyAccess(node.objectType);
-
-      return name.kind === NumericLiteral
-        ? factoryElementAccess(expression, name)
-        : factoryPropertyAccess(expression, factoryIdentifier(name.text));
-
-    default:
-      return node;
-  }
-}
-
-function getValueOfType(node) {
+export function getValueOfType(node) {
   switch (node.kind) {
     case LiteralType:
       return node.literal;
+
+    case TypeQuery:
+      return node.exprName;
+
     case TypeReference:
-      //console.log(host.checker.getConstantValue(typeNode));
-      return toPropertyAccess(node.typeName);
+      //console.log(host.checker.getConstantValue(node));
+      return getConstantLiteral(node) ?? getValueOfType(node.typeName);
 
     case IndexedAccessType:
-      return toPropertyAccess(node);
+      return;
+
+    case TypeOperator:
+      return getValueOfType(node.type);
   }
 }
 
-function findDefaultValue(types) {
-  for (const type of types)
-    if (typeNames.Default.is(type.typeName))
-      return getValueOfType(type.typeArguments[0]);
+const getMakerByTypeName = ({ typeName }) =>
+  types.get(getOriginSymbolOfNode(typeName));
+
+function makeType(context, typeNode) {
+  switch (typeNode.kind) {
+    case TypeReference:
+      getMakerByTypeName(typeNode)?.make(context, typeNode.typeArguments);
+      break;
+
+    case UnionType:
+    case IntersectionType:
+      for (const unitType of typeNode.types) {
+        makeType(context, unitType);
+      }
+      break;
+  }
 }
 
-export function getMetaType(symbol) {
-  const { type } = symbol.valueDeclaration;
-
-  return {
-    validators: null,
-    defaultValue: type.types ? findDefaultValue(type.types) : null,
+export function makeTypeContext(symbol) {
+  const context = {
+    defaultValue: null,
+    validators: new Map(),
   };
+
+  makeType(context, symbol.valueDeclaration.type);
+  return context;
 }

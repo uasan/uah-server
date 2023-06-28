@@ -50,10 +50,10 @@ export const internals = {
     factoryCall(getInternalImport('server/response', 'respondError'), args),
 
   tryParseJson: (...args) =>
-    factoryCall(getInternalImport('types/converters', 'tryParseJson'), args),
+    factoryCall(getInternalImport('types/json', 'tryParseJson'), args),
 
   decodeJSON: (...args) =>
-    factoryCall(getInternalImport('types/converters', 'decodeJSON'), args),
+    factoryCall(getInternalImport('types/json', 'decodeJSON'), args),
 
   newValidator: (...args) =>
     factoryNew(getInternalImport('types/validator', 'Validator'), args),

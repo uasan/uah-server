@@ -1,20 +1,10 @@
 import { PATH_LIB } from '../../config.js';
 import { toRuntimeUrl } from '../helpers/link.js';
 import * as decors from './decorators.js';
-import { host, types, declarations, decorators } from '../host.js';
-import {
-  getExportsOfModule,
-  getOriginSymbolOfNode,
-} from '../helpers/checker.js';
+import { host, declarations, decorators, types } from '../host.js';
+import { getExportsOfModule } from '../helpers/checker.js';
 
-export const typeNames = {
-  Default: {
-    symbol: null,
-    is(typeName) {
-      return typeName ? this.symbol === getOriginSymbolOfNode(typeName) : false;
-    },
-  },
-};
+import { typeNames } from './types/names.js';
 
 const { hasOwn } = Object;
 
@@ -25,8 +15,7 @@ export const setDeclarations = () => {
     const name = symbol.name;
 
     if (hasOwn(typeNames, name)) {
-      types.set(symbol, symbol);
-      typeNames[name].symbol = symbol;
+      types.set(symbol, typeNames[name]);
     } else if (hasOwn(decors, name)) {
       decorators.set(symbol, decors[name]);
     } else if (symbol.valueDeclaration) {

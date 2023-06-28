@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import { afterEmit, host, transformers } from '../../host.js';
+import { afterEmit, host } from '../../host.js';
 import { makeRouteMethod } from './handler.js';
 import { methods } from './constants.js';
 import { addTransformer } from '../../helpers/ast.js';
@@ -50,7 +50,7 @@ export function makeRoutePath({ url }) {
 }
 
 const isContextClass = symbol =>
-  symbol.valueDeclaration.kind === ClassDeclaration;
+  symbol.valueDeclaration?.kind === ClassDeclaration;
 
 export function addRoute({ route }, file) {
   if (routes.has(route)) {

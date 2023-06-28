@@ -1,28 +1,14 @@
-import { UnProcessable } from '../exceptions/UnProcessable.js';
-
-const ERROR_TYPE_MISMATCH = 'typeMismatch';
-const ERROR_VALUE_MISSING = 'valueMissing';
-const ERROR_VALUE_MISMATCH = 'valueMismatch';
-
-const enumValues = new WeakMap();
-
-function setEnumValues(ref) {
-  const values = Object.values(ref);
-  enumValues.set(ref, values);
-  return values;
-}
-
-const { isArray } = Array;
-const isString = value => typeof value === 'string';
-const isObject = value => typeof value === 'object' && value !== null;
-const isNumber = value => typeof value === 'number' && isNaN(value) === false;
-
-class InputErrors extends UnProcessable {
-  constructor(errors) {
-    super('Input errors');
-    this.errors = errors;
-  }
-}
+import {
+  hasOwn,
+  isArray,
+  isBoolean,
+  isInteger,
+  isNumber,
+  isObject,
+  isString,
+  isUUID,
+} from './checker.js';
+import { Errors } from './errors.js';
 
 export class Validator {
   key = '';
@@ -33,7 +19,7 @@ export class Validator {
 
   constructor(data) {
     if (isObject(data) === false) {
-      throw new UnProcessable(ERROR_TYPE_MISMATCH);
+      throw new UnProcessable(Errors.typeMismatch);
     }
     this.data = data;
   }
@@ -47,9 +33,121 @@ export class Validator {
       this.skip = true;
       this.data[key] = defaultValue;
     } else {
-      this.setError(ERROR_VALUE_MISSING);
+      this.setError(Errors.valueMissing);
     }
 
+    return this;
+  }
+
+  setNullable() {
+    this.skip ||= this.data[this.key] === null;
+    return this;
+  }
+
+  isString() {
+    return this.skip || isString(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'string');
+  }
+
+  isNumber() {
+    return this.skip || isNumber(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'number');
+  }
+
+  isBoolean() {
+    return this.skip || isBoolean(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'boolean');
+  }
+
+  isObject() {
+    return this.skip || isObject(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'object');
+  }
+
+  isArray() {
+    return this.skip || isArray(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'array');
+  }
+
+  inArray(array) {
+    return this.skip || array.includes(this.data[this.key])
+      ? this
+      : this.setError(Errors.valueMismatch, array);
+  }
+
+  hasKey(object) {
+    return this.skip || hasOwn(object, this.data[this.key])
+      ? this
+      : this.setError(Errors.valueMismatch, Object.keys(object));
+  }
+
+  isInt() {
+    return this.skip || isInteger(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'int');
+  }
+
+  isIntMin(min) {
+    return this.skip || this.data[this.key] >= min
+      ? this
+      : this.setError(Errors.rangeUnderflow, min);
+  }
+
+  isIntMax(max) {
+    return this.skip || this.data[this.key] <= max
+      ? this
+      : this.setError(Errors.rangeOverflow, max);
+  }
+
+  isTextMin(min) {
+    return this.skip || this.data[this.key].length >= min
+      ? this
+      : this.setError(Errors.tooShort, min);
+  }
+
+  isTextMax(max) {
+    return this.skip || this.data[this.key].length <= max
+      ? this
+      : this.setError(Errors.tooLong, max);
+  }
+
+  isTextLength(length) {
+    return this.skip || this.data[this.key].length === length
+      ? this
+      : this.setError(
+          this.data[this.key].length < length
+            ? Errors.tooShort
+            : Errors.tooLong,
+          length
+        );
+  }
+
+  isTextPattern(regexp) {
+    return this.skip || regexp.test(this.data[this.key])
+      ? this
+      : this.setError(Errors.patternMismatch, regexp.toString());
+  }
+
+  isUUID() {
+    return this.isString().skip || isUUID(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'uuid');
+  }
+
+  isEmail() {
+    return this.isString().skip ||
+      isEmail((this.data[this.key] = this.data[this.key].trim().toLowerCase()))
+      ? this
+      : this.setError(Errors.typeMismatch, 'email');
+  }
+
+  trimString() {
+    if (this.skip === false) this.data[this.key] = this.data[this.key].trim();
     return this;
   }
 
@@ -66,48 +164,7 @@ export class Validator {
     return this;
   }
 
-  checkNull() {
-    this.skip ||= this.data[this.key] === null;
-    return this;
-  }
-
-  checkString() {
-    return this.skip || isString(this.data[this.key])
-      ? this
-      : this.setError(ERROR_TYPE_MISMATCH, 'string');
-  }
-
-  checkNumber() {
-    return this.skip || isNumber(this.data[this.key])
-      ? this
-      : this.setError(ERROR_TYPE_MISMATCH, 'number');
-  }
-
-  checkObject() {
-    return this.skip || isObject(this.data[this.key])
-      ? this
-      : this.setError(ERROR_TYPE_MISMATCH, 'object');
-  }
-
-  checkUnit(values) {
-    return this.skip || values.includes(this.data[this.key])
-      ? this
-      : this.setError(ERROR_VALUE_MISMATCH, values);
-  }
-
-  checkEnum(object) {
-    return this.skip
-      ? this
-      : this.checkUnit(enumValues.get(object) ?? setEnumValues(object));
-  }
-
-  checkArray() {
-    return this.skip || isArray(this.data[this.key])
-      ? this
-      : this.setError(ERROR_TYPE_MISMATCH, 'array');
-  }
-
   validate() {
-    if (this.errors) throw new InputErrors(this.errors);
+    if (this.errors) throw new Errors(this.errors);
   }
 }

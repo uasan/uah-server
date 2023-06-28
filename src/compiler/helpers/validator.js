@@ -11,21 +11,18 @@ import {
   isStringType,
   getNonNullableType,
   hasAnyType,
-  isEnumType,
-  hasOnlyUnitsType,
-  getOriginSymbol,
-  getOriginSymbolOfNode,
+  isOnlyLiteralTypes,
   hasNullType,
 } from './checker.js';
 import { factoryString, factoryTrue } from './expression.js';
 import { internals } from './internals.js';
 import { factoryStatement } from './statements.js';
-import { getMetaType, getTypeNameOfSymbol } from './types.js';
+import { makeTypeContext, getRefForLiteralTypes } from './types.js';
 
 function makeValidations(ast, symbols) {
   for (const symbol of symbols) {
     let name = symbol.escapedName;
-    let meta = getMetaType(symbol);
+    let meta = makeTypeContext(symbol);
     let type = getTypeOfSymbol(symbol);
 
     const params = [factoryString(name)];
@@ -38,6 +35,7 @@ function makeValidations(ast, symbols) {
       if (meta.defaultValue) params.push(meta.defaultValue);
     }
 
+    //console.log(name, type.isUnion());
     ast = factoryCallMethod(ast, 'setKey', params);
 
     if (hasAnyType(type)) {
@@ -45,27 +43,24 @@ function makeValidations(ast, symbols) {
     }
 
     if (isNullable) {
-      ast = factoryCallMethod(ast, 'checkNull');
+      ast = factoryCallMethod(ast, 'setNullable');
     }
 
-    if (types.has(getOriginSymbol(symbol.valueDeclaration.type))) {
-      console.log(name, types.has(symbol.valueDeclaration.type));
-      //
+    if (isOnlyLiteralTypes(type)) {
+      ast = factoryCallMethod(ast, 'inArray', [getRefForLiteralTypes(type)]);
+    } else if (meta.validators.size) {
+      for (const validator of meta.validators.values())
+        ast = validator.make(ast);
     } else if (isStringType(type)) {
-      ast = factoryCallMethod(ast, 'checkString');
+      ast = factoryCallMethod(ast, 'isString');
     } else if (isNumberType(type)) {
-      ast = factoryCallMethod(ast, 'checkNumber');
+      ast = factoryCallMethod(ast, 'isNumber');
     } else if (isBooleanType(type)) {
-      ast = factoryCallMethod(ast, 'checkBoolean');
-    } else if (isEnumType(type)) {
-      ast = factoryCallMethod(ast, 'checkEnum', [getTypeNameOfSymbol(symbol)]);
-    } else if (hasOnlyUnitsType(type)) {
-      //console.log(symbol.valueDeclaration.type);
-      ast = factoryCallMethod(ast, 'checkUnit');
+      ast = factoryCallMethod(ast, 'isBoolean');
     } else if (isArrayLikeType(type)) {
-      ast = factoryCallMethod(ast, 'checkArray');
+      ast = factoryCallMethod(ast, 'isArray');
     } else if (isObjectType(type)) {
-      ast = factoryCallMethod(ast, 'checkObject');
+      ast = factoryCallMethod(ast, 'isObject');
     }
   }
 
