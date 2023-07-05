@@ -18,6 +18,7 @@ export const {
   NumberLike: flagNumberLike,
   BooleanLike: flagBooleanLike,
   BigIntLike: flagBigIntLike,
+  NonPrimitive: flagNonPrimitive,
   ObjectFlagsType,
 } = ts.TypeFlags;
 
@@ -52,11 +53,19 @@ export const isNumberType = ({ flags }) => (flags & flagNumberLike) !== 0;
 export const isStringType = ({ flags }) => (flags & flagStringLike) !== 0;
 export const isBooleanType = ({ flags }) => (flags & flagBooleanLike) !== 0;
 export const isBigIntType = ({ flags }) => (flags & flagBigIntLike) !== 0;
+export const isUndefinedType = ({ flags }) => (flags & flagUndefined) !== 0;
+export const isNotUndefinedType = ({ flags }) => (flags & flagUndefined) === 0;
+export const isNonPrimitiveType = ({ flags }) =>
+  (flags & flagNonPrimitive) !== 0;
+
 export const isObjectType = ({ flags, types }) =>
   (flags & ObjectFlagsType) !== 0 &&
   (flags & flagAny) === 0 &&
   (flags & flagNull) === 0 &&
   (!types || every(types, isObjectType));
+
+export const isLiteralTypeOrNullType = type =>
+  isLiteralType(type) || isNullType(type);
 
 export const hasAnyType = type =>
   isAnyType(type) || some(type.types, hasAnyType);
@@ -70,9 +79,11 @@ export const hasBooleanType = type =>
   isBooleanType(type) || some(type.types, hasBooleanType);
 export const hasBigIntType = type =>
   isBigIntType(type) || some(type.types, hasBigIntType);
+export const hasUndefinedType = type =>
+  isUndefinedType(type) || some(type.types, hasUndefinedType);
 
-export const isOnlyLiteralTypes = ({ types }) =>
-  !!types && every(types, isLiteralType);
+export const isTypeAsValues = ({ types }) =>
+  !!types && every(types, isLiteralTypeOrNullType);
 
 export const isArrayLikeType = type => host.checker.isArrayLikeType(type);
 
@@ -89,8 +100,6 @@ export const isNullableType = type =>
   type !== host.checker.getNonNullableType(type);
 
 export const isVoidLikeType = type => (type.flags & flagVoidLike) !== 0;
-export const hasUndefinedType = ({ flags, types }) =>
-  (flags & flagUndefined) !== 0 || some(types, hasUndefinedType);
 
 export const isReadonlySymbol = symbol =>
   (getCheckFlags(symbol) & CheckFlagReadonly) !== 0 ||
@@ -129,17 +138,22 @@ export const getFullName = symbol =>
 
 export const getTypeOfNode = node => host.checker.getTypeAtLocation(node);
 export const getTypeOfSymbol = symbol => host.checker.getTypeOfSymbol(symbol);
-export const getBaseType = type => host.checker.getBaseTypeOfLiteralType(type);
+export const getTypeOfTypeNode = node => host.checker.getTypeFromTypeNode(node);
+
+export const getUnionType = types => host.checker.getUnionType(types);
 export const getAwaitedType = type => host.checker.getAwaitedType(type);
+export const getBaseType = type => host.checker.getBaseTypeOfLiteralType(type);
+export const getIndexTypeOfType = type => host.checker.getIndexTypeOfType(type);
 export const getNonNullableType = type => host.checker.getNonNullableType(type);
 
-export const getTypeSymbolOfSymbol = symbol => {
-  // console.log(
-  //   host.checker.typeToString(host.checker.getDeclaredTypeOfSymbol(symbol)),
-  //   host.checker.typeToString(getTypeOfSymbol(symbol))
-  // );
-  return host.checker.getDeclaredTypeOfSymbol(symbol);
-};
+export const getNonUndefinedType = type =>
+  getUnionType(type.types.filter(isNotUndefinedType));
+
+export const getPropertiesOfType = type =>
+  host.checker.getPropertiesOfType(type);
+
+export const getPropertiesOfTypeNode = node =>
+  getPropertiesOfType(getTypeOfTypeNode(node));
 
 export const getExportsOfModule = node =>
   host.checker.getExportsOfModule(getSymbolOfNode(node));

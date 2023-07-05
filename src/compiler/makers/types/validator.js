@@ -1,6 +1,11 @@
-import { isTrueKeyword } from '../../helpers/checker.js';
-import { getValueOfType } from '../../helpers/types.js';
+import {
+  getPropertiesOfTypeNode,
+  getTypeOfSymbol,
+  isTrueKeyword,
+} from '../../helpers/checker.js';
+import { getValueOfTypeNode } from '../../helpers/types.js';
 import { factoryCallMethod } from '../../helpers/call.js';
+import { host } from '../../host.js';
 
 export class Validator {
   ast = null;
@@ -17,17 +22,20 @@ export class Validator {
   }
 
   setProps(context, typeNode) {
-    if (typeNode)
-      for (const member of typeNode.members) {
-        const name = member.name.escapedText;
-        const value = getValueOfType(member.type);
+    if (typeNode) {
+      for (const symbol of getPropertiesOfTypeNode(typeNode)) {
+        const name = symbol.escapedName;
+        const value = getValueOfTypeNode(symbol.valueDeclaration.type);
 
-        if (name === 'default') {
-          context.defaultValue ??= value;
-        } else {
+        if (value) {
           this.props.set(name, value);
+
+          if (name === 'default') {
+            context.defaultValue ??= value;
+          }
         }
       }
+    }
 
     return this;
   }
@@ -38,12 +46,6 @@ export class Validator {
   }
 
   static make(context, args) {
-    const typeNode = args?.[0];
-
-    if (context.validators.has(this)) {
-      context.validators.get(this).setProps(context, typeNode);
-    } else {
-      context.validators.set(this, new this().setProps(context, typeNode));
-    }
+    context.validators.add(new this().setProps(context, args?.[0]));
   }
 }

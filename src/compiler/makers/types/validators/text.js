@@ -4,20 +4,28 @@ export class Text extends Validator {
   make(ast) {
     super.make(ast, 'isString');
 
-    if (this.isTrue('trim')) {
+    if (this.isTrue('digits')) {
+      this.makeCall('toDigitsString');
+    } else if (this.isTrue('trim')) {
       this.makeCall('trimString');
     }
 
     if (this.props.has('length')) {
-      this.makeCall('isTextLength', 'length');
+      this.makeCall('isLength', 'length');
     } else {
       if (this.props.has('min')) {
-        this.makeCall('isTextMin', 'min');
+        this.makeCall('isMinLength', 'min');
       }
 
       if (this.props.has('max')) {
-        this.makeCall('isTextMax', 'max');
+        this.makeCall('isMaxLength', 'max');
       }
+    }
+
+    if (this.isTrue('lowercase')) {
+      this.makeCall('toLowerCase');
+    } else if (this.isTrue('uppercase')) {
+      this.makeCall('toUpperCase');
     }
 
     if (this.props.has('pattern')) {

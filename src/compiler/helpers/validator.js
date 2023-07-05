@@ -1,4 +1,5 @@
 import { host, types } from '../host.js';
+import { printNode } from '../worker/printer.js';
 import { factoryCallMethod } from './call.js';
 import {
   getTypeOfNode,
@@ -9,59 +10,102 @@ import {
   isNumberType,
   isObjectType,
   isStringType,
-  getNonNullableType,
   hasAnyType,
-  isOnlyLiteralTypes,
+  isTypeAsValues,
   hasNullType,
+  getIndexTypeOfType,
+  getNonNullableType,
+  getNonUndefinedType,
+  getPropertiesOfType,
+  isNonPrimitiveType,
 } from './checker.js';
-import { factoryString, factoryTrue } from './expression.js';
+import { factoryIdentifier, factoryString, factoryTrue } from './expression.js';
 import { internals } from './internals.js';
+import { getRefValue } from './refs.js';
 import { factoryStatement } from './statements.js';
 import { makeTypeContext, getRefForLiteralTypes } from './types.js';
 
-function makeValidations(ast, symbols) {
-  for (const symbol of symbols) {
-    let name = symbol.escapedName;
-    let meta = makeTypeContext(symbol);
-    let type = getTypeOfSymbol(symbol);
+function makeValidateFunction(ast) {
+  return getRefValue('_=>{' + printNode(ast) + '}');
+}
 
-    const params = [factoryString(name)];
-    const isNullable = hasNullType(type);
+function makeValidatorsByType(ast, context, type) {
+  if (hasAnyType(type)) {
+    return ast;
+  }
 
-    if (hasUndefinedType(type)) {
-      type = getNonNullableType(type);
+  //console.log(name, host.checker.typeToString(type), isTypeAsValues(type));
 
-      params.push(factoryTrue());
-      if (meta.defaultValue) params.push(meta.defaultValue);
-    }
+  if (isTypeAsValues(type)) {
+    return factoryCallMethod(ast, 'inArray', [getRefForLiteralTypes(type)]);
+  }
 
-    //console.log(name, type.isUnion());
-    ast = factoryCallMethod(ast, 'setKey', params);
+  if (hasNullType(type)) {
+    type = getNonNullableType(type);
+    ast = factoryCallMethod(ast, 'isNull');
+  }
 
-    if (hasAnyType(type)) {
-      continue;
-    }
+  if (context.validators.size) {
+    for (const validator of context.validators) ast = validator.make(ast);
+  } else if (isStringType(type)) {
+    ast = factoryCallMethod(ast, 'isString');
+  } else if (isNumberType(type)) {
+    ast = factoryCallMethod(ast, 'isNumber');
+  } else if (isBooleanType(type)) {
+    ast = factoryCallMethod(ast, 'isBoolean');
+  } else if (isNonPrimitiveType(type)) {
+    ast = factoryCallMethod(ast, 'isObject');
+  }
 
-    if (isNullable) {
-      ast = factoryCallMethod(ast, 'setNullable');
-    }
+  if (isArrayLikeType(type)) {
+    const childAst = factoryIdentifier('_');
+    const methodAst = makeValidatorsByType(
+      childAst,
+      context.child,
+      getIndexTypeOfType(type)
+    );
 
-    if (isOnlyLiteralTypes(type)) {
-      ast = factoryCallMethod(ast, 'inArray', [getRefForLiteralTypes(type)]);
-    } else if (meta.validators.size) {
-      for (const validator of meta.validators.values())
-        ast = validator.make(ast);
-    } else if (isStringType(type)) {
-      ast = factoryCallMethod(ast, 'isString');
-    } else if (isNumberType(type)) {
-      ast = factoryCallMethod(ast, 'isNumber');
-    } else if (isBooleanType(type)) {
-      ast = factoryCallMethod(ast, 'isBoolean');
-    } else if (isArrayLikeType(type)) {
+    if (childAst === methodAst) {
       ast = factoryCallMethod(ast, 'isArray');
-    } else if (isObjectType(type)) {
+    } else {
+      ast = factoryCallMethod(ast, 'forArray', [
+        makeValidateFunction(methodAst),
+      ]);
+    }
+  } else if (isObjectType(type)) {
+    const symbols = getPropertiesOfType(type);
+
+    if (symbols.length) {
+      const childAst = factoryIdentifier('_');
+
+      ast = factoryCallMethod(ast, 'forObject', [
+        makeValidateFunction(makeValidatorsBySymbols(childAst, symbols)),
+      ]);
+    } else {
       ast = factoryCallMethod(ast, 'isObject');
     }
+  }
+
+  return ast;
+}
+
+function makeValidatorsBySymbols(ast, symbols) {
+  for (const symbol of symbols) {
+    let name = symbol.escapedName;
+    let type = getTypeOfSymbol(symbol);
+    let context = makeTypeContext(symbol.valueDeclaration.type);
+
+    const params = [factoryString(name)];
+
+    if (hasUndefinedType(type)) {
+      type = getNonUndefinedType(type);
+
+      params.push(factoryTrue());
+      if (context.defaultValue) params.push(context.defaultValue);
+    }
+
+    ast = factoryCallMethod(ast, 'setKey', params);
+    ast = makeValidatorsByType(ast, context, type);
   }
 
   return ast;
@@ -74,9 +118,9 @@ export const payloadValidator = {
     const param = original.parameters[0];
     const type = getTypeOfNode(param);
 
-    let ast = makeValidations(
+    let ast = makeValidatorsBySymbols(
       internals.newValidator(param.name),
-      type.getApparentProperties()
+      getPropertiesOfType(type)
     );
 
     ast = factoryCallMethod(ast, 'validate');

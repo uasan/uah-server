@@ -1,15 +1,15 @@
 import { Validator } from '../validator.js';
 
 export class Int extends Validator {
-  make(ast) {
-    super.make(ast);
+  make(ast, method = 'isInt') {
+    super.make(ast, method);
 
     if (this.props.has('min')) {
-      this.makeCall('isIntMin', 'min');
+      this.makeCall('isMin', 'min');
     }
 
     if (this.props.has('max')) {
-      this.makeCall('isIntMax', 'max');
+      this.makeCall('isMax', 'max');
     }
 
     return this.ast;

@@ -1,8 +1,9 @@
 import ts from 'typescript';
-import { host, transformers } from '../host.js';
+import { host, transformers, types } from '../host.js';
 import { makeImportDeclaration } from '../makers/import.js';
 import { makeDecorator } from '../makers/decorators.js';
 import { makeEnumDeclaration } from '../makers/enum.js';
+import { makePropertyDeclaration } from '../makers/class.js';
 
 const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
 
@@ -13,6 +14,7 @@ const makers = {
   [SyntaxKind.EnumDeclaration]: makeEnumDeclaration,
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.Decorator]: makeDecorator,
+  [SyntaxKind.PropertyDeclaration]: makePropertyDeclaration,
 
   [SyntaxKind.ArrayType]: returnUndefined,
   [SyntaxKind.UnionType]: returnUndefined,

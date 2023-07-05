@@ -1,5 +1,4 @@
 import { afterEmit, host } from '../host.js';
-import { stringify } from '../../runtime/types/json.js';
 import { toBuildPath, toRelativeURL } from './link.js';
 import { writeFile } from '../worker/system.js';
 
@@ -16,10 +15,8 @@ function makeSource() {
   writeFile(toBuildPath(file), text.slice(0, -2) + ';');
 }
 
-export function getRefValue(value) {
+export function getRefValue(source) {
   let name;
-
-  const source = stringify(value);
   const relUrl = toRelativeURL(host.entity.url, file);
 
   if (refs.has(source)) {

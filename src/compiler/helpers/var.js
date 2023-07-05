@@ -8,6 +8,7 @@ export const {
   EqualsToken,
   StringLiteral,
   ExportKeyword,
+  StaticKeyword,
   OmittedExpression,
   BinaryExpression,
   VariableDeclaration,
@@ -15,7 +16,8 @@ export const {
   ObjectBindingPattern,
 } = ts.SyntaxKind;
 
-export const filterModifiers = ({ kind }) => kind === ExportKeyword;
+export const filterModifiers = ({ kind }) =>
+  kind === ExportKeyword || kind === StaticKeyword;
 
 export const factoryConstStatement = (params, modifiers) =>
   host.factory.createVariableStatement(

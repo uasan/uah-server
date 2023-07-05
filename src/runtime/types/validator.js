@@ -1,5 +1,4 @@
 import {
-  hasOwn,
   isArray,
   isBoolean,
   isInteger,
@@ -13,8 +12,8 @@ import { Errors } from './errors.js';
 export class Validator {
   key = '';
   data = null;
-
   skip = false;
+  parent = null;
   errors = null;
 
   constructor(data) {
@@ -39,7 +38,7 @@ export class Validator {
     return this;
   }
 
-  setNullable() {
+  isNull() {
     this.skip ||= this.data[this.key] === null;
     return this;
   }
@@ -80,43 +79,25 @@ export class Validator {
       : this.setError(Errors.valueMismatch, array);
   }
 
-  hasKey(object) {
-    return this.skip || hasOwn(object, this.data[this.key])
-      ? this
-      : this.setError(Errors.valueMismatch, Object.keys(object));
-  }
-
   isInt() {
     return this.skip || isInteger(this.data[this.key])
       ? this
       : this.setError(Errors.typeMismatch, 'int');
   }
 
-  isIntMin(min) {
+  isMin(min) {
     return this.skip || this.data[this.key] >= min
       ? this
       : this.setError(Errors.rangeUnderflow, min);
   }
 
-  isIntMax(max) {
+  isMax(max) {
     return this.skip || this.data[this.key] <= max
       ? this
       : this.setError(Errors.rangeOverflow, max);
   }
 
-  isTextMin(min) {
-    return this.skip || this.data[this.key].length >= min
-      ? this
-      : this.setError(Errors.tooShort, min);
-  }
-
-  isTextMax(max) {
-    return this.skip || this.data[this.key].length <= max
-      ? this
-      : this.setError(Errors.tooLong, max);
-  }
-
-  isTextLength(length) {
+  isLength(length) {
     return this.skip || this.data[this.key].length === length
       ? this
       : this.setError(
@@ -125,6 +106,18 @@ export class Validator {
             : Errors.tooLong,
           length
         );
+  }
+
+  isMinLength(min) {
+    return this.skip || this.data[this.key].length >= min
+      ? this
+      : this.setError(Errors.tooShort, min);
+  }
+
+  isMaxLength(max) {
+    return this.skip || this.data[this.key].length <= max
+      ? this
+      : this.setError(Errors.tooLong, max);
   }
 
   isTextPattern(regexp) {
@@ -147,19 +140,81 @@ export class Validator {
   }
 
   trimString() {
-    if (this.skip === false) this.data[this.key] = this.data[this.key].trim();
+    if (this.skip === false) {
+      this.data[this.key] = this.data[this.key].trim();
+    }
+    return this;
+  }
+
+  toLowerCase() {
+    if (this.skip === false) {
+      this.data[this.key] = this.data[this.key].toLowerCase();
+    }
+    return this;
+  }
+
+  toUpperCase() {
+    if (this.skip === false) {
+      this.data[this.key] = this.data[this.key].toUpperCase();
+    }
+    return this;
+  }
+
+  toDigitsString() {
+    if (this.skip === false) {
+      this.data[this.key] = this.data[this.key].replace(/\D+/g, '');
+    }
+    return this;
+  }
+
+  setParent() {
+    this.data = this.data[this.key];
+    this.parent = this.parent ? [...this.parent, this.key] : [this.key];
+
     return this;
   }
 
   setError(type, expected) {
     this.skip = true;
 
-    this.errors ??= {};
-    this.errors[this.key] = {
+    this.errors ??= [];
+    this.errors.push({
       type,
       expected,
       value: this.data[this.key],
-    };
+      path: this.parent ? [...this.parent, this.key] : [this.key],
+    });
+
+    return this;
+  }
+
+  forArray(method) {
+    if (this.isArray().skip === false) {
+      const { data, parent } = this;
+      const { length } = this.setParent().data;
+
+      for (let i = 0; i < length; i++) {
+        this.key = i;
+        method(this);
+        this.skip = false;
+      }
+
+      this.data = data;
+      this.parent = parent;
+    }
+
+    return this;
+  }
+
+  forObject(method) {
+    if (this.isObject().skip === false) {
+      const { data, parent } = this;
+
+      method(this.setParent());
+
+      this.data = data;
+      this.parent = parent;
+    }
 
     return this;
   }
