@@ -18,7 +18,8 @@
   "dependencies": {
     "typescript": "next",
     "@types/node": "latest",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.30.0"
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.31.0",
+    "@uah/postgres": "uasan/postgres"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "latest",

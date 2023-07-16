@@ -1,18 +1,17 @@
-interface CookieOptions{
+import { Context } from '../context';
+
+interface CookieOptions {
   path?: string;
   maxAge?: number;
   expires?: Date;
   httpOnly?: boolean;
-  sameSite?: 'None' | 'Lax' | 'Strict'
+  sameSite?: 'None' | 'Lax' | 'Strict';
 }
 
-export declare class RequestContext {
-  status:number;
-  connected:boolean;
-  cookies:Map<string, string>;
-
-  sql(strings: TemplateStringsArray, ...params: any[]): Promise<any>;
-
+export declare class RequestContext extends Context {
+  status: number;
+  connected: boolean;
+  cookies: Map<string, string>;
 
   setHeader(name: string, value: string): void;
   setCookie(name: string, value: string, options?: CookieOptions): void;

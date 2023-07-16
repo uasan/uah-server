@@ -48,7 +48,6 @@ function onListen(token) {
     };
 
     signal.addEventListener('abort', onAbort);
-
     console.log(green('Server start ') + blue(Server.url) + '\n');
   } else {
     console.error(new Error(red('Server start ' + Server.url)));

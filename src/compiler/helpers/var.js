@@ -4,20 +4,19 @@ import { factoryToken } from './expression.js';
 
 export const { Let, Const } = ts.NodeFlags;
 export const {
+  Decorator,
   Identifier,
   EqualsToken,
   StringLiteral,
   ExportKeyword,
   StaticKeyword,
+  DefaultKeyword,
   OmittedExpression,
   BinaryExpression,
   VariableDeclaration,
   ArrayBindingPattern,
   ObjectBindingPattern,
 } = ts.SyntaxKind;
-
-export const filterModifiers = ({ kind }) =>
-  kind === ExportKeyword || kind === StaticKeyword;
 
 export const factoryConstStatement = (params, modifiers) =>
   host.factory.createVariableStatement(

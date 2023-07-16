@@ -1,5 +1,6 @@
-import { rmSync, existsSync } from 'node:fs';
+import process from 'node:process';
 import { Worker } from 'node:worker_threads';
+import { rmSync, existsSync } from 'node:fs';
 
 import { writeFile } from '../../worker/system.js';
 import { PATH_BUILD } from '../../../config.js';
@@ -35,3 +36,18 @@ export const developmentAPI = {
 
   reset() {},
 };
+
+function closeWorker() {
+  developmentAPI.worker?.postMessage(0);
+}
+
+process
+  .once('SIGTSTP', closeWorker)
+  .once('SIGQUIT', closeWorker)
+  .once('SIGHUP', closeWorker)
+  .once('SIGTERM', closeWorker)
+  .once('SIGINT', closeWorker)
+  .once('SIGUSR1', closeWorker)
+  .once('SIGUSR2', closeWorker)
+  .once('disconnect', closeWorker)
+  .once('beforeExit', closeWorker);

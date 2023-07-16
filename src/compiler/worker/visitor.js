@@ -1,19 +1,23 @@
 import ts from 'typescript';
-import { host, transformers, types } from '../host.js';
+import { host, transformers } from '../host.js';
 import { makeImportDeclaration } from '../makers/import.js';
-import { makeDecorator } from '../makers/decorators.js';
+import { makeDecorator } from '../makers/declaration.js';
 import { makeEnumDeclaration } from '../makers/enum.js';
-import { makePropertyDeclaration } from '../makers/class.js';
+import {
+  makeClassDeclaration,
+  makePropertyDeclaration,
+} from '../makers/class.js';
 
 const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
 
-const returnUndefined = node => undefined;
+const returnUndefined = () => undefined;
 const returnExpression = node => host.visit(node.expression);
 
 const makers = {
   [SyntaxKind.EnumDeclaration]: makeEnumDeclaration,
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.Decorator]: makeDecorator,
+  [SyntaxKind.ClassDeclaration]: makeClassDeclaration,
   [SyntaxKind.PropertyDeclaration]: makePropertyDeclaration,
 
   [SyntaxKind.ArrayType]: returnUndefined,
@@ -44,8 +48,9 @@ export function visit(node) {
       : visitEachChild(node, visit, nullTransformationContext);
 
   if (transformers.has(node)) {
-    for (const transformer of transformers.get(node))
-      result = transformer.transform(result);
+    for (const transform of transformers.get(node)) {
+      result = transform(result);
+    }
     transformers.delete(node);
   }
 

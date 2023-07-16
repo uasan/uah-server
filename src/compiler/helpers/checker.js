@@ -23,9 +23,13 @@ export const {
 } = ts.TypeFlags;
 
 export const {
+  Decorator,
   TrueKeyword,
   FalseKeyword,
   StaticKeyword,
+  ExportKeyword,
+  DefaultKeyword,
+  ExtendsKeyword,
   NumericLiteral,
   DeclareKeyword,
 } = ts.SyntaxKind;
@@ -118,6 +122,18 @@ export const isTypeSymbol = ({ flags }) =>
 
 export const isAliasSymbol = symbol => (symbol.flags & Alias) !== 0;
 export const isExportSymbol = symbol => (symbol.flags & ExportValue) !== 0;
+export const isExtendsToken = ({ token }) => token === ExtendsKeyword;
+
+export function isNativeModifier({ kind }) {
+  switch (kind) {
+    case Decorator:
+    case ExportKeyword:
+    case StaticKeyword:
+    case DefaultKeyword:
+      return true;
+  }
+  return false;
+}
 
 export const getOriginSymbol = symbol =>
   symbol

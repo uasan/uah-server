@@ -1,10 +1,10 @@
 interface ServerOptions {
-  url:string
+  url: string;
 }
 
 export declare class Server {
-  static host:string;
-  static port:number;
+  static host: string;
+  static port: number;
 
-  static start(options: ServerOptions):Promise<void>
+  static start(options: ServerOptions): Promise<void>;
 }

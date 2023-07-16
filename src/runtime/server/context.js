@@ -1,6 +1,7 @@
+import { Context } from '../context.js';
 import { parseCookies, setCookie } from './cookies.js';
 
-export class RequestContext {
+export class RequestContext extends Context {
   status = 0;
   headers = [];
   cookies = new Map();

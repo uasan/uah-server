@@ -15,3 +15,14 @@ export const factoryClassStaticBlock = statements =>
   host.factory.createClassStaticBlockDeclaration(
     host.factory.createBlock(statements, true)
   );
+
+export function addToStaticBlock(node, statements) {
+  return host.factory.updateClassDeclaration(
+    node,
+    node.modifiers,
+    node.name,
+    undefined,
+    node.heritageClauses,
+    [...node.members, factoryClassStaticBlock(statements)]
+  );
+}

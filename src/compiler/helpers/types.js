@@ -1,29 +1,19 @@
 import ts from 'typescript';
-import { typeNames } from '../makers/types/names.js';
-import { factoryElementAccess, factoryPropertyAccess } from './object.js';
 import {
-  factoryIdentifier,
   factoryLiteral,
-  factoryNumber,
-  factoryString,
   getConstantLiteral,
 } from './expression.js';
 import { host, types } from '../host.js';
 import {
   getOriginSymbolOfNode,
-  getTypeOfNode,
-  getTypeOfSymbol,
   getTypeOfTypeNode,
-  isLiteralType,
   isLiteralTypeOrNullType,
-  isObjectType,
 } from './checker.js';
 import { getRefValue } from './refs.js';
 import { stringify } from '../../runtime/types/json.js';
 
 const {
   TypeQuery,
-  TypeOperator,
   ArrayType,
   UnionType,
   LiteralType,

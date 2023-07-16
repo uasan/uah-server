@@ -16,7 +16,7 @@ export function getInternalDecorators({ modifiers }) {
       const symbol = getSymbolDecorator(expression);
 
       if (decorators.has(symbol)) {
-        map.set(symbol.name, decorators.get(symbol).meta(expression));
+        map.set(symbol.escapedName, decorators.get(symbol).getMeta(expression));
       }
     }
 

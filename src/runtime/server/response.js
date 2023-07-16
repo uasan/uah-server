@@ -36,20 +36,20 @@ export function respondError(res, error) {
   let status = error.status || 500;
 
   if (res.context.connected) {
-    const data = {
-      status,
-      type: error.constructor?.name || 'Error',
-      message: error.message,
-      ...error,
-    };
+    const type = error.constructor?.name || 'Error';
 
     res.cork(() => {
-      res.writeStatus(status + '');
-
-      res.writeHeader('cache-control', 'no-store');
-      res.writeHeader('content-type', 'application/json');
-
-      res.end(stringify(data));
+      res
+        .writeStatus(status + '')
+        .writeHeader('cache-control', 'no-store')
+        .writeHeader('content-type', 'application/json')
+        .end(
+          stringify(
+            status === 500
+              ? { type, status, message: error.message }
+              : { type, status, ...error }
+          )
+        );
     });
   }
 

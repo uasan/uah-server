@@ -57,4 +57,10 @@ export const internals = {
 
   newValidator: (...args) =>
     factoryNew(getInternalImport('types/validator', 'Validator'), args),
+
+  initPostgres: options =>
+    factoryCallStatement(
+      getInternalImport('postgres/context', 'initPostgres'),
+      [host.factory.createThis(), options]
+    ),
 };

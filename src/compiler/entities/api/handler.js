@@ -13,7 +13,6 @@ import {
   factoryIdentifier,
   factoryAwait,
   factoryAwaitStatement,
-  factoryString,
 } from '../../helpers/expression.js';
 import {
   factoryStatement,
@@ -27,7 +26,7 @@ import {
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
 import { addTransformer } from '../../helpers/ast.js';
-import { payloadValidator } from '../../helpers/validator.js';
+import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
 
 export function makeRouteMethod(name, node) {
@@ -52,7 +51,7 @@ export function makeRouteMethod(name, node) {
   );
 
   if (payloadType) {
-    addTransformer(node, payloadValidator);
+    addTransformer(node, makePayloadValidator);
 
     if (name === 'get') {
       payload = factoryIdentifier('data');

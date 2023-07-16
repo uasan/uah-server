@@ -14,6 +14,8 @@ const routes = new Set();
 function makeImportRoutes() {
   let source = `import { Router } from '${URL_LIB_RUNTIME}server/router.js';\n`;
 
+  source += 'await Promise.all([';
+
   for (const route of routes) {
     source += `import ('./${route.url}').then(m => {`;
 
@@ -23,24 +25,21 @@ function makeImportRoutes() {
       source += 'm.' + route.class + '.' + method.name + ');';
     }
 
-    source += '});\n';
+    source += '}),\n';
   }
-
+  source += ']);';
   host.hooks.saveFile('api.js', source);
 }
 
-const classTransformer = {
-  transform(node) {
-    return host.factory.updateClassDeclaration(
-      node,
-      node.modifiers,
-      node.name,
-      undefined,
-      node.heritageClauses,
-      [...node.members, ...host.entity.route.members]
-    );
-  },
-};
+const makeClass = node =>
+  host.factory.updateClassDeclaration(
+    node,
+    node.modifiers,
+    node.name,
+    undefined,
+    node.heritageClauses,
+    [...node.members, ...host.entity.route.members]
+  );
 
 export function makeRoutePath({ url }) {
   const [moduleName, submoduleName, , filename] = url.slice(4, -3).split('/');
@@ -74,7 +73,7 @@ export function addRoute({ route }, file) {
   }
 
   afterEmit.add(makeImportRoutes);
-  addTransformer(node, classTransformer);
+  addTransformer(node, makeClass);
 
   return file;
 }

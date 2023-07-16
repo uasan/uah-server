@@ -1,4 +1,4 @@
-import { host, types } from '../host.js';
+import { host } from '../host.js';
 import { printNode } from '../worker/printer.js';
 import { factoryCallMethod } from './call.js';
 import {
@@ -111,35 +111,33 @@ function makeValidatorsBySymbols(ast, symbols) {
   return ast;
 }
 
-export const payloadValidator = {
-  transform(node) {
-    const { original = node } = node;
+export function makePayloadValidator(node) {
+  const { original = node } = node;
 
-    const param = original.parameters[0];
-    const type = getTypeOfNode(param);
+  const param = original.parameters[0];
+  const type = getTypeOfNode(param);
 
-    let ast = makeValidatorsBySymbols(
-      internals.newValidator(param.name),
-      getPropertiesOfType(type)
-    );
+  let ast = makeValidatorsBySymbols(
+    internals.newValidator(param.name),
+    getPropertiesOfType(type)
+  );
 
-    ast = factoryCallMethod(ast, 'validate');
+  ast = factoryCallMethod(ast, 'validate');
 
-    //console.info(ast);
+  //console.info(ast);
 
-    return host.factory.updateMethodDeclaration(
-      node,
-      node.modifiers,
-      undefined,
-      node.name,
-      undefined,
-      undefined,
-      node.parameters,
-      undefined,
-      host.factory.updateBlock(node.body, [
-        factoryStatement(ast),
-        ...node.body.statements,
-      ])
-    );
-  },
-};
+  return host.factory.updateMethodDeclaration(
+    node,
+    node.modifiers,
+    undefined,
+    node.name,
+    undefined,
+    undefined,
+    node.parameters,
+    undefined,
+    host.factory.updateBlock(node.body, [
+      factoryStatement(ast),
+      ...node.body.statements,
+    ])
+  );
+}
