@@ -20,6 +20,7 @@ import {
   isNonPrimitiveType,
 } from './checker.js';
 import { factoryIdentifier, factoryString, factoryTrue } from './expression.js';
+import { ensureArgument } from './function.js';
 import { internals } from './internals.js';
 import { getRefValue } from './refs.js';
 import { factoryStatement } from './statements.js';
@@ -112,10 +113,10 @@ function makeValidatorsBySymbols(ast, symbols) {
 }
 
 export function makePayloadValidator(node) {
-  const { original = node } = node;
+  node = ensureArgument(node);
 
-  const param = original.parameters[0];
-  const type = getTypeOfNode(param);
+  const param = node.parameters[0];
+  const type = getTypeOfNode((node.original ?? node).parameters[0]);
 
   let ast = makeValidatorsBySymbols(
     internals.newValidator(param.name),

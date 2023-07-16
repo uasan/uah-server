@@ -36,5 +36,8 @@ export const factoryVarDeclaration = (name, value) =>
 export const factoryConstant = (name, value, modifiers) =>
   factoryConstStatement([factoryVarDeclaration(name, value)], modifiers);
 
+export const factoryLet = (name, value) =>
+  factoryLetStatement([factoryVarDeclaration(name, value)]);
+
 export const factoryAssign = (left, right) =>
   host.factory.createBinaryExpression(left, factoryToken(EqualsToken), right);

@@ -1,9 +1,11 @@
 import ts from 'typescript';
 import { host } from '../host.js';
 import { factoryIdentifier, factoryToken } from './expression.js';
+import { factoryLet } from './var.js';
 
 export const {
   Block,
+  Identifier,
   AsyncKeyword,
   ArrowFunction,
   VariableDeclaration,
@@ -53,3 +55,39 @@ export const factoryRouteFunction = statements =>
     factoryToken(EqualsGreaterThanToken),
     host.factory.createBlock(statements, false)
   );
+
+export function ensureArgument(node, index = 0) {
+  const { name } = node.parameters[index];
+
+  if (name.kind === Identifier) {
+    return node;
+  }
+
+  const parameters = [...node.parameters];
+  const arg = host.module.createIdentifier('_');
+
+  parameters[index] = host.factory.updateParameterDeclaration(
+    node.parameters[index],
+    undefined,
+    undefined,
+    arg,
+    undefined,
+    undefined,
+    undefined
+  );
+
+  return host.factory.updateMethodDeclaration(
+    node,
+    node.modifiers,
+    undefined,
+    node.name,
+    undefined,
+    undefined,
+    parameters,
+    undefined,
+    host.factory.updateBlock(node.body, [
+      factoryLet(name, arg),
+      ...node.body.statements,
+    ])
+  );
+}
