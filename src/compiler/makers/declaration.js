@@ -15,6 +15,9 @@ import { Default } from './types/validators/default.js';
 import { Postgres } from './decorators/postgres.js';
 import { Permission } from './decorators/permission.js';
 
+import { TableModel } from '../entities/models/maker.js';
+import { RequestContext } from '../entities/api/maker.js';
+
 const lookup = {
   types: {
     Int,
@@ -28,6 +31,11 @@ const lookup = {
   decorators: {
     Postgres,
     Permission,
+  },
+
+  declarations: {
+    TableModel,
+    RequestContext,
   },
 };
 
@@ -46,6 +54,9 @@ export function setDeclarations() {
     } else if (symbol.valueDeclaration) {
       declarations.set(symbol, {
         url: toRuntimeUrl(symbol.valueDeclaration.getSourceFile().resolvedPath),
+        make: hasOwn(lookup.declarations, name)
+          ? lookup.declarations[name]
+          : null,
       });
     }
   }
@@ -55,8 +66,11 @@ export function makeDecorator(node) {
   const symbol = getSymbolDecorator(node.expression);
 
   if (decorators.has(symbol)) {
-    const args = node.expression.arguments ?? [];
-    addTransformer(node.parent, node => decorators.get(symbol)(node, ...args));
+    const arg = node.expression.arguments?.[0];
+
+    addTransformer(node.parent, (node, original) =>
+      decorators.get(symbol)(node, original, arg)
+    );
   } else {
     return host.visitEachChild(node);
   }

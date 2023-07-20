@@ -112,11 +112,11 @@ function makeValidatorsBySymbols(ast, symbols) {
   return ast;
 }
 
-export function makePayloadValidator(node) {
+export function makePayloadValidator(node, original) {
   node = ensureArgument(node);
 
   const param = node.parameters[0];
-  const type = getTypeOfNode((node.original ?? node).parameters[0]);
+  const type = getTypeOfNode(original.parameters[0]);
 
   let ast = makeValidatorsBySymbols(
     internals.newValidator(param.name),

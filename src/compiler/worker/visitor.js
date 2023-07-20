@@ -18,6 +18,7 @@ const makers = {
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.Decorator]: makeDecorator,
   [SyntaxKind.ClassDeclaration]: makeClassDeclaration,
+  [SyntaxKind.ClassExpression]: makeClassDeclaration,
   [SyntaxKind.PropertyDeclaration]: makePropertyDeclaration,
 
   [SyntaxKind.ArrayType]: returnUndefined,
@@ -49,7 +50,7 @@ export function visit(node) {
 
   if (transformers.has(node)) {
     for (const transform of transformers.get(node)) {
-      result = transform(result);
+      result = transform(result, node);
     }
     transformers.delete(node);
   }

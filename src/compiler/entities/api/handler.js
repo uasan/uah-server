@@ -67,7 +67,7 @@ export function makeRouteMethod(name, node) {
     }
   }
 
-  if (decors.get('Permission')?.isPublic !== true) {
+  if (decors.has('Permission')) {
     statements.push(factoryAwaitStatement(factoryCallMethod(ctx, 'auth')));
   }
 

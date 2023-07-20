@@ -2,9 +2,6 @@ import { factoryCallMethod } from '../../helpers/call.js';
 import {
   isNullableType,
   getTypeOfSymbol,
-  isNumberType,
-  isBooleanType,
-  isObjectType,
   hasStringType,
 } from '../../helpers/checker.js';
 import {

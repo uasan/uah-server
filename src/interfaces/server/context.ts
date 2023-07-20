@@ -8,7 +8,7 @@ interface CookieOptions {
   sameSite?: 'None' | 'Lax' | 'Strict';
 }
 
-export declare class RequestContext extends Context {
+export declare abstract class RequestContext extends Context {
   status: number;
   connected: boolean;
   cookies: Map<string, string>;

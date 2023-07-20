@@ -1,65 +1,51 @@
 import ts from 'typescript';
 
-import { afterEmit, host } from '../../host.js';
+import { host } from '../../host.js';
 import { makeRouteMethod } from './handler.js';
 import { methods } from './constants.js';
-import { addTransformer } from '../../helpers/ast.js';
-import { getExportsOfModule, isStaticKeyword } from '../../helpers/checker.js';
+import { isStaticKeyword } from '../../helpers/checker.js';
 import { URL_LIB_RUNTIME } from '../../../config.js';
+import { updateClass } from '../../helpers/class.js';
 
-const { ClassDeclaration, MethodDeclaration } = ts.SyntaxKind;
+const { MethodDeclaration } = ts.SyntaxKind;
 
-const routes = new Set();
+export const routes = new Set();
 
-function makeImportRoutes() {
+export function makeImportRoutes() {
   let source = `import { Router } from '${URL_LIB_RUNTIME}server/router.js';\n`;
 
   source += 'await Promise.all([';
 
-  for (const route of routes) {
-    source += `import ('./${route.url}').then(m => {`;
+  for (const route of routes)
+    if (route.methods.length) {
+      source += `import ('./${route.url}').then(m => {`;
 
-    for (const method of route.methods) {
-      source += 'Router.set(';
-      source += "'" + route.path + method.params + "',";
-      source += 'm.' + route.class + '.' + method.name + ');';
+      for (const method of route.methods) {
+        source += 'Router.set(';
+        source += "'" + route.path + method.params + "',";
+        source += 'm.' + route.class + '.' + method.name + ');';
+      }
+
+      source += '}),\n';
     }
-
-    source += '}),\n';
-  }
   source += ']);';
   host.hooks.saveFile('api.js', source);
 }
 
-const makeClass = node =>
-  host.factory.updateClassDeclaration(
-    node,
-    node.modifiers,
-    node.name,
-    undefined,
-    node.heritageClauses,
-    [...node.members, ...host.entity.route.members]
-  );
+export function RequestContext(node) {
+  const { route } = host.entity;
 
-export function makeRoutePath({ url }) {
-  const [moduleName, submoduleName, , filename] = url.slice(4, -3).split('/');
-  return filename === 'index'
-    ? moduleName + '/' + submoduleName
-    : moduleName + '/' + submoduleName + '/' + filename;
-}
+  if (!route) {
+    return host.visitEachChild(node);
+  }
 
-const isContextClass = symbol =>
-  symbol.valueDeclaration?.kind === ClassDeclaration;
-
-export function addRoute({ route }, file) {
   if (routes.has(route)) {
-    route.members.length = 0;
     route.methods.length = 0;
   } else {
     routes.add(route);
   }
 
-  const node = getExportsOfModule(file).find(isContextClass).valueDeclaration;
+  const members = [];
 
   route.class = node.name?.escapedText ?? 'default';
 
@@ -68,18 +54,21 @@ export function addRoute({ route }, file) {
       continue;
     } else if (member.kind === MethodDeclaration) {
       if (methods.has(member.name.escapedText))
-        route.members.push(makeRouteMethod(member.name.escapedText, member));
+        members.push(makeRouteMethod(member.name.escapedText, member));
     }
   }
 
-  afterEmit.add(makeImportRoutes);
-  addTransformer(node, makeClass);
+  node = host.visitEachChild(node);
 
-  return file;
+  return updateClass(node, node.modifiers, node.name, node.heritageClauses, [
+    ...node.members,
+    ...members,
+  ]);
 }
 
-export function deleteRoute(entity) {
-  routes.delete(entity.route);
-  afterEmit.add(makeImportRoutes);
-  return entity;
+export function makeRoutePath({ url }) {
+  const [moduleName, submoduleName, , filename] = url.slice(4, -3).split('/');
+  return filename === 'index'
+    ? moduleName + '/' + submoduleName
+    : moduleName + '/' + submoduleName + '/' + filename;
 }

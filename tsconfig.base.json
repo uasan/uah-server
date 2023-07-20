@@ -46,6 +46,7 @@
     "allowImportingTsExtensions": true,
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,
-    "allowArbitraryExtensions": false
+    "allowArbitraryExtensions": false,
+    "strictPropertyInitialization": false
   }
 }

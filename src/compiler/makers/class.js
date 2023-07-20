@@ -3,20 +3,26 @@ import {
   isExtendsToken,
   isDeclareKeyword,
   isNativeModifier,
+  getInternalClassOfExtends,
 } from '../helpers/checker.js';
+import { updateClass } from '../helpers/class.js';
 
 export function makeClassDeclaration(node) {
-  if (!node.modifiers?.some(isDeclareKeyword)) {
-    node = host.visitEachChild(node);
-    return host.factory.updateClassDeclaration(
-      node,
-      node.modifiers?.filter(isNativeModifier),
-      node.name,
-      undefined,
-      node.heritageClauses?.filter(isExtendsToken),
-      node.members
-    );
+  if (node.modifiers?.some(isDeclareKeyword)) {
+    return;
   }
+
+  const internal = getInternalClassOfExtends(node);
+
+  node = internal ? internal.make(node) : host.visitEachChild(node);
+
+  return updateClass(
+    node,
+    node.modifiers?.filter(isNativeModifier),
+    node.name,
+    node.heritageClauses?.filter(isExtendsToken),
+    node.members
+  );
 }
 
 export const makePropertyDeclaration = node =>

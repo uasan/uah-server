@@ -25,7 +25,7 @@ function init(x, y) {
     if (!$.enabled || txt == null) return txt;
     return (
       open +
-      (!!~('' + txt).indexOf(close) ? txt.replace(rgx, close + open) : txt) +
+      (~('' + txt).indexOf(close) ? txt.replace(rgx, close + open) : txt) +
       close
     );
   };
@@ -46,7 +46,7 @@ export const black = init(30, 39);
 export const red = init(31, 39);
 export const green = init(32, 39);
 export const yellow = init(33, 39);
-export const blue = init(34, 39);
+export const blue = init(94, 94);
 export const magenta = init(35, 39);
 export const cyan = init(36, 39);
 export const white = init(37, 39);

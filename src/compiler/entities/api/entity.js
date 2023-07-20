@@ -1,6 +1,7 @@
 import { AppTsEntity } from '../typescript/entity.js';
 import { PATH_SRC_APP } from '#config';
-import { deleteRoute, addRoute, makeRoutePath } from './maker.js';
+import { routes, makeImportRoutes, makeRoutePath } from './maker.js';
+import { afterEmit } from '../../host.js';
 
 export class AppRouteEntity extends AppTsEntity {
   static {
@@ -9,17 +10,19 @@ export class AppRouteEntity extends AppTsEntity {
 
   route = {
     class: '',
-    members: [],
     methods: [],
     url: this.url,
     path: makeRoutePath(this),
   };
 
   emitting(file) {
-    return addRoute(this, super.emitting(file));
+    afterEmit.add(makeImportRoutes);
+    return super.emitting(file);
   }
 
   delete() {
-    return deleteRoute(super.delete());
+    routes.delete(this.route);
+    afterEmit.add(makeImportRoutes);
+    return super.delete();
   }
 }

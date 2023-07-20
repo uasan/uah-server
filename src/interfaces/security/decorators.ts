@@ -1,1 +1,6 @@
-export declare function Permission(rule: Function[] | true): (target: Function, context: ClassMethodDecoratorContext) => void;
+export declare function Permission(
+  rule: () => boolean
+): (
+  target: (payload?: any) => any,
+  context: ClassMethodDecoratorContext
+) => void;

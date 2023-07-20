@@ -38,7 +38,13 @@ export const developmentAPI = {
 };
 
 function closeWorker() {
-  developmentAPI.worker?.postMessage(0);
+  const { worker } = developmentAPI;
+
+  if (worker) {
+    worker.on('exit', process.exit.bind(process)).postMessage(0);
+  } else {
+    process.exit(0);
+  }
 }
 
 process
