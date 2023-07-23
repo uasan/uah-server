@@ -2,9 +2,10 @@ import { CWD, PATH_NODE_MODULES } from '../../config.js';
 import { entities } from '../host.js';
 
 import { AppRouteEntity } from './api/entity.js';
-import { AppTsEntity } from './typescript/entity.js';
+import { ModelEntity } from './models/entity.js';
+import { TypeScriptEntity } from './typescript/entity.js';
 
-const classes = [AppRouteEntity, AppTsEntity];
+const classes = [AppRouteEntity, ModelEntity, TypeScriptEntity];
 
 export const factoryEntity = path => {
   if (entities.has(path)) {

@@ -6,7 +6,7 @@ import { getUrlFromPath } from '../../helpers/link.js';
 import { ModuleScope } from '../../scopes/module.js';
 import { createImportsOfMap } from '../../helpers/import.js';
 
-export class AppTsEntity extends Entity {
+export class TypeScriptEntity extends Entity {
   static {
     this.init({ path: '**.ts' });
   }

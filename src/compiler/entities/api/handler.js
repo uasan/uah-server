@@ -8,7 +8,7 @@ import {
   factoryCallThisMethod,
 } from '../../helpers/call.js';
 import { factoryConstant } from '../../helpers/var.js';
-import { getInternalDecorators } from '../../helpers/decorators.js';
+import { hasDecorator } from '../../helpers/decorators.js';
 import {
   factoryIdentifier,
   factoryAwait,
@@ -23,11 +23,13 @@ import {
   getReturnType,
   getTypeOfNode,
   isVoidLikeType,
+  isNotThisParameter,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
 import { addTransformer } from '../../helpers/ast.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
+import { lookup } from '../../makers/declaration.js';
 
 export function makeRouteMethod(name, node) {
   const statements = [];
@@ -36,10 +38,9 @@ export function makeRouteMethod(name, node) {
   const res = factoryIdentifier('res');
   const ctx = factoryIdentifier('ctx');
 
-  const decors = getInternalDecorators(node);
   const returnType = getAwaitedType(getReturnType(node));
-  const payloadType = node.parameters.length
-    ? getTypeOfNode(node.parameters[0])
+  const payloadType = node.parameters.some(isNotThisParameter)
+    ? getTypeOfNode(node.parameters.find(isNotThisParameter))
     : null;
 
   let ast = ctx;
@@ -51,7 +52,7 @@ export function makeRouteMethod(name, node) {
   );
 
   if (payloadType) {
-    addTransformer(node, makePayloadValidator);
+    addTransformer(node, node => makePayloadValidator(node, payloadType));
 
     if (name === 'get') {
       payload = factoryIdentifier('data');
@@ -67,7 +68,7 @@ export function makeRouteMethod(name, node) {
     }
   }
 
-  if (decors.has('Permission')) {
+  if (node.modifiers?.some(hasDecorator, lookup.decorators.Permission)) {
     statements.push(factoryAwaitStatement(factoryCallMethod(ctx, 'auth')));
   }
 

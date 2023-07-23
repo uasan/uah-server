@@ -122,7 +122,11 @@ export const isTypeSymbol = ({ flags }) =>
 
 export const isAliasSymbol = symbol => (symbol.flags & Alias) !== 0;
 export const isExportSymbol = symbol => (symbol.flags & ExportValue) !== 0;
+export const isExportKeyword = ({ kind }) => kind === ExportKeyword;
+export const isExportNode = node => some(node.modifiers, isExportKeyword);
 export const isExtendsToken = ({ token }) => token === ExtendsKeyword;
+export const isNotThisIdentifier = node => node.escapedText !== 'this';
+export const isNotThisParameter = node => isNotThisIdentifier(node.name);
 
 export function isNativeModifier({ kind }) {
   switch (kind) {
@@ -180,17 +184,14 @@ export const getReturnType = node =>
   );
 
 export function getInternalClassOfExtends(node) {
-  if (!node.heritageClauses) return;
+  node = node.heritageClauses?.find(isExtendsToken);
 
-  for (const { token, types } of node.heritageClauses)
-    if (token === ExtendsKeyword) {
-      const symbol = getOriginSymbolOfNode(types[0].expression);
+  if (node) {
+    const symbol = getOriginSymbolOfNode(node.types[0].expression);
 
-      if (symbol)
-        return declarations.has(symbol)
-          ? declarations.get(symbol)
-          : getInternalClassOfExtends(symbol.valueDeclaration);
-
-      break;
-    }
+    if (symbol)
+      return declarations.has(symbol)
+        ? declarations.get(symbol)
+        : getInternalClassOfExtends(symbol.valueDeclaration);
+  }
 }

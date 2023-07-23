@@ -2,23 +2,26 @@ import ts from 'typescript';
 
 import { decorators } from '../host.js';
 import { getOriginSymbolOfNode } from './checker.js';
+import { updateMethodStatements } from './function.js';
 
 const { Decorator, CallExpression } = ts.SyntaxKind;
 
 export const getSymbolDecorator = node =>
   getOriginSymbolOfNode(node.kind === CallExpression ? node.expression : node);
 
-export function getInternalDecorators({ modifiers }) {
-  const map = new Map();
+export function hasDecorator(node) {
+  return (
+    node.kind === Decorator &&
+    decorators.get(getSymbolDecorator(node.expression)) === this
+  );
+}
 
-  for (const { kind, expression } of modifiers)
-    if (kind === Decorator) {
-      const symbol = getSymbolDecorator(expression);
+export function decorMethodStatements(node, original, statements) {
+  const offset = node.body.statements.length - original.body.statements.length;
 
-      if (decorators.has(symbol)) {
-        map.set(symbol.escapedName, expression);
-      }
-    }
-
-  return map;
+  return updateMethodStatements(node, [
+    ...node.body.statements.slice(0, offset),
+    ...statements,
+    ...node.body.statements.slice(offset),
+  ]);
 }

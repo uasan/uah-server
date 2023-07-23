@@ -18,7 +18,7 @@ import { Permission } from './decorators/permission.js';
 import { TableModel } from '../entities/models/maker.js';
 import { RequestContext } from '../entities/api/maker.js';
 
-const lookup = {
+export const lookup = {
   types: {
     Int,
     Float,

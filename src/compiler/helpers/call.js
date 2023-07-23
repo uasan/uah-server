@@ -12,6 +12,9 @@ export const factoryCallStatement = (name, params) =>
 export const factoryAwaitCall = (name, params) =>
   host.factory.createAwaitExpression(factoryCall(name, params));
 
+export const factoryAwaitCallStatement = (name, params) =>
+  host.factory.createExpressionStatement(factoryAwaitCall(name, params));
+
 export const factoryNew = (name, params) =>
   host.factory.createNewExpression(name, undefined, params);
 

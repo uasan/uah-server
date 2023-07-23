@@ -1,9 +1,9 @@
-import { AppTsEntity } from '../typescript/entity.js';
+import { TypeScriptEntity } from '../typescript/entity.js';
 import { PATH_SRC_APP } from '#config';
 import { routes, makeImportRoutes, makeRoutePath } from './maker.js';
 import { afterEmit } from '../../host.js';
 
-export class AppRouteEntity extends AppTsEntity {
+export class AppRouteEntity extends TypeScriptEntity {
   static {
     this.init({ path: PATH_SRC_APP + '*/api/**.ts' });
   }
@@ -16,6 +16,7 @@ export class AppRouteEntity extends AppTsEntity {
   };
 
   emitting(file) {
+    routes.add(this.route);
     afterEmit.add(makeImportRoutes);
     return super.emitting(file);
   }

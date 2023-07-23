@@ -41,3 +41,17 @@ export const factoryLet = (name, value) =>
 
 export const factoryAssign = (left, right) =>
   host.factory.createBinaryExpression(left, factoryToken(EqualsToken), right);
+
+export const factoryAssignStatement = (left, right) =>
+  host.factory.createExpressionStatement(factoryAssign(left, right));
+
+export const factoryAssignProperty = (object, key, value) =>
+  factoryAssign(
+    host.factory.createPropertyAccessExpression(object, key),
+    value
+  );
+
+export const factoryAssignPropertyStatement = (object, key, value) =>
+  host.factory.createExpressionStatement(
+    factoryAssignProperty(object, key, value)
+  );

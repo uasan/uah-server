@@ -12,9 +12,8 @@ export function makeClassDeclaration(node) {
     return;
   }
 
-  const internal = getInternalClassOfExtends(node);
-
-  node = internal ? internal.make(node) : host.visitEachChild(node);
+  node =
+    getInternalClassOfExtends(node)?.make(node) ?? host.visitEachChild(node);
 
   return updateClass(
     node,
@@ -25,12 +24,15 @@ export function makeClassDeclaration(node) {
   );
 }
 
-export const makePropertyDeclaration = node =>
-  host.factory.updatePropertyDeclaration(
+export function makePropertyDeclaration(node) {
+  node = host.visitEachChild(node);
+
+  return host.factory.updatePropertyDeclaration(
     node,
     node.modifiers?.filter(isNativeModifier),
     node.name,
     undefined,
     undefined,
-    node.initializer && host.visit(node.initializer)
+    node.initializer
   );
+}

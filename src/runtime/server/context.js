@@ -6,6 +6,7 @@ export class RequestContext extends Context {
   headers = [];
   cookies = new Map();
   connected = true;
+  permission = null;
 
   setHeader(name, value) {
     this.headers.push(name, value);

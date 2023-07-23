@@ -3,9 +3,9 @@ import ts from 'typescript';
 import { host } from '../../host.js';
 import { makeRouteMethod } from './handler.js';
 import { methods } from './constants.js';
-import { isStaticKeyword } from '../../helpers/checker.js';
 import { URL_LIB_RUNTIME } from '../../../config.js';
 import { updateClass } from '../../helpers/class.js';
+import { isExportNode, isStaticKeyword } from '../../helpers/checker.js';
 
 const { MethodDeclaration } = ts.SyntaxKind;
 
@@ -35,14 +35,12 @@ export function makeImportRoutes() {
 export function RequestContext(node) {
   const { route } = host.entity;
 
-  if (!route) {
+  if (!route || !isExportNode(node)) {
     return host.visitEachChild(node);
   }
 
   if (routes.has(route)) {
     route.methods.length = 0;
-  } else {
-    routes.add(route);
   }
 
   const members = [];
@@ -50,12 +48,12 @@ export function RequestContext(node) {
   route.class = node.name?.escapedText ?? 'default';
 
   for (const member of node.members) {
-    if (member.modifiers.some(isStaticKeyword)) {
-      continue;
-    } else if (member.kind === MethodDeclaration) {
-      if (methods.has(member.name.escapedText))
-        members.push(makeRouteMethod(member.name.escapedText, member));
-    }
+    if (
+      member.kind === MethodDeclaration &&
+      methods.has(member.name.escapedText) &&
+      !member.modifiers.some(isStaticKeyword)
+    )
+      members.push(makeRouteMethod(member.name.escapedText, member));
   }
 
   node = host.visitEachChild(node);

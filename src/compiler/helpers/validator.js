@@ -1,8 +1,6 @@
-import { host } from '../host.js';
 import { printNode } from '../worker/printer.js';
 import { factoryCallMethod } from './call.js';
 import {
-  getTypeOfNode,
   getTypeOfSymbol,
   hasUndefinedType,
   isArrayLikeType,
@@ -20,7 +18,7 @@ import {
   isNonPrimitiveType,
 } from './checker.js';
 import { factoryIdentifier, factoryString, factoryTrue } from './expression.js';
-import { ensureArgument } from './function.js';
+import { ensureArgument, updateMethodStatements } from './function.js';
 import { internals } from './internals.js';
 import { getRefValue } from './refs.js';
 import { factoryStatement } from './statements.js';
@@ -112,11 +110,10 @@ function makeValidatorsBySymbols(ast, symbols) {
   return ast;
 }
 
-export function makePayloadValidator(node, original) {
+export function makePayloadValidator(node, type) {
   node = ensureArgument(node);
 
   const param = node.parameters[0];
-  const type = getTypeOfNode(original.parameters[0]);
 
   let ast = makeValidatorsBySymbols(
     internals.newValidator(param.name),
@@ -125,20 +122,8 @@ export function makePayloadValidator(node, original) {
 
   ast = factoryCallMethod(ast, 'validate');
 
-  //console.info(ast);
-
-  return host.factory.updateMethodDeclaration(
-    node,
-    node.modifiers,
-    undefined,
-    node.name,
-    undefined,
-    undefined,
-    node.parameters,
-    undefined,
-    host.factory.updateBlock(node.body, [
-      factoryStatement(ast),
-      ...node.body.statements,
-    ])
-  );
+  return updateMethodStatements(node, [
+    factoryStatement(ast),
+    ...node.body.statements,
+  ]);
 }

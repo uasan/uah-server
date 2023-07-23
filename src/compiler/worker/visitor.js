@@ -7,18 +7,22 @@ import {
   makeClassDeclaration,
   makePropertyDeclaration,
 } from '../makers/class.js';
+import { isNotThisIdentifier } from '../helpers/checker.js';
 
 const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
 
 const returnUndefined = () => undefined;
 const returnExpression = node => host.visit(node.expression);
+const makeParameter = node =>
+  isNotThisIdentifier(node.name) ? host.visitEachChild(node) : undefined;
 
 const makers = {
-  [SyntaxKind.EnumDeclaration]: makeEnumDeclaration,
-  [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.Decorator]: makeDecorator,
-  [SyntaxKind.ClassDeclaration]: makeClassDeclaration,
+  [SyntaxKind.Parameter]: makeParameter,
+  [SyntaxKind.EnumDeclaration]: makeEnumDeclaration,
   [SyntaxKind.ClassExpression]: makeClassDeclaration,
+  [SyntaxKind.ClassDeclaration]: makeClassDeclaration,
+  [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.PropertyDeclaration]: makePropertyDeclaration,
 
   [SyntaxKind.ArrayType]: returnUndefined,
