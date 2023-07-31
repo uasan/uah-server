@@ -20,6 +20,7 @@ type TextOptions =
     }
   | undefined;
 
+
 export type Default<T> = T;
 
 export type Text<T extends TextOptions = undefined> = string;

@@ -10,6 +10,9 @@
   "engines": {
     "node": ">=20.1.0"
   },
+  "bin": {
+    "UAH.server": "./bin/dev.mjs"
+  },
   "imports": {
     "#config": "./src/config.js",
     "#runtime/*": "./src/runtime/*",

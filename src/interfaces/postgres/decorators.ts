@@ -9,3 +9,7 @@ interface PostgresOptions {
 export declare function Postgres(
   options: PostgresOptions
 ): (target: Function, context: ClassDecoratorContext) => void;
+
+export declare function Table(
+  options: any
+): (target: Function, context: ClassDecoratorContext) => void;

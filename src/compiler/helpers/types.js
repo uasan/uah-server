@@ -1,8 +1,5 @@
 import ts from 'typescript';
-import {
-  factoryLiteral,
-  getConstantLiteral,
-} from './expression.js';
+import { factoryLiteral, getConstantLiteral } from './expression.js';
 import { host, types } from '../host.js';
 import {
   getOriginSymbolOfNode,
@@ -66,21 +63,32 @@ export function getValueOfTypeNode(node) {
   }
 }
 
+function makeIndexedAccess(context, node) {
+  const symbol = getOriginSymbolOfNode(node.objectType.typeName);
+
+  let { members } = symbol;
+
+  if (symbol.valueDeclaration) {
+    //console.info(symbol.valueDeclaration);
+  }
+
+  const field = members.get(node.indexType.literal.text).declarations[0];
+
+  return field;
+}
+
 function makeType(context, node) {
   switch (node?.kind) {
     case TypeReference:
-      const symbol = getOriginSymbolOfNode(node.typeName);
+      {
+        const symbol = getOriginSymbolOfNode(node.typeName);
 
-      if (types.has(symbol)) {
-        types.get(symbol).make(context, node.typeArguments);
-      } else {
-        const typeNode = symbol.declarations?.[0]?.type;
-        // if (symbol.name === 'Payload1') {
-        //   console.log(
-        //     host.checker.typeToString(getTypeOfNode(symbol.declarations?.[0]))
-        //   );
-        // }
-        makeType(context, typeNode);
+        if (types.has(symbol)) {
+          types.get(symbol).make(context, node.typeArguments);
+        } else {
+          const typeNode = symbol.declarations?.[0]?.type;
+          makeType(context, typeNode);
+        }
       }
       break;
 
@@ -98,12 +106,17 @@ function makeType(context, node) {
         makeType(context, unitType);
       }
       break;
+
+    case IndexedAccessType:
+      makeType(context, makeIndexedAccess(context, node).type);
+      break;
   }
 }
 
 export function makeTypeContext(node) {
   const context = {
     child: null,
+    isOptional: false,
     defaultValue: null,
     validators: new Set(),
   };

@@ -25,14 +25,19 @@ export function makeClassDeclaration(node) {
 }
 
 export function makePropertyDeclaration(node) {
-  node = host.visitEachChild(node);
+  const modifiers =
+    node.modifiers && host.visit(node.modifiers)?.filter(isNativeModifier);
 
-  return host.factory.updatePropertyDeclaration(
-    node,
-    node.modifiers?.filter(isNativeModifier),
-    node.name,
-    undefined,
-    undefined,
-    node.initializer
-  );
+  const initializer = node.initializer && host.visit(node.initializer);
+
+  return initializer
+    ? host.factory.updatePropertyDeclaration(
+        node,
+        modifiers,
+        node.name,
+        undefined,
+        undefined,
+        initializer
+      )
+    : undefined;
 }

@@ -9,7 +9,7 @@ import {
 } from '../makers/class.js';
 import { isNotThisIdentifier } from '../helpers/checker.js';
 
-const { visitEachChild, SyntaxKind, nullTransformationContext } = ts;
+const { SyntaxKind, visitEachChild, nullTransformationContext } = ts;
 
 const returnUndefined = () => undefined;
 const returnExpression = node => host.visit(node.expression);

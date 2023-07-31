@@ -91,16 +91,28 @@ function makeValidatorsByType(ast, context, type) {
 function makeValidatorsBySymbols(ast, symbols) {
   for (const symbol of symbols) {
     let name = symbol.escapedName;
+    let node = symbol.valueDeclaration;
     let type = getTypeOfSymbol(symbol);
-    let context = makeTypeContext(symbol.valueDeclaration.type);
 
     const params = [factoryString(name)];
+    const context = makeTypeContext(node.type);
 
     if (hasUndefinedType(type)) {
+      context.isOptional = true;
       type = getNonUndefinedType(type);
+    }
 
+    if (node.initializer) {
+      context.isOptional = true;
+      context.defaultValue = node.initializer;
+    }
+
+    if (context.isOptional) {
       params.push(factoryTrue());
-      if (context.defaultValue) params.push(context.defaultValue);
+
+      if (context.defaultValue) {
+        params.push(context.defaultValue);
+      }
     }
 
     ast = factoryCallMethod(ast, 'setKey', params);
