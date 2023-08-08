@@ -89,6 +89,7 @@ export const hasUndefinedType = type =>
 export const isTypeAsValues = ({ types }) =>
   !!types && every(types, isLiteralTypeOrNullType);
 
+export const isTupleType = type => host.checker.isTupleType(type);
 export const isArrayLikeType = type => host.checker.isArrayLikeType(type);
 
 export const isObjectNode = node =>
@@ -165,6 +166,9 @@ export const getAwaitedType = type => host.checker.getAwaitedType(type);
 export const getBaseType = type => host.checker.getBaseTypeOfLiteralType(type);
 export const getIndexTypeOfType = type => host.checker.getIndexTypeOfType(type);
 export const getNonNullableType = type => host.checker.getNonNullableType(type);
+export const getIndexInfoOfType = type => host.checker.getIndexInfoOfType(type);
+
+export const typeToString = type => host.checker.typeToString(type);
 
 export const getNonUndefinedType = type =>
   getUnionType(type.types.filter(isNotUndefinedType));

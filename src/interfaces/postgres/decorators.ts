@@ -6,10 +6,18 @@ interface PostgresOptions {
   password?: string;
 }
 
+interface TableOptions {
+  name: string;
+  primary: [string, ...string[]];
+  references?: Record<string, any>;
+  constrains?: Record<string, any>;
+  indexes?: Record<string, any>;
+}
+
 export declare function Postgres(
   options: PostgresOptions
-): (target: Function, context: ClassDecoratorContext) => void;
+): (target: new ()=>{}, context: ClassDecoratorContext) => void;
 
 export declare function Table(
-  options: any
-): (target: Function, context: ClassDecoratorContext) => void;
+  options: TableOptions
+): (target: new ()=>{}, context: ClassDecoratorContext) => void;

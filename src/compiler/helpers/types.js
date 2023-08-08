@@ -12,6 +12,7 @@ import { stringify } from '../../runtime/types/json.js';
 const {
   TypeQuery,
   ArrayType,
+  TupleType,
   UnionType,
   LiteralType,
   TypeReference,
@@ -94,6 +95,13 @@ function makeType(context, node) {
 
     case ArrayType:
       context.child = makeTypeContext(node.elementType);
+      break;
+
+    case TupleType:
+      for (const element of node.elements) {
+        //dotDotDotToken
+        context.child = makeTypeContext(element);
+      }
       break;
 
     case ParenthesizedType:

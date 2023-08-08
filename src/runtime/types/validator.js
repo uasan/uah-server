@@ -1,6 +1,7 @@
 import {
   isArray,
   isBoolean,
+  isEmail,
   isInteger,
   isNumber,
   isObject,
@@ -8,6 +9,7 @@ import {
   isUUID,
 } from './checker.js';
 import { Errors } from './errors.js';
+import { UnProcessable } from '../exceptions/UnProcessable.js';
 
 export class Validator {
   key = '';

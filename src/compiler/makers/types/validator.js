@@ -1,11 +1,9 @@
 import {
   getPropertiesOfTypeNode,
-  getTypeOfSymbol,
   isTrueKeyword,
 } from '../../helpers/checker.js';
 import { getValueOfTypeNode } from '../../helpers/types.js';
 import { factoryCallMethod } from '../../helpers/call.js';
-import { host } from '../../host.js';
 
 export class Validator {
   ast = null;

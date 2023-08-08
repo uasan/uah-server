@@ -16,8 +16,14 @@ import {
   getNonUndefinedType,
   getPropertiesOfType,
   isNonPrimitiveType,
+  isTupleType,
 } from './checker.js';
-import { factoryIdentifier, factoryString, factoryTrue } from './expression.js';
+import {
+  factoryIdentifier,
+  factoryNumber,
+  factoryString,
+  factoryTrue,
+} from './expression.js';
 import { ensureArgument, updateMethodStatements } from './function.js';
 import { internals } from './internals.js';
 import { getRefValue } from './refs.js';
@@ -57,6 +63,14 @@ function makeValidatorsByType(ast, context, type) {
   }
 
   if (isArrayLikeType(type)) {
+    if (isTupleType(type)) {
+      const { minLength, fixedLength, hasRestElement } = type.target;
+
+      ast = hasRestElement
+        ? factoryCallMethod(ast, 'isMinLength', [factoryNumber(minLength)])
+        : factoryCallMethod(ast, 'isLength', [factoryNumber(fixedLength)]);
+    }
+
     const childAst = factoryIdentifier('_');
     const methodAst = makeValidatorsByType(
       childAst,
