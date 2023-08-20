@@ -20,3 +20,12 @@ export const factoryThisChain = (...names) =>
     host.factory.createPropertyAccessExpression,
     host.factory.createThis()
   );
+
+export function factoryObjectOfMap(map) {
+  const props = [];
+
+  for (const [name, value] of map)
+    props.push(factoryProperty(name, factoryObjectLiteral(value)));
+
+  return factoryObjectLiteral(props);
+}

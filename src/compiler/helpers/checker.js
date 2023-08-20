@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { declarations, host } from '../host.js';
+import { host } from '../host.js';
 
 export const {
   Any: flagAny,
@@ -186,16 +186,3 @@ export const getReturnType = node =>
   host.checker.getReturnTypeOfSignature(
     host.checker.getSignatureFromDeclaration(node)
   );
-
-export function getInternalClassOfExtends(node) {
-  node = node.heritageClauses?.find(isExtendsToken);
-
-  if (node) {
-    const symbol = getOriginSymbolOfNode(node.types[0].expression);
-
-    if (symbol)
-      return declarations.has(symbol)
-        ? declarations.get(symbol)
-        : getInternalClassOfExtends(symbol.valueDeclaration);
-  }
-}

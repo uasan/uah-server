@@ -1,19 +1,46 @@
-import { host } from '../host.js';
+import { host, declarations } from '../host.js';
 import {
   isExtendsToken,
   isDeclareKeyword,
   isNativeModifier,
-  getInternalClassOfExtends,
+  getOriginSymbolOfNode,
+  getPropertiesOfTypeNode,
+  getTypeOfSymbol,
 } from '../helpers/checker.js';
 import { updateClass } from '../helpers/class.js';
+
+const getMemberEntry = symbol => [symbol.escapedName, getTypeOfSymbol(symbol)];
+const getTypeArgument = ({ typeArguments }) =>
+  typeArguments
+    ? new Map(getPropertiesOfTypeNode(typeArguments[0]).map(getMemberEntry))
+    : undefined;
+
+function makeInternalClassOfExtends(node, extend = node) {
+  const heritage = extend.heritageClauses?.find(isExtendsToken);
+
+  if (heritage) {
+    const type = heritage.types[0];
+    const symbol = getOriginSymbolOfNode(type.expression);
+
+    if (symbol) {
+      return declarations.has(symbol)
+        ? declarations.get(symbol).make(node, getTypeArgument(type))
+        : makeInternalClassOfExtends(node, symbol.valueDeclaration);
+    }
+  }
+}
+
+export const makeFunctionDeclaration = node =>
+  node.modifiers?.some(isDeclareKeyword)
+    ? undefined
+    : host.visitEachChild(node);
 
 export function makeClassDeclaration(node) {
   if (node.modifiers?.some(isDeclareKeyword)) {
     return;
   }
 
-  node =
-    getInternalClassOfExtends(node)?.make(node) ?? host.visitEachChild(node);
+  node = makeInternalClassOfExtends(node) ?? host.visitEachChild(node);
 
   return updateClass(
     node,

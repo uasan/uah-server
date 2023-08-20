@@ -5,6 +5,7 @@ import { makeDecorator } from '../makers/declaration.js';
 import { makeEnumDeclaration } from '../makers/enum.js';
 import {
   makeClassDeclaration,
+  makeFunctionDeclaration,
   makePropertyDeclaration,
 } from '../makers/class.js';
 import { isNotThisIdentifier } from '../helpers/checker.js';
@@ -24,19 +25,23 @@ const makers = {
   [SyntaxKind.ClassDeclaration]: makeClassDeclaration,
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
   [SyntaxKind.PropertyDeclaration]: makePropertyDeclaration,
+  [SyntaxKind.FunctionDeclaration]: makeFunctionDeclaration,
 
   [SyntaxKind.ArrayType]: returnUndefined,
   [SyntaxKind.UnionType]: returnUndefined,
+  [SyntaxKind.AnyKeyword]: returnUndefined,
   [SyntaxKind.LiteralType]: returnUndefined,
   [SyntaxKind.TypeLiteral]: returnUndefined,
   [SyntaxKind.AsExpression]: returnExpression,
   [SyntaxKind.TypeParameter]: returnUndefined,
   [SyntaxKind.TypeReference]: returnUndefined,
-  [SyntaxKind.AnyKeyword]: returnUndefined,
+  [SyntaxKind.DeclareKeyword]: returnUndefined,
   [SyntaxKind.StringKeyword]: returnUndefined,
   [SyntaxKind.NumberKeyword]: returnUndefined,
   [SyntaxKind.SymbolKeyword]: returnUndefined,
+  [SyntaxKind.TypePredicate]: returnUndefined,
   [SyntaxKind.BooleanKeyword]: returnUndefined,
+  [SyntaxKind.UnknownKeyword]: returnUndefined,
   [SyntaxKind.IntersectionType]: returnUndefined,
   [SyntaxKind.ModuleDeclaration]: returnUndefined,
   [SyntaxKind.TypeAliasDeclaration]: returnUndefined,

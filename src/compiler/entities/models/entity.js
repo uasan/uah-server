@@ -9,7 +9,7 @@ export class ModelEntity extends TypeScriptEntity {
   }
 
   model = {
-    class: '',
+    name: '',
   };
 
   emitting(file) {

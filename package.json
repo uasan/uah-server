@@ -19,7 +19,7 @@
     "#compiler/*": "./src/compiler/*"
   },
   "dependencies": {
-    "typescript": "next",
+    "typescript": "5.2.1-rc",
     "@types/node": "latest",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.31.0",
     "@uah/postgres": "uasan/postgres"

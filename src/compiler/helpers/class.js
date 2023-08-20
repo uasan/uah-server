@@ -1,9 +1,9 @@
 import ts from 'typescript';
 import { host } from '../host.js';
 import { factoryToken } from './expression.js';
-import { StaticKeyword } from './checker.js';
+import { StaticKeyword, isStaticKeyword } from './checker.js';
 
-export const { ClassDeclaration } = ts.SyntaxKind;
+export const { ClassDeclaration, PropertyDeclaration } = ts.SyntaxKind;
 
 export const factoryStaticProperty = (name, value) =>
   host.factory.createPropertyDeclaration(
@@ -43,6 +43,10 @@ export const updateClass = (
         heritageClauses,
         statements
       );
+
+export const isFieldProperty = member =>
+  member.kind === PropertyDeclaration &&
+  !member.modifiers?.some(isStaticKeyword);
 
 export const addToStaticBlock = (node, statements) =>
   updateClass(node, node.modifiers, node.name, node.heritageClauses, [

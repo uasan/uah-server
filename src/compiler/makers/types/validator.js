@@ -9,6 +9,8 @@ export class Validator {
   ast = null;
   props = new Map();
 
+  static sqlType = '';
+
   isTrue(key) {
     return this.props.has(key) && isTrueKeyword(this.props.get(key));
   }
@@ -44,6 +46,7 @@ export class Validator {
   }
 
   static make(context, args) {
+    context.sqlType = this.sqlType;
     context.validators.add(new this().setProps(context, args?.[0]));
   }
 }
