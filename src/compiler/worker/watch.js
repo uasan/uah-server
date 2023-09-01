@@ -3,6 +3,8 @@ import { system } from './system.js';
 import { compilerOptions } from './config.js';
 import { createProgram } from './program.js';
 import { host } from '../host.js';
+import { BuilderHooks } from './hooks.js';
+import { CWD } from '../../config.js';
 
 const {
   createWatchProgram,
@@ -30,11 +32,11 @@ function reportWatchStatus(diagnostic) {
   console.log(formatDiagnosticsWithColorAndContext([diagnostic], formatHost));
 }
 
-export const createWatchHost = (basePath, hooks) => {
-  host.hooks = hooks;
+export const createWatchHost = workerFile => {
+  host.hooks = new BuilderHooks(workerFile);
 
   const compilerHost = ts.createWatchCompilerHost(
-    basePath + '/tsconfig.json',
+    CWD + '/tsconfig.json',
     compilerOptions,
     system,
     createProgram,
@@ -44,5 +46,21 @@ export const createWatchHost = (basePath, hooks) => {
 
   compilerHost.useCaseSensitiveFileNames = useCaseSensitiveFileNames;
 
+  createWatchProgram(compilerHost);
+};
+
+export const createBuilderHost = workerFile => {
+  host.hooks = new BuilderHooks(workerFile);
+
+  const compilerHost = ts.createWatchCompilerHost(
+    CWD + '/tsconfig.json',
+    compilerOptions,
+    system,
+    createProgram,
+    reportDiagnostic,
+    reportWatchStatus
+  );
+
+  compilerHost.useCaseSensitiveFileNames = useCaseSensitiveFileNames;
   createWatchProgram(compilerHost);
 };

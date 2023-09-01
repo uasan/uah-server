@@ -16,7 +16,8 @@ import { Postgres } from './decorators/postgres.js';
 import { Permission } from './decorators/permission.js';
 
 import { TableModel } from '../entities/models/maker.js';
-import { RequestContext } from '../entities/api/maker.js';
+import { ServerContext } from '../entities/api/maker.js';
+import { MigrationContext } from '../entities/migrations/maker.js';
 
 export const lookup = {
   types: {
@@ -35,7 +36,8 @@ export const lookup = {
 
   declarations: {
     TableModel,
-    RequestContext,
+    ServerContext,
+    MigrationContext,
   },
 };
 

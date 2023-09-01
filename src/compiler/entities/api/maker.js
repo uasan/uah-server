@@ -6,6 +6,7 @@ import { methods } from './constants.js';
 import { URL_LIB_RUNTIME } from '../../../config.js';
 import { updateClass } from '../../helpers/class.js';
 import { isExportNode, isStaticKeyword } from '../../helpers/checker.js';
+import { getNodeTextName } from '../../helpers/var.js';
 
 const { MethodDeclaration } = ts.SyntaxKind;
 
@@ -32,7 +33,7 @@ export function makeImportRoutes() {
   host.hooks.saveFile('api.js', source);
 }
 
-export function RequestContext(node) {
+export function ServerContext(node) {
   const { route } = host.entity;
 
   if (!route || !isExportNode(node)) {
@@ -45,7 +46,7 @@ export function RequestContext(node) {
 
   const members = [];
 
-  route.class = node.name?.escapedText ?? 'default';
+  route.class = getNodeTextName(node);
 
   for (const member of node.members) {
     if (

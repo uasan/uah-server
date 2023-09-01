@@ -2,7 +2,7 @@ interface ServerOptions {
   url: string;
 }
 
-export declare class Server {
+export declare abstract class Server {
   static host: string;
   static port: number;
 

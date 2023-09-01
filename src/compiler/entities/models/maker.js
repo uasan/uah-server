@@ -17,10 +17,7 @@ import {
 import { makeFieldValidate } from '../../helpers/validator.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
 
-export const models = new Set();
 export const { PropertyDeclaration } = ts.SyntaxKind;
-
-export function makeImportModels() {}
 
 const getSqlType = meta =>
   meta.sqlType

@@ -1,4 +1,3 @@
-import { getUrlFromPath } from '../helpers/link.js';
 import { entities, host } from '../host.js';
 
 export class Entity {

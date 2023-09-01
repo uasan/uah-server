@@ -16,7 +16,7 @@ const emitResult = {
 
 export function emit() {
   const state = this.getState();
-  const { program, fileInfos, referencedMap } = state;
+  const { program, fileInfos } = state;
 
   host.program = program;
   host.checker = program.getTypeChecker();

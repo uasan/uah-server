@@ -55,3 +55,5 @@ export const factoryAssignPropertyStatement = (object, key, value) =>
   host.factory.createExpressionStatement(
     factoryAssignProperty(object, key, value)
   );
+
+export const getNodeTextName = node => node.name?.escapedText ?? 'default';
