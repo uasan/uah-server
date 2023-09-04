@@ -1,4 +1,7 @@
+import { connect, disconnect } from './database.js';
+
 export async function migrate(context, migrations) {
-  console.log('MIGRATIONS', migrations);
-  console.log(await context.prototype.sql`SELECT 1`);
+  const ctx = await connect(context);
+
+  await disconnect(ctx);
 }

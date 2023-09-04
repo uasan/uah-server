@@ -1,79 +1,55 @@
-import { LOCK_ID } from '../constants.js';
-import { presets } from '#env';
-import { green, yellow, red } from '#utils/console.js';
-import { setDataBaseContext } from '#db/context.js';
-import { getConnectOptions, createClient } from '#db/client.js';
+import { green, yellow, red } from '../console/colors.js';
 
-export const defaultOptions = {
-  max: 1,
-  prepare: false,
-  username: 'postgres',
-  password: 'pass',
-};
+export const LOCK_ID = 0;
+export const DEFAULT_DATABASE = 'postgres';
+export const ERROR_DATABASE_NOT_EXIST = '3D000';
 
-const createDatabase = async context => {
-  const { connection } = context.config;
-  await context.db.end({ timeout: 0 });
+export async function createDatabase(ctx) {
+  const { options } = ctx.postgres;
 
-  const client = createClient({ ...connection, database: 'postgres' });
-  await client.unsafe(`CREATE DATABASE "${connection.database}"`);
-  await client.end({ timeout: 0 });
+  await ctx.postgres.setOptions({ ...options, database: DEFAULT_DATABASE });
+  await ctx.postgres.query(`CREATE DATABASE "${options.database}"`);
+  await ctx.postgres.setOptions(options);
+}
 
-  context.db = createClient(connection);
-};
+export async function dropDatabase(ctx) {
+  const { options } = ctx.postgres;
 
-export const dropDatabase = async context => {
-  const { connection } = context.config;
-  await context.db.end({ timeout: 0 });
+  await ctx.postgres.setOptions({ ...options, database: DEFAULT_DATABASE });
+  await ctx.postgres.query(`DROP DATABASE IF EXISTS "${options.database}"`);
+}
 
-  const client = createClient({ ...connection, database: 'postgres' });
-  await client.unsafe(`DROP DATABASE IF EXISTS "${connection.database}"`);
-  await client.end({ timeout: 0 });
-};
-
-export const lockMigrate = async ({ sql }) => {
-  const isLock = await sql`
-    SELECT pg_try_advisory_lock(${LOCK_ID}::bigint) AS "0"
-  `.findOneValue();
+export async function lockMigrate(ctx) {
+  const isLock =
+    await ctx.sql`SELECT pg_try_advisory_lock(${LOCK_ID}::bigint)`.asValue();
 
   if (isLock === false) {
     console.log(yellow(`Migrate: `) + red(`waiting release lock ${LOCK_ID}`));
-    await sql`SELECT pg_advisory_lock(${LOCK_ID}::bigint)`;
+
+    await ctx.sql`SELECT pg_advisory_lock(${LOCK_ID}::bigint)`;
   }
 
-  if (!presets.app.isTesting)
-    console.log(green(`Migrate: start lock ${LOCK_ID}`));
-};
+  console.log(green(`Migrate: start lock ${LOCK_ID}`));
+}
 
-export const unlockMigrate = async ({ sql }) =>
-  await sql`SELECT pg_advisory_unlock_all()`;
+export async function unlockMigrate(ctx) {
+  await ctx.sql`SELECT pg_advisory_unlock_all()`;
+}
 
-export const connect = async context => {
-  context.config.connection = getConnectOptions(
-    {
-      ...presets.db,
-      ...defaultOptions,
-      ...context.config.connection,
-    },
-    'MASTER'
-  );
-
-  setDataBaseContext(context, context.config.connection);
+export async function connect(context) {
+  const ctx = context.prototype;
 
   try {
-    await lockMigrate(context);
+    await ctx.postgres.connect();
   } catch (error) {
-    if (error?.code === '3D000') {
-      await createDatabase(context);
-      await lockMigrate(context);
-    } else {
-      throw error;
-    }
+    if (error.code === ERROR_DATABASE_NOT_EXIST) await createDatabase(ctx);
+    else throw error;
   }
-};
 
-export const disconnect = async context => {
-  if (context.db) {
-    await context.db.end({ timeout: 0 });
-  }
-};
+  await lockMigrate(ctx);
+  return ctx;
+}
+
+export async function disconnect(ctx) {
+  await ctx.postgres.disconnect();
+}

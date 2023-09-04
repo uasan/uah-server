@@ -23,7 +23,7 @@
     "typescript": "next",
     "@types/node": "latest",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.31.0",
-    "@uah/postgres": "uasan/postgres"
+    "@uah/postgres": "file:../../Postgres"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "latest",

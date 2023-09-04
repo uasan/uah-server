@@ -12,7 +12,7 @@ export function makeMigrations() {
   let classes = [];
   let source = `import { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
 
-  source += `import { Migration as _0 } from '../${DIR_LIB}/Migration.js';\n`;
+  source += `import { Migration } from '../${DIR_LIB}/Migration.js';\n`;
 
   for (const { className, url } of migrations)
     if (className) {
@@ -22,7 +22,7 @@ export function makeMigrations() {
       source += `import { ${className} as ${alias} } from '../${url}';\n`;
     }
 
-  source += `\nawait migrate(_0, [${classes.join(', ')}]);\n`;
+  source += `\nawait migrate(Migration, [${classes.join(', ')}]);\n`;
 
   host.hooks.saveFile(DIR_BIN + '/migrate.js', source);
 }

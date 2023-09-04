@@ -4,6 +4,7 @@ interface PostgresOptions {
   database?: string;
   username?: string;
   password?: string;
+  maxConnections?: number;
 }
 
 export declare function Postgres(
