@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 let FORCE_COLOR,
   NODE_DISABLE_COLORS,
   NO_COLOR,

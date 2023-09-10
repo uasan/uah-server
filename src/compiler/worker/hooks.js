@@ -10,6 +10,7 @@ export class BuilderHooks {
   worker = {
     filename: '',
     instance: null,
+    options: { argv: process.argv.slice(2) },
     close: () => {
       if (this.worker.instance) {
         this.worker.instance.once('exit', process.exit.bind(process));
@@ -60,10 +61,10 @@ export class BuilderHooks {
   afterEmit() {
     if (this.worker.filename) {
       this.worker.instance?.terminate();
-      this.worker.instance = new Worker(this.worker.filename).on(
-        'error',
-        console.error
-      );
+      this.worker.instance = new Worker(
+        this.worker.filename,
+        this.worker.options
+      ).on('error', console.error);
     }
   }
 

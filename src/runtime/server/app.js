@@ -6,7 +6,7 @@ import {
 
 import { signal } from '../process.js';
 import { Router } from './router.js';
-import { blue, green, red } from '../console/colors.js';
+import { blue, green, red } from '#utils/console.js';
 
 export const Server = {
   url: '',

@@ -16,6 +16,7 @@
   },
   "imports": {
     "#config": "./src/config.js",
+    "#utils/*": "./src/runtime/utils/*",
     "#runtime/*": "./src/runtime/*",
     "#compiler/*": "./src/compiler/*"
   },

@@ -1,21 +1,21 @@
-import { green, yellow, red } from '../console/colors.js';
+import { yellow, red } from '#utils/console.js';
+import { ERRORS } from '@uah/postgres/src/constants.js';
+import { LOCK_ID } from '../constants.js';
 
-export const LOCK_ID = 0;
 export const DEFAULT_DATABASE = 'postgres';
-export const ERROR_DATABASE_NOT_EXIST = '3D000';
 
 export async function createDatabase(ctx) {
   const { options } = ctx.postgres;
 
-  await ctx.postgres.setOptions({ ...options, database: DEFAULT_DATABASE });
+  await ctx.postgres.reset({ ...options, database: DEFAULT_DATABASE });
   await ctx.postgres.query(`CREATE DATABASE "${options.database}"`);
-  await ctx.postgres.setOptions(options);
+  await ctx.postgres.reset(options);
 }
 
 export async function dropDatabase(ctx) {
   const { options } = ctx.postgres;
 
-  await ctx.postgres.setOptions({ ...options, database: DEFAULT_DATABASE });
+  await ctx.postgres.reset({ ...options, database: DEFAULT_DATABASE });
   await ctx.postgres.query(`DROP DATABASE IF EXISTS "${options.database}"`);
 }
 
@@ -28,8 +28,6 @@ export async function lockMigrate(ctx) {
 
     await ctx.sql`SELECT pg_advisory_lock(${LOCK_ID}::bigint)`;
   }
-
-  console.log(green(`Migrate: start lock ${LOCK_ID}`));
 }
 
 export async function unlockMigrate(ctx) {
@@ -42,11 +40,10 @@ export async function connect(context) {
   try {
     await ctx.postgres.connect();
   } catch (error) {
-    if (error.code === ERROR_DATABASE_NOT_EXIST) await createDatabase(ctx);
+    if (error.code === ERRORS.DATABASE_NOT_EXIST) await createDatabase(ctx);
     else throw error;
   }
 
-  await lockMigrate(ctx);
   return ctx;
 }
 

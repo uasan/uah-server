@@ -1,4 +1,4 @@
-#!/usr/bin/env node --watch --experimental-import-meta-resolve
+#!/usr/bin/env node --watch
 
 import { createWatchHost } from '../src/compiler/worker/watch.js';
 
