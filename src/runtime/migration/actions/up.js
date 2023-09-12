@@ -19,8 +19,8 @@ async function upMigration(ctx, migrations) {
 
 export async function up(ctx, migrations) {
   const upMigrations = [];
-  const wasDoneMigrations = [];
-  const afterCommitMigrations = [];
+  const onDoneMigrations = [];
+  const onWasDoneMigrations = [];
 
   for (const migration of migrations)
     switch (migration.status) {
@@ -28,15 +28,15 @@ export async function up(ctx, migrations) {
       case STATUS_UPDATED: {
         upMigrations.push(migration);
 
-        if (Object.hasOwn(migration, 'onAfterCommit'))
-          afterCommitMigrations.push(migration);
+        if (Object.hasOwn(migration, 'onDone'))
+          onDoneMigrations.push(migration);
 
         break;
       }
 
       case STATUS_DONE: {
         if (Object.hasOwn(migration, 'onWasDone'))
-          wasDoneMigrations.push(migration);
+          onWasDoneMigrations.push(migration);
 
         break;
       }
@@ -44,13 +44,13 @@ export async function up(ctx, migrations) {
 
   if (upMigrations.length) {
     await ctx.startTransaction(upMigration, upMigrations);
+
+    for (const migration of onDoneMigrations) {
+      await migration.onDone();
+    }
   }
 
-  for (const migration of afterCommitMigrations) {
-    await migration.onAfterCommit();
-  }
-
-  for (const migration of wasDoneMigrations) {
+  for (const migration of onWasDoneMigrations) {
     await migration.onWasDone();
   }
 }

@@ -8,11 +8,11 @@ export class ModelEntity extends TypeScriptEntity {
 
   model = {
     name: '',
+    migration: {
+      url: '',
+      className: '',
+    },
   };
-
-  emitting(file) {
-    return super.emitting(file);
-  }
 
   delete() {
     return super.delete();

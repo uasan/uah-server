@@ -15,7 +15,7 @@ import { Default } from './types/validators/default.js';
 import { Postgres } from './decorators/postgres.js';
 import { Permission } from './decorators/permission.js';
 
-import { TableModel } from '../entities/models/maker.js';
+import { TableModel } from '../entities/models/table.js';
 import { ServerContext } from '../entities/api/maker.js';
 import { MigrationContext } from '../entities/migrations/maker.js';
 

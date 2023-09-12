@@ -16,6 +16,8 @@ import {
 } from '../../helpers/checker.js';
 import { makeFieldValidate } from '../../helpers/validator.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
+import { setSchema } from '../migrations/maker.js';
+import { createTableMigration } from '../migrations/table.js';
 
 export const { PropertyDeclaration } = ts.SyntaxKind;
 
@@ -39,9 +41,10 @@ export function TableModel(node, options) {
     return host.visitEachChild(node);
   }
 
-  model.name = options.get('name').value;
   model.fields = new Map();
   model.columns = new Map();
+  model.tableName = setSchema(options.get('name').value);
+  model.name = model.tableName.replaceAll('"', '');
 
   for (const member of node.members.filter(isFieldProperty)) {
     const meta = MetaType.create(member);
@@ -58,6 +61,7 @@ export function TableModel(node, options) {
     ]);
   }
 
+  createTableMigration(model);
   node = host.visitEachChild(node);
 
   return updateClass(node, node.modifiers, node.name, node.heritageClauses, [

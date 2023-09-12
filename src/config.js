@@ -9,6 +9,7 @@ export const DIR_BUILD = 'build';
 export const DIR_APP = 'app';
 export const DIR_LIB = 'lib';
 export const DIR_BIN = 'bin';
+export const DIR_MIGRATIONS = 'migrations';
 
 export const PATH_SRC = CWD + '/src/';
 export const PATH_SRC_APP = PATH_SRC + DIR_APP + '/';

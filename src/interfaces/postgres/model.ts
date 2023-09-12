@@ -1,5 +1,10 @@
 type Deferrable = 'not' | 'immediate' | 'deferred';
-type ReferenceAction = 'cascade' | 'restrict' | 'noAction' | 'setDefault' | 'setNull';
+type ReferenceAction =
+  | 'cascade'
+  | 'restrict'
+  | 'noAction'
+  | 'setDefault'
+  | 'setNull';
 
 interface Reference {
   keys: Record<string, any>;
@@ -17,4 +22,5 @@ interface TableOptions {
 }
 
 export declare abstract class TableModel<T extends TableOptions> {
+
 }

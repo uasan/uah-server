@@ -1,23 +1,17 @@
 import { afterEmit } from '../../host.js';
-import { PATH_SRC } from '#config';
+import { PATH_SRC, DIR_MIGRATIONS } from '#config';
 import { TypeScriptEntity } from '../typescript/entity.js';
 import { migrations, makeMigrations } from './maker.js';
 
 export class MigrationEntity extends TypeScriptEntity {
   static {
-    this.init({ path: PATH_SRC + 'migrations/*/*/**.ts' });
+    this.init({ path: PATH_SRC + DIR_MIGRATIONS + '/*/**.ts' });
   }
 
   migration = {
-    className: '',
     url: this.url,
+    className: '',
   };
-
-  emitting(file) {
-    migrations.add(this.migration);
-    afterEmit.add(makeMigrations);
-    return super.emitting(file);
-  }
 
   delete() {
     migrations.delete(this.migration);
