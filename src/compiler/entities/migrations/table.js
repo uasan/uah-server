@@ -12,18 +12,18 @@ export function createTableMigration(model) {
   let up = `await this.postgres.query(\`CREATE TABLE ${model.tableName} (\n`;
   let down = `await this.postgres.query('DROP TABLE ${model.tableName}');`;
 
-  for (const { name, type, ...meta } of model.columns.values()) {
-    let column = '  "' + name + '" ' + type;
+  for (const column of model.columns.values()) {
+    let field = '  "' + column.name + '" ' + column.type;
 
-    if (meta.isNotNull) {
-      column += ' NOT NULL';
+    if (column.isNotNull) {
+      field += ' NOT NULL';
     }
 
-    if (meta.default) {
-      column += ' default ' + meta.default;
+    if (column.default) {
+      field += ' default ' + column.default;
     }
 
-    fields.push(column);
+    fields.push(field);
   }
 
   up += fields.join(',\n');
