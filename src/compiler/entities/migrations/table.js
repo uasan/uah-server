@@ -3,8 +3,11 @@ import { createFileMigration } from './utils.js';
 import { makeMigrations, presetMigrations as presets } from './maker.js';
 
 export function createTableMigration(model) {
-  let { name } = model;
-  let members = [];
+  let { url, name } = model;
+  let fields = [];
+
+  let path = 'tables/' + name;
+  let className = name.slice(name.indexOf('.') + 1) + 'Table';
 
   let up = `await this.postgres.query(\`CREATE TABLE ${model.tableName} (\n`;
   let down = `await this.postgres.query('DROP TABLE ${model.tableName}');`;
@@ -20,27 +23,18 @@ export function createTableMigration(model) {
       column += ' default ' + meta.default;
     }
 
-    members.push(column);
+    fields.push(column);
   }
 
-  up += members.join(',\n');
+  up += fields.join(',\n');
   up += '\n)`);';
 
-  let className = name.slice(name.indexOf('.') + 1) + 'Table';
-
-  if (!presets.has(name) || presets.get(model.name).className !== className) {
+  if (!presets.has(url) || presets.get(url).className !== className) {
     afterEmit.add(makeMigrations);
   }
 
   presets.set(
-    name,
-    createFileMigration({
-      path: 'tables/' + model.name,
-      className,
-      members: {
-        up,
-        down,
-      },
-    })
+    url,
+    createFileMigration({ path, className, members: { up, down } })
   );
 }

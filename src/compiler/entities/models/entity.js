@@ -8,6 +8,7 @@ export class ModelEntity extends TypeScriptEntity {
 
   model = {
     name: '',
+    url: this.url,
     migration: {
       url: '',
       className: '',
