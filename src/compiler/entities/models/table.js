@@ -3,6 +3,7 @@ import ts from 'typescript';
 import { host } from '../../host.js';
 import { factoryString } from '../../helpers/expression.js';
 import {
+  factoryStaticMethod,
   factoryStaticProperty,
   isFieldProperty,
   updateClass,
@@ -33,6 +34,14 @@ const getSqlType = meta =>
     : isNonPrimitiveType(meta.type)
     ? 'jsonb'
     : 'text';
+
+function makeToSQL(model) {
+  return factoryStaticMethod(
+    'toSQL',
+    [],
+    [host.factory.createReturnStatement(factoryString(model.tableName))]
+  );
+}
 
 export function TableModel(node, options) {
   const { model } = host.entity;
@@ -65,7 +74,7 @@ export function TableModel(node, options) {
   node = host.visitEachChild(node);
 
   return updateClass(node, node.modifiers, node.name, node.heritageClauses, [
-    factoryStaticProperty('tableName', factoryString(model.name)),
+    makeToSQL(model),
     factoryStaticProperty('fields', factoryObjectOfMap(model.fields)),
     ...node.members,
   ]);

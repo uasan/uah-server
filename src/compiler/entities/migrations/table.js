@@ -1,5 +1,5 @@
 import { afterEmit } from '../../host.js';
-import { createFileMigration } from './utils.js';
+import { createFileMigration, getSQLValueOfNode } from './utils.js';
 import { makeMigrations, presetMigrations as presets } from './maker.js';
 
 export function createTableMigration(model) {
@@ -20,7 +20,7 @@ export function createTableMigration(model) {
     }
 
     if (column.default) {
-      field += ' default ' + column.default;
+      field += ' default ' + getSQLValueOfNode(column.default);
     }
 
     fields.push(field);

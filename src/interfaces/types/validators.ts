@@ -20,7 +20,6 @@ type TextOptions =
     }
   | undefined;
 
-
 export type Default<T> = T;
 
 export type Text<T extends TextOptions = undefined> = string;
@@ -28,4 +27,4 @@ export type Int<T extends NumberOptions = undefined> = number;
 export type Float<T extends NumberOptions = undefined> = number;
 
 export type Email = string;
-export type UUID = string;
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;

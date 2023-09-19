@@ -14,6 +14,18 @@ export const factoryStaticProperty = (name, value) =>
     value
   );
 
+export const factoryStaticMethod = (name, args, statements) =>
+  host.factory.createMethodDeclaration(
+    [factoryToken(StaticKeyword)],
+    undefined,
+    name,
+    undefined,
+    undefined,
+    args,
+    undefined,
+    host.factory.createBlock(statements, true)
+  );
+
 export const factoryClassStaticBlock = statements =>
   host.factory.createClassStaticBlockDeclaration(
     host.factory.createBlock(statements, true)

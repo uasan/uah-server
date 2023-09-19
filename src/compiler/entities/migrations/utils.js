@@ -1,9 +1,20 @@
 import { DIR_LIB, DIR_MIGRATIONS } from '#config';
+import { getValueOfLiteral } from '../../helpers/expression.js';
 import { toRelativeURL } from '../../helpers/link.js';
 import { host } from '../../host.js';
 
 const format = code => '    ' + code.replaceAll('\n', '\n    ');
 export const toPascalCase = text => text[0].toUpperCase() + text.slice(1);
+
+export function getSQLValueOfNode(node) {
+  let value = getValueOfLiteral(node);
+
+  if (typeof value === 'string') {
+    value = "'" + value.replaceAll("'", "''") + "'";
+  }
+
+  return value;
+}
 
 export function createFileMigration(migration) {
   migration.url = DIR_MIGRATIONS + '/' + migration.path + '.js';
