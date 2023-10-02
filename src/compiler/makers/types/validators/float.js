@@ -1,4 +1,4 @@
-import { Int } from './int.js';
+import { Int } from './Int.js';
 
 export class Float extends Int {
   make(ast) {

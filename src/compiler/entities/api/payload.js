@@ -44,12 +44,13 @@ export function makePayloadFromQuery(type) {
   return { path, data: factoryObjectLiteral(nodes) };
 }
 
-export function makePayloadFromBody() {
+export function makePayloadFromBody(payloadValidator) {
   return {
     init: internals.readBody(
       factoryIdentifier('req'),
       factoryIdentifier('res')
     ),
-    data: internals.decodeJSON(factoryAwait(factoryIdentifier('data'))),
+    //internals.decodeJSON
+    data: payloadValidator.makeDecoder(factoryAwait(factoryIdentifier('data'))),
   };
 }

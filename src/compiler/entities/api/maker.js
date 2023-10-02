@@ -66,8 +66,13 @@ export function ServerContext(node) {
 }
 
 export function makeRoutePath({ url }) {
-  const [moduleName, submoduleName, , filename] = url.slice(4, -3).split('/');
-  return filename === 'index'
-    ? moduleName + '/' + submoduleName
-    : moduleName + '/' + submoduleName + '/' + filename;
+  let [moduleName, submoduleName, , ...names] = url.slice(4, -3).split('/');
+
+  if (names.at(-1) === 'index') {
+    names = names.slice(0, -1);
+  }
+
+  return names.length
+    ? moduleName + '/' + submoduleName + '/' + names.join('/')
+    : moduleName + '/' + submoduleName;
 }

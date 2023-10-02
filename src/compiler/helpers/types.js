@@ -13,6 +13,7 @@ import {
 } from './checker.js';
 import { getRefValue } from './refs.js';
 import { stringify } from '../../runtime/types/json.js';
+import { Validator } from '../makers/types/validator.js';
 
 const {
   RestType,
@@ -127,14 +128,21 @@ function makeMetaType(meta, node) {
   }
 }
 
+export function getPayloadValidator(node) {
+  return (node && types.get(getOriginSymbolOfNode(node.typeName))) || Validator;
+}
+
 export class MetaType {
   name = '';
   type = null;
 
   sqlType = '';
   children = [];
+
+  isBinary = false;
   isNullable = false;
   isOptional = false;
+
   defaultValue = null;
   validators = new Set();
 

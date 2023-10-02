@@ -20,6 +20,14 @@ export function respondNoContent(res, ctx) {
   }
 }
 
+export function respondBinary(res, ctx, data) {
+  if (ctx.connected) {
+    res.cork(() => {
+      sendBlob(res, ctx, data);
+    });
+  }
+}
+
 export function respondJson(res, ctx, data) {
   if (ctx.connected) {
     ctx.headers.push('content-type', 'application/json');

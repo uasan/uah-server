@@ -34,6 +34,12 @@ export const internals = {
   readBody: (...args) =>
     factoryCall(getInternalImport('server/request', 'readBody'), args),
 
+  respondBinary: (...args) =>
+    factoryCallStatement(
+      getInternalImport('server/response', 'respondBinary'),
+      args
+    ),
+
   respondJson: (...args) =>
     factoryCallStatement(
       getInternalImport('server/response', 'respondJson'),

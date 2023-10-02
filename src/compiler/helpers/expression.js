@@ -127,6 +127,12 @@ export const factoryAwaitParenthesized = node =>
     host.factory.createAwaitExpression(node)
   );
 
+export const factoryPropertyParenthesized = (left, right) =>
+  host.factory.createPropertyAccessExpression(
+    host.factory.createParenthesizedExpression(left),
+    right
+  );
+
 export const factoryAwaitStatement = node =>
   host.factory.createExpressionStatement(
     host.factory.createAwaitExpression(node)

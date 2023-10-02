@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class Unauthorized extends Exception {
+export class Unauthorized extends Error {
   status = 401;
 }

@@ -1,23 +1,23 @@
 type NumberOptions =
   | {
-      min?: number;
-      max?: number;
-      default?: number;
-    }
+    min?: number;
+    max?: number;
+    default?: number;
+  }
   | undefined;
 
 type TextOptions =
   | {
-      max?: number;
-      min?: number;
-      length?: number;
-      trim?: boolean;
-      digits?: boolean;
-      pattern?: RegExp;
-      default?: string;
-      lowercase?: boolean;
-      uppercase?: boolean;
-    }
+    max?: number;
+    min?: number;
+    length?: number;
+    trim?: boolean;
+    digits?: boolean;
+    pattern?: RegExp;
+    default?: string;
+    lowercase?: boolean;
+    uppercase?: boolean;
+  }
   | undefined;
 
 export type Default<T> = T;
@@ -28,3 +28,5 @@ export type Float<T extends NumberOptions = undefined> = number;
 
 export type Email = string;
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
+
+export type UintArray<T extends TextOptions = undefined> = Uint8Array;

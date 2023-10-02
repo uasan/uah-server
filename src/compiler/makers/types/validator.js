@@ -4,12 +4,14 @@ import {
 } from '../../helpers/checker.js';
 import { getValueOfTypeNode } from '../../helpers/types.js';
 import { factoryCallMethod } from '../../helpers/call.js';
+import { internals } from '../../helpers/internals.js';
 
 export class Validator {
   ast = null;
   props = new Map();
 
   static sqlType = '';
+  static makeDecoder = internals.decodeJSON;
 
   isTrue(key) {
     return this.props.has(key) && isTrueKeyword(this.props.get(key));

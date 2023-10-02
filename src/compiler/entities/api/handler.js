@@ -13,6 +13,7 @@ import {
   factoryIdentifier,
   factoryAwait,
   factoryAwaitStatement,
+  factoryPropertyParenthesized,
 } from '../../helpers/expression.js';
 import {
   factoryStatement,
@@ -29,7 +30,8 @@ import { methods } from './constants.js';
 import { addTransformer } from '../../helpers/ast.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
-import { lookup } from '../../makers/declaration.js';
+import { binaryTypedArray, lookup } from '../../makers/declaration.js';
+import { getPayloadValidator } from '../../helpers/types.js';
 
 export function makeRouteMethod(name, node) {
   const statements = [];
@@ -39,9 +41,8 @@ export function makeRouteMethod(name, node) {
   const ctx = factoryIdentifier('ctx');
 
   const returnType = getAwaitedType(getReturnType(node));
-  const payloadType = node.parameters.some(isNotThisParameter)
-    ? getTypeOfNode(node.parameters.find(isNotThisParameter))
-    : null;
+  const payloadNode = node.parameters.find(isNotThisParameter);
+  const payloadType = payloadNode && getTypeOfNode(payloadNode);
 
   let ast = ctx;
   let payload;
@@ -52,7 +53,12 @@ export function makeRouteMethod(name, node) {
   );
 
   if (payloadType) {
-    addTransformer(node, node => makePayloadValidator(node, payloadType));
+    const payloadValidator = getPayloadValidator(payloadNode.type);
+
+    if (payloadValidator) {
+    } else {
+      addTransformer(node, node => makePayloadValidator(node, payloadType));
+    }
 
     if (name === 'get') {
       payload = factoryIdentifier('data');
@@ -61,7 +67,7 @@ export function makeRouteMethod(name, node) {
       pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));
     } else {
-      const body = makePayloadFromBody();
+      const body = makePayloadFromBody(payloadValidator);
 
       payload = body.data;
       statements.push(factoryConstant(factoryIdentifier('data'), body.init));
@@ -79,6 +85,8 @@ export function makeRouteMethod(name, node) {
       factoryStatement(ast),
       internals.respondNoContent(res, ctx)
     );
+  } else if (binaryTypedArray.has(returnType.symbol)) {
+    statements.push(internals.respondBinary(res, ctx, ast));
   } else {
     statements.push(internals.respondJson(res, ctx, ast));
   }
