@@ -1,6 +1,5 @@
 import ts from 'typescript';
-import { factoryLiteral, getConstantLiteral } from './expression.js';
-import { host, types } from '../host.js';
+import { types } from '../host.js';
 import {
   getNonNullableType,
   getNonUndefinedType,
@@ -9,67 +8,19 @@ import {
   getTypeOfTypeNode,
   hasNullType,
   hasUndefinedType,
-  isLiteralTypeOrNullType,
 } from './checker.js';
-import { getRefValue } from './refs.js';
-import { stringify } from '../../runtime/types/json.js';
-import { Validator } from '../makers/types/validator.js';
+import { BinaryData } from '../makers/types/validators/BinaryData.js';
 
 const {
   RestType,
-  TypeQuery,
   ArrayType,
   TupleType,
   UnionType,
-  LiteralType,
   TypeReference,
   IntersectionType,
   IndexedAccessType,
   ParenthesizedType,
 } = ts.SyntaxKind;
-
-export const getValueOfLiteralType = type =>
-  type.value ??
-  (type === host.checker.getTrueType()
-    ? true
-    : type === host.checker.getFalseType()
-    ? false
-    : type === host.checker.getNullType()
-    ? null
-    : undefined);
-
-export const getRefForLiteralTypes = ({ types }) =>
-  getRefValue(stringify(types.map(getValueOfLiteralType)));
-
-export function getValueOfTypeNode(node) {
-  switch (node.kind) {
-    case LiteralType:
-      return factoryLiteral(getValueOfLiteralType(getTypeOfTypeNode(node)));
-
-    case TypeQuery:
-      return node.exprName;
-
-    case IndexedAccessType:
-      return;
-  }
-
-  const type = getTypeOfTypeNode(node);
-
-  if (isLiteralTypeOrNullType(type)) {
-    return factoryLiteral(getValueOfLiteralType(type));
-  }
-
-  switch (node.kind) {
-    case TypeQuery:
-      return node.exprName;
-
-    case TypeReference:
-      return getConstantLiteral(node) ?? getValueOfTypeNode(node.typeName);
-
-    case IndexedAccessType:
-      return;
-  }
-}
 
 function makeIndexedAccess(context, node) {
   const symbol = getOriginSymbolOfNode(node.objectType.typeName);
@@ -93,7 +44,7 @@ function makeMetaType(meta, node) {
 
         if (types.has(symbol)) {
           types.get(symbol).make(meta, node.typeArguments);
-        } else {
+        } else if (meta.isBinary === false) {
           const typeNode = symbol.declarations?.[0]?.type;
           makeMetaType(meta, typeNode);
         }
@@ -128,10 +79,6 @@ function makeMetaType(meta, node) {
   }
 }
 
-export function getPayloadValidator(node) {
-  return (node && types.get(getOriginSymbolOfNode(node.typeName))) || Validator;
-}
-
 export class MetaType {
   name = '';
   type = null;
@@ -143,10 +90,21 @@ export class MetaType {
   isNullable = false;
   isOptional = false;
 
+  bytelength = null;
+  minByteLength = null;
+  maxByteLength = null;
+
   defaultValue = null;
   validators = new Set();
 
-  constructor(node) {
+  constructor(node, type = getNonNullableType(getTypeOfTypeNode(node))) {
+    this.type = type;
+
+    if (BinaryData.isAssignable(type)) {
+      this.isBinary = true;
+      this.sqlType = 'bytea';
+    }
+
     makeMetaType(this, node);
   }
 
@@ -155,9 +113,8 @@ export class MetaType {
   }
 
   static create(node) {
-    const self = new this(node.type);
+    const self = new this(node.type, getTypeOfNode(node));
 
-    self.type = getTypeOfNode(node);
     self.name = node.name.escapedText;
 
     if (hasNullType(self.type)) {

@@ -61,6 +61,9 @@ export const internals = {
   decodeJSON: (...args) =>
     factoryCall(getInternalImport('types/json', 'decodeJSON'), args),
 
+  decodeBuffers: () =>
+    getInternalImport('types//BuffersDecoder', 'BuffersDecoder'),
+
   newValidator: (...args) =>
     factoryNew(getInternalImport('types/validator', 'Validator'), args),
 

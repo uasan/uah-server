@@ -1,6 +1,8 @@
 import { afterEmit, host } from '../host.js';
 import { toBuildPath, toRelativeURL } from './link.js';
 import { writeFile } from '../worker/system.js';
+import { stringify } from '../../runtime/types/json.js';
+import { getValueOfLiteralType } from './values.js';
 
 const refs = new Map();
 const file = 'refs.js';
@@ -30,3 +32,6 @@ export function getRefValue(source) {
 
   return host.module.getImportName(relUrl, name);
 }
+
+export const getRefForLiteralTypes = ({ types }) =>
+  getRefValue(stringify(types.map(getValueOfLiteralType)));

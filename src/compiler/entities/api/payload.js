@@ -1,8 +1,12 @@
+import { Uint8Array } from '../../makers/types/validators/Uint8Array.js';
 import { factoryCallMethod } from '../../helpers/call.js';
 import {
   isNullableType,
   getTypeOfSymbol,
   hasStringType,
+  isNumberType,
+  isStringType,
+  isBooleanType,
 } from '../../helpers/checker.js';
 import {
   factoryString,
@@ -12,6 +16,8 @@ import {
 } from '../../helpers/expression.js';
 import { internals } from '../../helpers/internals.js';
 import { factoryProperty, factoryObjectLiteral } from '../../helpers/object.js';
+
+const isBinary = ({ isBinary }) => isBinary;
 
 export function makePayloadFromQuery(type) {
   let index = 0;
@@ -44,13 +50,57 @@ export function makePayloadFromQuery(type) {
   return { path, data: factoryObjectLiteral(nodes) };
 }
 
-export function makePayloadFromBody(payloadValidator) {
-  return {
+function makeDecodeMethod(ast, metaType) {
+  if (metaType.isBinary) {
+    return metaType.byteLength
+      ? factoryCallMethod(ast, 'getSlice', [metaType.byteLength])
+      : factoryCallMethod(ast, 'getBuffer');
+  } else if (isNumberType(metaType.type)) {
+    return factoryCallMethod(ast, 'getFloat64');
+  } else if (isStringType(metaType.type)) {
+    return factoryCallMethod(ast, 'getString');
+  } else if (isBooleanType(metaType.type)) {
+    return factoryCallMethod(ast, 'getBoolean');
+  } else {
+    return factoryCallMethod(ast, 'getJSON');
+  }
+}
+
+function makeDecodeBuffers(data, props) {
+  const nodes = [];
+  const decodeAst = internals.decodeBuffers();
+
+  for (let i = 0; i < props.length; i++) {
+    nodes.push(
+      factoryProperty(
+        props[i].name,
+        makeDecodeMethod(
+          i ? decodeAst : factoryCallMethod(decodeAst, 'from', [data]),
+          props[i]
+        )
+      )
+    );
+  }
+
+  return factoryObjectLiteral(nodes);
+}
+
+export function makePayloadFromBody(metaType) {
+  const result = {
     init: internals.readBody(
       factoryIdentifier('req'),
       factoryIdentifier('res')
     ),
-    //internals.decodeJSON
-    data: payloadValidator.makeDecoder(factoryAwait(factoryIdentifier('data'))),
+    data: factoryAwait(factoryIdentifier('data')),
   };
+
+  if (metaType.isBinary) {
+    //Uint8Array.isAssignable(metaType.type)
+  } else if (metaType.props.some(isBinary)) {
+    result.data = makeDecodeBuffers(result.data, metaType.props);
+  } else {
+    result.data = internals.decodeJSON(result.data);
+  }
+
+  return result;
 }

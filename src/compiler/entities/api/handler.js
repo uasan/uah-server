@@ -13,7 +13,6 @@ import {
   factoryIdentifier,
   factoryAwait,
   factoryAwaitStatement,
-  factoryPropertyParenthesized,
 } from '../../helpers/expression.js';
 import {
   factoryStatement,
@@ -30,8 +29,9 @@ import { methods } from './constants.js';
 import { addTransformer } from '../../helpers/ast.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
-import { binaryTypedArray, lookup } from '../../makers/declaration.js';
-import { getPayloadValidator } from '../../helpers/types.js';
+import { lookup } from '../../makers/declaration.js';
+import { TypedArray } from '../../makers/types/validators/TypedArray.js';
+import { BinaryData } from '../../makers/types/validators/BinaryData.js';
 
 export function makeRouteMethod(name, node) {
   const statements = [];
@@ -53,12 +53,7 @@ export function makeRouteMethod(name, node) {
   );
 
   if (payloadType) {
-    const payloadValidator = getPayloadValidator(payloadNode.type);
-
-    if (payloadValidator) {
-    } else {
-      addTransformer(node, node => makePayloadValidator(node, payloadType));
-    }
+    const metaType = makePayloadValidator(node, payloadType);
 
     if (name === 'get') {
       payload = factoryIdentifier('data');
@@ -67,7 +62,7 @@ export function makeRouteMethod(name, node) {
       pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));
     } else {
-      const body = makePayloadFromBody(payloadValidator);
+      const body = makePayloadFromBody(metaType);
 
       payload = body.data;
       statements.push(factoryConstant(factoryIdentifier('data'), body.init));
@@ -85,7 +80,7 @@ export function makeRouteMethod(name, node) {
       factoryStatement(ast),
       internals.respondNoContent(res, ctx)
     );
-  } else if (binaryTypedArray.has(returnType.symbol)) {
+  } else if (TypedArray.isAssignable(returnType)) {
     statements.push(internals.respondBinary(res, ctx, ast));
   } else {
     statements.push(internals.respondJson(res, ctx, ast));

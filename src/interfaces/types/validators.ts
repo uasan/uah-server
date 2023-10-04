@@ -6,6 +6,14 @@ type NumberOptions =
   }
   | undefined;
 
+type ArrayBufferOptions =
+  | {
+    byteLength?: number;
+    minByteLength?: number;
+    maxByteLength?: number;
+  }
+  | undefined;
+
 type TextOptions =
   | {
     max?: number;
@@ -29,4 +37,11 @@ export type Float<T extends NumberOptions = undefined> = number;
 export type Email = string;
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
-export type UintArray<T extends TextOptions = undefined> = Uint8Array;
+export type Blob<T extends ArrayBufferOptions = undefined> = globalThis.Blob;
+//export type File<T extends ArrayBufferOptions = undefined> = globalThis.File;
+
+export type ArrayBuffer<T extends ArrayBufferOptions = undefined> =
+  globalThis.ArrayBuffer;
+
+export type Uint8Array<T extends ArrayBufferOptions = undefined> =
+  globalThis.Uint8Array;

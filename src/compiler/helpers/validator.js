@@ -1,4 +1,7 @@
+import { host } from '../host.js';
+import { BinaryData } from '../makers/types/validators/BinaryData.js';
 import { printNode } from '../worker/printer.js';
+import { addTransformer } from './ast.js';
 import { factoryCallMethod } from './call.js';
 import {
   isArrayLikeType,
@@ -25,9 +28,9 @@ import {
   updateMethodStatements,
 } from './function.js';
 import { internals } from './internals.js';
-import { getRefValue } from './refs.js';
+import { getRefValue, getRefForLiteralTypes } from './refs.js';
 import { factoryStatement } from './statements.js';
-import { getRefForLiteralTypes, MetaType } from './types.js';
+import { MetaType } from './types.js';
 
 function makeValidateFunction(ast) {
   return getRefValue('_=>{' + printNode(ast) + '}');
@@ -101,6 +104,10 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
 }
 
 function makeValidatorsByMeta(ast, meta) {
+  if (meta.isBinary) {
+    return ast;
+  }
+
   const params = [factoryString(meta.name)];
 
   if (meta.isOptional) {
@@ -115,28 +122,44 @@ function makeValidatorsByMeta(ast, meta) {
 }
 
 function makeValidatorsBySymbols(ast, symbols) {
-  for (const symbol of symbols)
-    ast = makeValidatorsByMeta(ast, MetaType.create(symbol.valueDeclaration));
+  let i = 0;
+
+  for (const symbol of symbols) {
+    symbols[i] = MetaType.create(symbol.valueDeclaration);
+    ast = makeValidatorsByMeta(ast, symbols[i]);
+    i++;
+  }
 
   return ast;
 }
 
 export function makePayloadValidator(node, type) {
-  node = ensureArgument(node);
+  const metaType = {
+    type,
+    props: [],
+    isBinary: BinaryData.isAssignable(type),
+  };
 
-  const param = node.parameters[0];
+  if (metaType.isBinary === false) {
+    metaType.props.push(...getPropertiesOfType(type));
 
-  let ast = makeValidatorsBySymbols(
-    internals.newValidator(param.name),
-    getPropertiesOfType(type)
-  );
+    let initAst = host.factory.createIdentifier('_');
+    let ast = makeValidatorsBySymbols(initAst, metaType.props);
 
-  ast = factoryCallMethod(ast, 'validate');
+    if (initAst !== ast) {
+      addTransformer(node, node => {
+        node = ensureArgument(node);
+        Object.assign(initAst, internals.newValidator(node.parameters[0].name));
 
-  return updateMethodStatements(node, [
-    factoryStatement(ast),
-    ...node.body.statements,
-  ]);
+        return updateMethodStatements(node, [
+          factoryStatement(factoryCallMethod(ast, 'validate')),
+          ...node.body.statements,
+        ]);
+      });
+    }
+  }
+
+  return metaType;
 }
 
 export const makeFieldValidate = meta =>

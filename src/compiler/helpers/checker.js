@@ -15,9 +15,10 @@ export const {
   EnumLike: flagEnumLike,
   Undefined: flagUndefined,
   StringLike: flagStringLike,
+  BigIntLike: flagBigIntLike,
   NumberLike: flagNumberLike,
   BooleanLike: flagBooleanLike,
-  BigIntLike: flagBigIntLike,
+  StructuredType: flagStructured,
   NonPrimitive: flagNonPrimitive,
   ObjectFlagsType,
 } = ts.TypeFlags;
@@ -145,8 +146,8 @@ export const getOriginSymbol = symbol =>
     ? isAliasSymbol(symbol)
       ? host.checker.getAliasedSymbol(symbol)
       : isExportSymbol(symbol)
-      ? host.checker.getExportSymbolOfSymbol(symbol)
-      : symbol
+        ? host.checker.getExportSymbolOfSymbol(symbol)
+        : symbol
     : symbol;
 
 export const getOriginSymbolOfNode = node =>

@@ -2,16 +2,18 @@ import {
   getPropertiesOfTypeNode,
   isTrueKeyword,
 } from '../../helpers/checker.js';
-import { getValueOfTypeNode } from '../../helpers/types.js';
+import { getValueOfTypeNode } from '../../helpers/values.js';
 import { factoryCallMethod } from '../../helpers/call.js';
-import { internals } from '../../helpers/internals.js';
+import { host } from '../../host.js';
 
 export class Validator {
   ast = null;
   props = new Map();
 
+  static type = null;
+  static symbol = null;
+
   static sqlType = '';
-  static makeDecoder = internals.decodeJSON;
 
   isTrue(key) {
     return this.props.has(key) && isTrueKeyword(this.props.get(key));
@@ -23,7 +25,7 @@ export class Validator {
       : factoryCallMethod(this.ast, method);
   }
 
-  setProps(context, typeNode) {
+  setProps(meta, typeNode) {
     if (typeNode) {
       for (const symbol of getPropertiesOfTypeNode(typeNode)) {
         const name = symbol.escapedName;
@@ -32,8 +34,22 @@ export class Validator {
         if (value) {
           this.props.set(name, value);
 
-          if (name === 'default') {
-            context.defaultValue ??= value;
+          switch (name) {
+            case 'default':
+              meta.defaultValue ??= value;
+              break;
+
+            case 'byteLength':
+              meta.byteLength = value;
+              break;
+
+            case 'minByteLength':
+              meta.minByteLength = value;
+              break;
+
+            case 'maxByteLength':
+              meta.maxByteLength ??= value;
+              break;
           }
         }
       }
@@ -47,8 +63,12 @@ export class Validator {
     return this.ast;
   }
 
-  static make(context, args) {
-    context.sqlType = this.sqlType;
-    context.validators.add(new this().setProps(context, args?.[0]));
+  static make(meta, args) {
+    meta.sqlType = this.sqlType;
+    meta.validators.add(new this().setProps(meta, args?.[0]));
+  }
+
+  static isAssignable(type) {
+    return host.checker.isTypeAssignableTo(type, this.type);
   }
 }

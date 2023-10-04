@@ -1,3 +1,3 @@
-import { Validator } from '../validator.js';
+import { Validator } from '../Validator.js';
 
-export class Email extends Validator {}
+export class Email extends Validator { }

@@ -1,4 +1,4 @@
-import { getValueOfTypeNode } from '../../../helpers/types.js';
+import { getValueOfTypeNode } from '../../../helpers/values.js';
 
 export class Default {
   static make(context, args) {
