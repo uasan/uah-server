@@ -6,6 +6,13 @@ import { getSymbolDecorator } from '../helpers/decorators.js';
 import { host, declarations, decorators, types } from '../host.js';
 
 import { Int } from './types/validators/Int.js';
+import { Int8 } from './types/validators/Int8.js';
+import { Int16 } from './types/validators/Int16.js';
+import { Int32 } from './types/validators/Int32.js';
+import { Uint8 } from './types/validators/Uint8.js';
+import { Uint16 } from './types/validators/Uint16.js';
+import { Uint32 } from './types/validators/Uint32.js';
+
 import { Text } from './types/validators/Text.js';
 import { UUID } from './types/validators/UUID.js';
 import { Email } from './types/validators/Email.js';
@@ -25,6 +32,12 @@ import { MigrationContext } from '../entities/migrations/maker.js';
 export const lookup = {
   types: {
     Int,
+    Int8,
+    Int16,
+    Int32,
+    Uint8,
+    Uint16,
+    Uint32,
     Float,
     Text,
     UUID,

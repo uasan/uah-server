@@ -13,6 +13,10 @@ const algorithms = new Map().set(-7, {
 
 export class WebAuthn {
   constructor(options) {
+    if (!options) {
+      throw new Unauthorized();
+    }
+
     if (algorithms.has(options.algorithm)) {
       this.algorithm = algorithms.get(options.algorithm);
     } else {

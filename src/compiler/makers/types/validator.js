@@ -8,6 +8,7 @@ import { host } from '../../host.js';
 
 export class Validator {
   ast = null;
+  meta = null;
   props = new Map();
 
   static type = null;
@@ -26,6 +27,8 @@ export class Validator {
   }
 
   setProps(meta, typeNode) {
+    this.meta = meta;
+
     if (typeNode) {
       for (const symbol of getPropertiesOfTypeNode(typeNode)) {
         const name = symbol.escapedName;
@@ -37,18 +40,6 @@ export class Validator {
           switch (name) {
             case 'default':
               meta.defaultValue ??= value;
-              break;
-
-            case 'byteLength':
-              meta.byteLength = value;
-              break;
-
-            case 'minByteLength':
-              meta.minByteLength = value;
-              break;
-
-            case 'maxByteLength':
-              meta.maxByteLength ??= value;
               break;
           }
         }

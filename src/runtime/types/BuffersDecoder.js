@@ -14,11 +14,11 @@ export const BuffersDecoder = new (class BuffersDecoder {
   }
 
   getBoolean() {
-    return this.uint8[this.offset++] === 1;
+    return this.view.getUint8(this.offset++) === 1;
   }
 
   getUint8() {
-    return this.uint8[this.offset++];
+    return this.view.getUint8(this.offset++);
   }
 
   getInt8() {
@@ -28,6 +28,11 @@ export const BuffersDecoder = new (class BuffersDecoder {
   getUint32() {
     this.offset += 4;
     return this.view.getUint32(this.offset - 4);
+  }
+
+  getFloat64() {
+    this.offset += 8;
+    return this.view.getFloat64(this.offset - 8);
   }
 
   getSlice(length) {

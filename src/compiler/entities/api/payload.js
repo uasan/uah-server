@@ -53,10 +53,10 @@ export function makePayloadFromQuery(type) {
 function makeDecodeMethod(ast, metaType) {
   if (metaType.isBinary) {
     return metaType.byteLength
-      ? factoryCallMethod(ast, 'getSlice', [metaType.byteLength])
+      ? factoryCallMethod(ast, 'getSlice', [factoryNumber(metaType.byteLength)])
       : factoryCallMethod(ast, 'getBuffer');
   } else if (isNumberType(metaType.type)) {
-    return factoryCallMethod(ast, 'getFloat64');
+    return factoryCallMethod(ast, 'get' + (metaType.numberType || 'Float64'));
   } else if (isStringType(metaType.type)) {
     return factoryCallMethod(ast, 'getString');
   } else if (isBooleanType(metaType.type)) {

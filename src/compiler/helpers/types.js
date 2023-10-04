@@ -82,19 +82,20 @@ function makeMetaType(meta, node) {
 export class MetaType {
   name = '';
   type = null;
+  defaultValue = null;
 
   sqlType = '';
-  children = [];
+  numberType = '';
 
   isBinary = false;
   isNullable = false;
   isOptional = false;
 
-  bytelength = null;
-  minByteLength = null;
-  maxByteLength = null;
+  byteLength = 0;
+  minByteLength = 0;
+  maxByteLength = 0;
 
-  defaultValue = null;
+  children = [];
   validators = new Set();
 
   constructor(node, type = getNonNullableType(getTypeOfTypeNode(node))) {

@@ -13,11 +13,11 @@ export class Text extends Validator {
     if (this.props.has('length')) {
       this.makeCall('isLength', 'length');
     } else {
-      if (this.props.has('min')) {
+      if (this.props.has('minLength')) {
         this.makeCall('isMinLength', 'min');
       }
 
-      if (this.props.has('max')) {
+      if (this.props.has('maxLength')) {
         this.makeCall('isMaxLength', 'max');
       }
     }
