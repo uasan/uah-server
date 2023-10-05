@@ -1,15 +1,30 @@
 import { webcrypto } from 'node:crypto';
 import { Unauthorized } from '../exceptions/Unauthorized.js';
 import { UnProcessable } from '../exceptions/UnProcessable.js';
+import { hasOwn } from '../types/checker.js';
 
 const { subtle } = webcrypto;
-
 const keyUsages = ['verify'];
-const algorithms = new Map().set(-7, {
-  name: 'ECDSA',
-  namedCurve: 'P-256',
-  hash: { name: 'SHA-256' },
-});
+
+const ES256 = -7;
+const PS256 = -37;
+const RS256 = -257;
+
+const algorithms = {
+  [ES256]: {
+    name: 'ECDSA',
+    namedCurve: 'P-256',
+    hash: { name: 'SHA-256' },
+  },
+  [PS256]: {
+    name: 'RSA-PSS',
+    hash: { name: 'SHA-256' },
+  },
+  [RS256]: {
+    name: 'RSASSA-PKCS1-v1_5',
+    hash: { name: 'SHA-256' },
+  },
+};
 
 export class WebAuthn {
   constructor(options) {
@@ -17,8 +32,8 @@ export class WebAuthn {
       throw new Unauthorized();
     }
 
-    if (algorithms.has(options.algorithm)) {
-      this.algorithm = algorithms.get(options.algorithm);
+    if (hasOwn(algorithms, options.algorithm)) {
+      this.algorithm = algorithms[options.algorithm];
     } else {
       throw new UnProcessable(`Unsupported algorithm "${options.algorithm}"`);
     }
@@ -58,5 +73,7 @@ export class WebAuthn {
     if (verified === false) {
       throw new Unauthorized();
     }
+
+    console.log({ verified });
   }
 }
