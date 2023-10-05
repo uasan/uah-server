@@ -17,6 +17,7 @@ import { Text } from './types/validators/Text.js';
 import { UUID } from './types/validators/UUID.js';
 import { Email } from './types/validators/Email.js';
 import { Float } from './types/validators/Float.js';
+import { Float32 } from './types/validators/Float32.js';
 import { Default } from './types/validators/Default.js';
 import { Uint8Array } from './types/validators/Uint8Array.js';
 import { TypedArray } from './types/validators/TypedArray.js';
@@ -39,6 +40,7 @@ export const lookup = {
     Uint16,
     Uint32,
     Float,
+    Float32,
     Text,
     UUID,
     Email,
