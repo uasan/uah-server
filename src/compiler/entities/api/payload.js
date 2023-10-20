@@ -1,4 +1,3 @@
-import { Uint8Array } from '../../makers/types/validators/Uint8Array.js';
 import { factoryCallMethod } from '../../helpers/call.js';
 import {
   isNullableType,
@@ -52,7 +51,13 @@ export function makePayloadFromQuery(type) {
 
 function makeDecodeMethod(ast, metaType) {
   if (metaType.isBinary) {
-    return metaType.byteLength
+    return metaType.isFile
+      ? factoryCallMethod(ast, 'getFile')
+      : metaType.isBlob
+      ? factoryCallMethod(ast, 'getBlob')
+      : metaType.isStream
+      ? factoryCallMethod(ast, 'getStream')
+      : metaType.byteLength
       ? factoryCallMethod(ast, 'getSlice', [factoryNumber(metaType.byteLength)])
       : factoryCallMethod(ast, 'getBuffer');
   } else if (isNumberType(metaType.type)) {
@@ -85,22 +90,29 @@ function makeDecodeBuffers(data, props) {
   return factoryObjectLiteral(nodes);
 }
 
+const decodeBuffersFrom = data =>
+  factoryCallMethod(internals.decodeBuffers(), 'from', [data]);
+
 export function makePayloadFromBody(metaType) {
-  const result = {
-    init: internals.readBody(
-      factoryIdentifier('req'),
-      factoryIdentifier('res')
-    ),
-    data: factoryAwait(factoryIdentifier('data')),
-  };
+  const args = [factoryIdentifier('req'), factoryIdentifier('res')];
+
+  let init = metaType.isStream
+    ? internals.readStream(args)
+    : metaType.isPartStream
+    ? internals.readPartStream(args)
+    : internals.readBody(args);
+
+  let data = factoryAwait(factoryIdentifier('data'));
 
   if (metaType.isBinary) {
-    //Uint8Array.isAssignable(metaType.type)
+    if (metaType.isPartStream) {
+      data = makeDecodeMethod(decodeBuffersFrom(data), metaType);
+    }
   } else if (metaType.props.some(isBinary)) {
-    result.data = makeDecodeBuffers(result.data, metaType.props);
+    data = makeDecodeBuffers(data, metaType.props);
   } else {
-    result.data = internals.decodeJSON(result.data);
+    data = internals.decodeJSON(data);
   }
 
-  return result;
+  return { init, data };
 }

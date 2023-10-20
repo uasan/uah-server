@@ -1,4 +1,6 @@
 import { host } from '../host.js';
+import { File } from '../makers/types/validators/File.js';
+import { Blob } from '../makers/types/validators/Blob.js';
 import { BinaryData } from '../makers/types/validators/BinaryData.js';
 import { printNode } from '../worker/printer.js';
 import { addTransformer } from './ast.js';
@@ -93,7 +95,7 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
       const childAst = factoryIdentifier('_');
 
       ast = factoryCallMethod(ast, 'forObject', [
-        makeValidateFunction(makeValidatorsBySymbols(childAst, symbols)),
+        makeValidateFunction(makeValidatorsBySymbols(childAst, [...symbols])),
       ]);
     } else {
       ast = factoryCallMethod(ast, 'isObject');
@@ -137,10 +139,22 @@ export function makePayloadValidator(node, type) {
   const metaType = {
     type,
     props: [],
+    isFile: false,
+    isBlob: false,
+    isStream: false,
+    isPartStream: false,
     isBinary: BinaryData.isAssignable(type),
   };
 
-  if (metaType.isBinary === false) {
+  if (metaType.isBinary) {
+    if (File.isAssignable(type)) {
+      metaType.isFile = true;
+      metaType.isPartStream = true;
+    } else if (Blob.isAssignable(type)) {
+      metaType.isBlob = true;
+      metaType.isPartStream = true;
+    }
+  } else {
     metaType.props.push(...getPropertiesOfType(type));
 
     let initAst = host.factory.createIdentifier('_');

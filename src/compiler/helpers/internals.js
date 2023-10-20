@@ -31,8 +31,14 @@ function getInternalImport(url, name) {
 }
 
 export const internals = {
-  readBody: (...args) =>
+  readBody: args =>
     factoryCall(getInternalImport('server/request', 'readBody'), args),
+
+  readStream: args =>
+    factoryCall(getInternalImport('server/request', 'readStream'), args),
+
+  readPartStream: args =>
+    factoryCall(getInternalImport('server/request', 'readPartStream'), args),
 
   respondBinary: (...args) =>
     factoryCallStatement(

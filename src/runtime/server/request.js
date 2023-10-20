@@ -2,6 +2,8 @@ import { Server } from './app.js';
 import { ContentTooLarge } from '../exceptions/ContentTooLarge.js';
 import { LengthRequired } from '../exceptions/LengthRequired.js';
 
+import { BufferStreamReader } from './stream.js';
+
 export function readBody(req, res, maxLength = Server.maxByteLengthBody) {
   let offset = 0;
   let buffer = null;
@@ -29,5 +31,18 @@ export function readBody(req, res, maxLength = Server.maxByteLengthBody) {
         else offset += chunk.byteLength;
       }
     });
+  });
+}
+
+export function readPartStream(req, res) {
+  const state = new BufferStreamReader(res);
+
+  return new Promise((resolve, reject) => {
+    state.resolve = resolve;
+    state.reject = reject;
+
+    res.context.onAborted = reject;
+
+    res.onData(state.onData);
   });
 }

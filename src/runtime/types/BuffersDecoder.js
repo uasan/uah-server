@@ -1,3 +1,6 @@
+import { streams } from '../utils/stream.js';
+import { File } from './File.js';
+
 const textDecoder = new TextDecoder();
 
 export const BuffersDecoder = new (class BuffersDecoder {
@@ -49,5 +52,18 @@ export const BuffersDecoder = new (class BuffersDecoder {
 
   getJSON() {
     return JSON.parse(textDecoder.decode(this.getBuffer()));
+  }
+
+  getBlob() {}
+
+  getFile() {
+    const file = new File(streams.get(this.uint8).stream);
+
+    file.name = this.getString();
+    file.lastModified = this.getFloat64();
+    file.type = this.getString();
+    file.size = this.getUint32();
+
+    return file;
   }
 })();

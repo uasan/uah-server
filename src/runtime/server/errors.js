@@ -1,4 +1,4 @@
-export const notImplemented = response => {
+export const notImplemented = (response, request) => {
   response
     .writeStatus('501')
     .writeHeader('cache-control', 'no-store')
@@ -7,6 +7,8 @@ export const notImplemented = response => {
       JSON.stringify({
         status: 501,
         type: 'NotImplemented',
+        url: request.getUrl(),
+        method: request.getMethod(),
       })
     );
 };

@@ -2,7 +2,7 @@ import { Int } from './Int.js';
 
 export class Float extends Int {
   byteLength = 8;
-  sqlType = 'float';
+  sqlType = 'float8';
   numberType = 'Float64';
 
   make(ast) {

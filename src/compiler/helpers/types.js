@@ -87,9 +87,14 @@ export class MetaType {
   sqlType = '';
   numberType = '';
 
-  isBinary = false;
   isNullable = false;
   isOptional = false;
+
+  isBlob = false;
+  isFile = false;
+  isBinary = false;
+  isStream = false;
+  isPartStream = false;
 
   byteLength = 0;
   minByteLength = 0;

@@ -26,12 +26,10 @@ import {
   isNotThisParameter,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
-import { addTransformer } from '../../helpers/ast.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
 import { lookup } from '../../makers/declaration.js';
 import { TypedArray } from '../../makers/types/validators/TypedArray.js';
-import { BinaryData } from '../../makers/types/validators/BinaryData.js';
 
 export function makeRouteMethod(name, node) {
   const statements = [];

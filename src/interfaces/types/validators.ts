@@ -54,8 +54,21 @@ export type Uint32<T extends NumberOptions = undefined> = number;
 export type Float<T extends NumberOptions = undefined> = number;
 export type Float32<T extends NumberOptions = undefined> = number;
 
-export type Blob<T extends ArrayOptions = undefined> = globalThis.Blob;
-//export type File<T extends ArrayBufferOptions = undefined> = globalThis.File;
+type BlobOptions =
+  | {
+    size?: number;
+    minSize?: number;
+    maxSize?: number;
+    types?: string;
+  }
+  | undefined;
+
+export type Blob<T extends BlobOptions = undefined> = globalThis.Blob;
+export type File<T extends BlobOptions = undefined> = {
+  name: 'string';
+  lastModified: number;
+  save(path?: string): Promise<string>;
+} & globalThis.Blob;
 
 export type ArrayBuffer<T extends ArrayBufferOptions = undefined> =
   globalThis.ArrayBuffer;
@@ -65,3 +78,18 @@ export type DataView<T extends ArrayBufferOptions = undefined> =
 
 export type Uint8Array<T extends ArrayOptions = undefined> =
   globalThis.Uint8Array;
+
+export type TypedArray =
+  | Uint8Array
+  | Uint8ClampedArray
+  | Uint16Array
+  | Uint32Array
+  | BigUint64Array
+  | Int8Array
+  | Int16Array
+  | Int32Array
+  | BigInt64Array
+  | Float32Array
+  | Float64Array;
+
+export type BinaryData = ArrayBuffer | TypedArray | DataView | Blob | File;
