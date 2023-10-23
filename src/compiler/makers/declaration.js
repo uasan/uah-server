@@ -3,7 +3,13 @@ import { toRuntimeUrl } from '../helpers/link.js';
 import { addTransformer } from '../helpers/ast.js';
 import { getExportsOfModule } from '../helpers/checker.js';
 import { getSymbolDecorator } from '../helpers/decorators.js';
-import { host, declarations, decorators, types } from '../host.js';
+import {
+  host,
+  declarations,
+  decorators,
+  types,
+  internalSymbols,
+} from '../host.js';
 
 import { Int } from './types/validators/Int.js';
 import { Int8 } from './types/validators/Int8.js';
@@ -73,6 +79,7 @@ export function setDeclarations() {
 
   for (const symbol of getExportsOfModule(file)) {
     const name = symbol.escapedName;
+    internalSymbols.add(symbol);
 
     if (hasOwn(lookup.types, name)) {
       const ctor = lookup.types[name];

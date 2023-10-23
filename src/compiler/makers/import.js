@@ -1,11 +1,7 @@
-import { declarations, entities, host } from '../host.js';
+import { declarations, entities, host, internalSymbols } from '../host.js';
 import { toRelativeURL } from '../helpers/link.js';
 import { resolveImportPath } from '../helpers/import.js';
-import {
-  getOriginSymbolOfNode,
-  isDeclareSymbol,
-  isTypeSymbol,
-} from '../helpers/checker.js';
+import { getOriginSymbolOfNode, isTypeSymbol } from '../helpers/checker.js';
 import { factoryIdentifier } from '../helpers/expression.js';
 
 export const makeImportDeclaration = node => {
@@ -43,7 +39,7 @@ export const makeImportDeclaration = node => {
             host.entity.url,
             entities.get(resolveImportPath(node)).url
           );
-        } else if (isDeclareSymbol(symbol)) {
+        } else if (internalSymbols.has(symbol)) {
           continue;
         }
 

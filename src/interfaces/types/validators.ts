@@ -66,6 +66,7 @@ type BlobOptions =
 export type Blob<T extends BlobOptions = undefined> = globalThis.Blob;
 export type File<T extends BlobOptions = undefined> = {
   name: 'string';
+  hash: 'string';
   lastModified: number;
   save(path?: string): Promise<string>;
 } & globalThis.Blob;

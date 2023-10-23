@@ -35,14 +35,14 @@ export function readBody(req, res, maxLength = Server.maxByteLengthBody) {
 }
 
 export function readPartStream(req, res) {
-  const state = new BufferStreamReader(res);
+  const reader = new BufferStreamReader(res);
 
   return new Promise((resolve, reject) => {
-    state.resolve = resolve;
-    state.reject = reject;
+    reader.resolve = resolve;
+    reader.reject = reject;
 
     res.context.onAborted = reject;
 
-    res.onData(state.onData);
+    res.onData(reader.onData);
   });
 }

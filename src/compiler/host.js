@@ -8,6 +8,7 @@ export const types = new WeakMap();
 export const decorators = new WeakMap();
 export const declarations = new WeakMap();
 export const transformers = new WeakMap();
+export const internalSymbols = new WeakSet();
 
 export const beforeEmit = new Set();
 export const afterEmit = new Set();
