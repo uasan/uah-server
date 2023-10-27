@@ -17,6 +17,7 @@ import { internals } from '../../helpers/internals.js';
 import { factoryProperty, factoryObjectLiteral } from '../../helpers/object.js';
 
 const isBinary = ({ isBinary }) => isBinary;
+const isBufferStream = ({ isBufferStream }) => isBufferStream;
 
 export function makePayloadFromQuery(type) {
   let index = 0;
@@ -96,16 +97,15 @@ const decodeBuffersFrom = data =>
 export function makePayloadFromBody(metaType) {
   const args = [factoryIdentifier('req'), factoryIdentifier('res')];
 
-  let init = metaType.isStream
-    ? internals.readStream(args)
-    : metaType.isPartStream
-    ? internals.readPartStream(args)
-    : internals.readBody(args);
+  let init =
+    metaType.isBufferStream || metaType.props.some(isBufferStream)
+      ? internals.readBufferStream(args)
+      : internals.readBuffer(args);
 
   let data = factoryAwait(factoryIdentifier('data'));
 
   if (metaType.isBinary) {
-    if (metaType.isPartStream) {
+    if (metaType.isBufferStream) {
       data = makeDecodeMethod(decodeBuffersFrom(data), metaType);
     }
   } else if (metaType.props.some(isBinary)) {

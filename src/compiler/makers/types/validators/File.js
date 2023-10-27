@@ -5,6 +5,6 @@ export class File extends Validator {
 
   static make(meta) {
     meta.isFile = true;
-    meta.isPartStream = true;
+    meta.isBufferStream = true;
   }
 }

@@ -2,7 +2,8 @@ import { host } from '../host.js';
 import { factoryIdentifier } from './expression.js';
 
 export const resolveImportPath = node =>
-  host.file.resolvedModules.get(
+  host.program.getResolvedModule(
+    host.file,
     node.moduleSpecifier.text,
     host.file.impliedNodeFormat
   ).resolvedModule?.resolvedFileName;

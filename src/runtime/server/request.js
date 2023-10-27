@@ -4,7 +4,7 @@ import { LengthRequired } from '../exceptions/LengthRequired.js';
 
 import { BufferStreamReader } from './stream.js';
 
-export function readBody(req, res, maxLength = Server.maxByteLengthBody) {
+export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
   let offset = 0;
   let buffer = null;
   let length = +req.getHeader('content-length');
@@ -34,7 +34,7 @@ export function readBody(req, res, maxLength = Server.maxByteLengthBody) {
   });
 }
 
-export function readPartStream(req, res) {
+export function readBufferStream(req, res) {
   const reader = new BufferStreamReader(res);
 
   return new Promise((resolve, reject) => {

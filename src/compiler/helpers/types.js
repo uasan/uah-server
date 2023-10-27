@@ -94,7 +94,7 @@ export class MetaType {
   isFile = false;
   isBinary = false;
   isStream = false;
-  isPartStream = false;
+  isBufferStream = false;
 
   byteLength = 0;
   minByteLength = 0;

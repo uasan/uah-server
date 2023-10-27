@@ -5,6 +5,6 @@ export class Blob extends Validator {
 
   static make(meta) {
     meta.isBlob = true;
-    meta.isPartStream = true;
+    meta.isBufferStream = true;
   }
 }

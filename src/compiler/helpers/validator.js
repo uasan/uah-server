@@ -141,18 +141,17 @@ export function makePayloadValidator(node, type) {
     props: [],
     isFile: false,
     isBlob: false,
-    isStream: false,
-    isPartStream: false,
+    isBufferStream: false,
     isBinary: BinaryData.isAssignable(type),
   };
 
   if (metaType.isBinary) {
     if (File.isAssignable(type)) {
       metaType.isFile = true;
-      metaType.isPartStream = true;
+      metaType.isBufferStream = true;
     } else if (Blob.isAssignable(type)) {
       metaType.isBlob = true;
-      metaType.isPartStream = true;
+      metaType.isBufferStream = true;
     }
   } else {
     metaType.props.push(...getPropertiesOfType(type));
