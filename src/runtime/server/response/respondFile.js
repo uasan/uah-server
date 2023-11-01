@@ -1,4 +1,4 @@
-import { openSync, read } from 'node:fs';
+import { openSync, read, close } from 'node:fs';
 import { parseRange } from '../utils/parseRange.js';
 
 const files = new Map();
@@ -30,25 +30,25 @@ class FileSender {
     this.response = response;
     this.context = response.context;
 
-    this.contentLength = file.size;
-
     this.write = this.write.bind(this);
     this.onWritable = this.onWritable.bind(this);
     this.onReadFile = this.onReadFile.bind(this);
     this.endRespond = this.endRespond.bind(this);
-
-    this.range = parseRange(this.context.request.headers.range, file.size);
-
-    if (this.range) {
-      this.position = this.range.offset;
-      this.contentLength = this.range.length;
-    }
 
     if (files.has(file.path)) {
       this.fd = files.get(file.path).fd;
     } else {
       this.fd = openSync(file.path, 'r', 0o444);
       files.set(this.file.path, { fd: this.fd });
+    }
+
+    this.range = parseRange(this.context.request.headers.range, file.size);
+
+    if (this.range) {
+      this.position = this.range.offset;
+      this.contentLength = this.range.length;
+    } else {
+      this.contentLength = file.size;
     }
 
     this.readFile();
@@ -118,6 +118,8 @@ class FileSender {
 
         if (this.bytesRead !== this.contentLength) {
           this.isReadable = true;
+        } else {
+          this.closeFile();
         }
 
         if (this.isWritable) {
@@ -125,7 +127,13 @@ class FileSender {
         }
       } else {
         this.isReadable = false;
+
+        this.closeFile();
         this.response.cork(this.endRespond);
+
+        if (error) {
+          console.error(error);
+        }
       }
     }
   }
@@ -159,13 +167,16 @@ class FileSender {
     this.isConnected = false;
   }
 
-  onAborted() {
-    this.isConnected = false;
-
+  closeFile() {
     if (this.fd) {
       //close(this.fd);
       this.fd = 0;
     }
+  }
+
+  onAborted() {
+    this.isConnected = false;
+    this.closeFile();
   }
 }
 
