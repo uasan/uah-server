@@ -37,9 +37,9 @@ export const internals = {
   readBufferStream: args =>
     factoryCall(getInternalImport('server/request', 'readBufferStream'), args),
 
-  respondBinary: (...args) =>
+  respondNoContent: (...args) =>
     factoryCallStatement(
-      getInternalImport('server/response', 'respondBinary'),
+      getInternalImport('server/response', 'respondNoContent'),
       args
     ),
 
@@ -49,9 +49,15 @@ export const internals = {
       args
     ),
 
-  respondNoContent: (...args) =>
+  respondBinary: (...args) =>
     factoryCallStatement(
-      getInternalImport('server/response', 'respondNoContent'),
+      getInternalImport('server/response', 'respondBinary'),
+      args
+    ),
+
+  respondFile: (...args) =>
+    factoryCallStatement(
+      getInternalImport('server/response/respondFile', 'respondFile'),
       args
     ),
 
@@ -71,8 +77,8 @@ export const internals = {
     factoryNew(getInternalImport('types/validator', 'Validator'), args),
 
   initPostgres: options =>
-    factoryCallStatement(
-      getInternalImport('postgres/context', 'initPostgres'),
-      [host.factory.createThis(), options]
-    ),
+    factoryCallStatement(factoryIdentifier('Postgres'), [
+      host.factory.createThis(),
+      options,
+    ]),
 };

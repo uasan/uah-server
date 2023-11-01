@@ -79,7 +79,17 @@ export function setDeclarations() {
 
   for (const symbol of getExportsOfModule(file)) {
     const name = symbol.escapedName;
+
     internalSymbols.add(symbol);
+
+    if (symbol.valueDeclaration) {
+      declarations.set(symbol, {
+        url: toRuntimeUrl(symbol.valueDeclaration.getSourceFile().resolvedPath),
+        make: hasOwn(lookup.declarations, name)
+          ? lookup.declarations[name]
+          : null,
+      });
+    }
 
     if (hasOwn(lookup.types, name)) {
       const ctor = lookup.types[name];
@@ -90,13 +100,6 @@ export function setDeclarations() {
       types.set(symbol, ctor);
     } else if (hasOwn(lookup.decorators, name)) {
       decorators.set(symbol, lookup.decorators[name]);
-    } else if (symbol.valueDeclaration) {
-      declarations.set(symbol, {
-        url: toRuntimeUrl(symbol.valueDeclaration.getSourceFile().resolvedPath),
-        make: hasOwn(lookup.declarations, name)
-          ? lookup.declarations[name]
-          : null,
-      });
     }
   }
 }

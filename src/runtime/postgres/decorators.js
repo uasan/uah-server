@@ -5,7 +5,7 @@ import { sql } from './query/sql.js';
 import { signal } from '../process.js';
 import { startTransaction } from './transaction.js';
 
-export function initPostgres({ prototype }, options) {
+export function Postgres({ prototype }, options) {
   prototype.sql = sql;
   prototype.startTransaction = startTransaction;
 

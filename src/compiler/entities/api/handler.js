@@ -29,6 +29,8 @@ import { methods } from './constants.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
 import { lookup } from '../../makers/declaration.js';
+
+import { File } from '../../makers/types/validators/File.js';
 import { TypedArray } from '../../makers/types/validators/TypedArray.js';
 
 export function makeRouteMethod(name, node) {
@@ -80,6 +82,8 @@ export function makeRouteMethod(name, node) {
     );
   } else if (TypedArray.isAssignable(returnType)) {
     statements.push(internals.respondBinary(res, ctx, ast));
+  } else if (File.isAssignable(returnType)) {
+    statements.push(internals.respondFile(res, ast));
   } else {
     statements.push(internals.respondJson(res, ctx, ast));
   }

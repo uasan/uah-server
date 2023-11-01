@@ -1,3 +1,6 @@
+import type { Blob } from './Blob.ts';
+import type { File } from './File.ts';
+
 type NumberOptions =
   | {
     min?: number;
@@ -53,23 +56,6 @@ export type Uint32<T extends NumberOptions = undefined> = number;
 
 export type Float<T extends NumberOptions = undefined> = number;
 export type Float32<T extends NumberOptions = undefined> = number;
-
-type BlobOptions =
-  | {
-    size?: number;
-    minSize?: number;
-    maxSize?: number;
-    types?: string;
-  }
-  | undefined;
-
-export type Blob<T extends BlobOptions = undefined> = globalThis.Blob;
-export type File<T extends BlobOptions = undefined> = {
-  name: 'string';
-  hash: 'string';
-  lastModified: number;
-  save(path?: string): Promise<string>;
-} & globalThis.Blob;
 
 export type ArrayBuffer<T extends ArrayBufferOptions = undefined> =
   globalThis.ArrayBuffer;

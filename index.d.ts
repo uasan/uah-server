@@ -4,6 +4,8 @@ export * from './src/interfaces/migration/context.js';
 export * from './src/interfaces/security/WebAuthn.js';
 export * from './src/interfaces/security/Challenge.ts';
 export * from './src/interfaces/security/decorators.ts';
+export * from './src/interfaces/types/Blob.ts';
+export * from './src/interfaces/types/File.ts';
 export * from './src/interfaces/types/validators.ts';
 export * from './src/interfaces/postgres/model.ts';
 export * from './src/interfaces/postgres/decorators.ts';
@@ -20,4 +22,3 @@ export * from './src/interfaces/exceptions/Timeout.ts';
 export * from './src/interfaces/exceptions/UnProcessable.ts';
 export * from './src/interfaces/exceptions/Unauthorized.ts';
 export * from './src/interfaces/exceptions/Unavailable.ts';
-

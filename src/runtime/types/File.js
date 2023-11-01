@@ -5,6 +5,8 @@ import { IO } from '../utils/io.js';
 export class File {
   name = '';
   type = '';
+  path = '';
+  cash = '';
 
   hash = '';
   hashAlgorithm = 'SHA-1';
@@ -15,8 +17,16 @@ export class File {
 
   #stream = null;
 
-  constructor(stream) {
-    this.#stream = stream;
+  constructor(stream, type = '') {
+    if (type) {
+      this.type = type;
+    }
+
+    if (typeof stream === 'string') {
+      this.path = stream;
+    } else {
+      this.#stream = stream;
+    }
   }
 
   stream() {
