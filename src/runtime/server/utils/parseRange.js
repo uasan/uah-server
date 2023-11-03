@@ -9,7 +9,7 @@ export function parseRange(range, contentLength) {
 
   length = finish - offset + 1;
 
-  if (!length || length < 1) {
+  if (!length || offset < 0 || length < 1 || length > contentLength) {
     throw new RangeNotSatisfiable();
   }
 

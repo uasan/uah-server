@@ -24,6 +24,7 @@ import {
   getTypeOfNode,
   isVoidLikeType,
   isNotThisParameter,
+  isStringType,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
@@ -80,7 +81,7 @@ export function makeRouteMethod(name, node) {
       factoryStatement(ast),
       internals.respondNoContent(res, ctx)
     );
-  } else if (TypedArray.isAssignable(returnType)) {
+  } else if (TypedArray.isAssignable(returnType) || isStringType(returnType)) {
     statements.push(internals.respondBinary(res, ctx, ast));
   } else if (File.isAssignable(returnType)) {
     statements.push(internals.respondFile(res, ast));

@@ -11,9 +11,9 @@ class FileSender {
   context = null;
 
   fd = 0;
+  length = 0;
   position = 0;
   bytesRead = 0;
-  contentLength = 0;
   bufferLength = bufferLength;
 
   offsetWrite = 0;
@@ -46,9 +46,9 @@ class FileSender {
 
     if (this.range) {
       this.position = this.range.offset;
-      this.contentLength = this.range.length;
+      this.length = this.range.length;
     } else {
-      this.contentLength = file.size;
+      this.length = file.size;
     }
 
     this.readFile();
@@ -63,6 +63,8 @@ class FileSender {
       response.writeStatus('206');
       response.writeHeader('content-range', this.range.header);
     }
+
+    response.writeHeader('accept-ranges', 'bytes');
 
     if (file.type) {
       response.writeHeader('content-type', file.type);
@@ -116,7 +118,7 @@ class FileSender {
         this.position += bytesRead;
         this.bytesRead += bytesRead;
 
-        if (this.bytesRead !== this.contentLength) {
+        if (this.bytesRead !== this.length) {
           this.isReadable = true;
         } else {
           this.closeFile();
@@ -143,7 +145,7 @@ class FileSender {
       this.offsetWrite === 0
         ? this.buffer
         : this.buffer.buffer.slice(this.offsetWrite),
-      this.contentLength
+      this.length
     )[0];
 
     if (this.isWritable && this.isReadable) {
