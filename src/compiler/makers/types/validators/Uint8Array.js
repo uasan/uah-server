@@ -7,7 +7,7 @@ export class Uint8Array extends Validator {
   static make(meta, args) {
     const self = new this().setProps(meta, args?.[0]);
 
-    meta.sqlType = this.sqlType;
+    meta.sqlType = self.sqlType;
 
     if (self.props.has('length')) {
       meta.byteLength =

@@ -22,18 +22,17 @@ const {
   ParenthesizedType,
 } = ts.SyntaxKind;
 
-function makeIndexedAccess(context, node) {
+function makeIndexedAccess(meta, node) {
   const symbol = getOriginSymbolOfNode(node.objectType.typeName);
 
-  let { members } = symbol;
-
   if (symbol.valueDeclaration) {
-    //console.info(symbol.valueDeclaration);
+    meta.links.push({
+      node: symbol.valueDeclaration,
+      key: node.indexType.literal.text,
+    });
   }
 
-  const field = members.get(node.indexType.literal.text).declarations[0];
-
-  return field;
+  return symbol.members.get(node.indexType.literal.text).declarations[0];
 }
 
 function makeMetaType(meta, node) {
@@ -100,6 +99,7 @@ export class MetaType {
   minByteLength = 0;
   maxByteLength = 0;
 
+  links = [];
   children = [];
   validators = new Set();
 

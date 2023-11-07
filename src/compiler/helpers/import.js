@@ -6,7 +6,7 @@ export const resolveImportPath = node =>
     host.file,
     node.moduleSpecifier.text,
     host.file.impliedNodeFormat
-  ).resolvedModule?.resolvedFileName;
+  )?.resolvedModule?.resolvedFileName;
 
 export const createAssertClause = type =>
   host.factory.createAssertClause(

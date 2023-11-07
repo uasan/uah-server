@@ -22,6 +22,8 @@ import { createTableMigration } from '../migrations/table.js';
 
 export const { PropertyDeclaration } = ts.SyntaxKind;
 
+const tableModels = new WeakMap();
+
 const getSqlType = meta =>
   meta.sqlType
     ? meta.sqlType
@@ -43,12 +45,29 @@ function makeToSQL(model) {
   );
 }
 
+function getTableReferences(links) {
+  let ref = '';
+
+  for (let i = 0; i < links.length; i++)
+    if (tableModels.has(links[i].node)) {
+      const { node, key } = links[i];
+      const { name } = tableModels.get(node);
+
+      ref += 'REFERENCES ' + name + '("' + key + '") ';
+      ref += 'ON UPDATE cascade ON DELETE cascade';
+    }
+
+  return ref;
+}
+
 export function TableModel(node, options) {
   const { model } = host.entity;
 
   if (!model || !options) {
     return host.visitEachChild(node);
   }
+
+  tableModels.set(node, model);
 
   model.fields = new Map();
   model.columns = new Map();
@@ -63,6 +82,7 @@ export function TableModel(node, options) {
       type: getSqlType(meta),
       default: meta.defaultValue,
       isNotNull: !meta.isNullable,
+      references: getTableReferences(meta.links),
     });
 
     model.fields.set(meta.name, [

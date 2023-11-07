@@ -128,14 +128,9 @@ class FileSender {
           this.response.cork(this.write);
         }
       } else {
+        this.onError(error);
         this.isReadable = false;
-
-        this.closeFile();
         this.response.cork(this.endRespond);
-
-        if (error) {
-          console.error(error);
-        }
       }
     }
   }
@@ -171,9 +166,19 @@ class FileSender {
 
   closeFile() {
     if (this.fd) {
-      //close(this.fd);
       this.fd = 0;
     }
+  }
+
+  onError(error) {
+    files.delete(this.file.path);
+
+    if (this.fd) {
+      close(this.fd);
+      this.fd = 0;
+    }
+
+    console.error(error);
   }
 
   onAborted() {

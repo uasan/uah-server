@@ -20,7 +20,11 @@ export function createTableMigration(model) {
     }
 
     if (column.default) {
-      field += ' default ' + getSQLValueOfNode(column.default);
+      field += ' DEFAULT ' + getSQLValueOfNode(column.default);
+    }
+
+    if (column.references) {
+      field += ' ' + column.references;
     }
 
     fields.push(field);
