@@ -33,6 +33,13 @@ export function createTableMigration(model) {
   up += fields.join(',\n');
   up += '\n)`);';
 
+  if (model.comment) {
+    up += '\nawait this.postgres.query("';
+    up += `COMMENT ON TABLE ${model.tableName} IS '`;
+    up += model.comment.replaceAll("'", "''");
+    up += '\'");';
+  }
+
   if (!presets.has(url) || presets.get(url).className !== className) {
     afterEmit.add(makeMigrations);
   }

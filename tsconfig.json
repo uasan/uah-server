@@ -14,7 +14,7 @@
     "composite": false,
     "incremental": true,
     "isolatedModules": false,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "noEmitHelpers": true,
     "noEmitOnError": false,
     "removeComments": true,

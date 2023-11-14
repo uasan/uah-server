@@ -10,6 +10,7 @@ import {
 } from '../../helpers/class.js';
 import { MetaType } from '../../helpers/types.js';
 import {
+  isBigIntType,
   isBooleanType,
   isNonPrimitiveType,
   isNumberType,
@@ -19,6 +20,7 @@ import { makeFieldValidate } from '../../helpers/validator.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
 import { setSchema } from '../migrations/maker.js';
 import { createTableMigration } from '../migrations/table.js';
+import { PATH_SRC } from '../../../config.js';
 
 export const { PropertyDeclaration } = ts.SyntaxKind;
 
@@ -29,8 +31,10 @@ const getSqlType = meta =>
     ? meta.sqlType
     : isStringType(meta.type)
     ? 'text'
+    : isBigIntType(meta.type)
+    ? 'bigint'
     : isNumberType(meta.type)
-    ? 'int'
+    ? 'float8'
     : isBooleanType(meta.type)
     ? 'boolean'
     : isNonPrimitiveType(meta.type)
@@ -71,6 +75,7 @@ export function TableModel(node, options) {
 
   model.fields = new Map();
   model.columns = new Map();
+  model.comment = host.entity.path.slice(PATH_SRC.length);
   model.tableName = setSchema(options.get('name').value);
   model.name = model.tableName.replaceAll('"', '');
 
