@@ -18,28 +18,27 @@ import {
 } from '../../helpers/checker.js';
 import { makeFieldValidate } from '../../helpers/validator.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
-import { setSchema } from '../migrations/maker.js';
-import { createTableMigration } from '../migrations/table.js';
+
 import { PATH_SRC } from '../../../config.js';
 
 export const { PropertyDeclaration } = ts.SyntaxKind;
 
-const tableModels = new WeakMap();
+export const tableModels = new WeakMap();
 
 const getSqlType = meta =>
   meta.sqlType
     ? meta.sqlType
     : isStringType(meta.type)
-    ? 'text'
-    : isBigIntType(meta.type)
-    ? 'bigint'
-    : isNumberType(meta.type)
-    ? 'float8'
-    : isBooleanType(meta.type)
-    ? 'boolean'
-    : isNonPrimitiveType(meta.type)
-    ? 'jsonb'
-    : 'text';
+      ? 'text'
+      : isBigIntType(meta.type)
+        ? 'bigint'
+        : isNumberType(meta.type)
+          ? 'float8'
+          : isBooleanType(meta.type)
+            ? 'boolean'
+            : isNonPrimitiveType(meta.type)
+              ? 'jsonb'
+              : 'text';
 
 function makeToSQL(model) {
   return factoryStaticMethod(
@@ -64,10 +63,10 @@ function getTableReferences(links) {
   return ref;
 }
 
-export function TableModel(node, options) {
+export function TableModel(node) {
   const { model } = host.entity;
 
-  if (!model || !options) {
+  if (!model) {
     return host.visitEachChild(node);
   }
 
@@ -76,8 +75,6 @@ export function TableModel(node, options) {
   model.fields = new Map();
   model.columns = new Map();
   model.comment = host.entity.path.slice(PATH_SRC.length);
-  model.tableName = setSchema(options.get('name').value);
-  model.name = model.tableName.replaceAll('"', '');
 
   for (const member of node.members.filter(isFieldProperty)) {
     const meta = MetaType.create(member);
@@ -95,11 +92,10 @@ export function TableModel(node, options) {
     ]);
   }
 
-  createTableMigration(model);
   node = host.visitEachChild(node);
 
   return updateClass(node, node.modifiers, node.name, node.heritageClauses, [
-    makeToSQL(model),
+    //makeToSQL(model),
     factoryStaticProperty('fields', factoryObjectOfMap(model.fields)),
     ...node.members,
   ]);

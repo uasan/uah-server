@@ -3,7 +3,7 @@ import { createFileMigration, getSQLValueOfNode } from './utils.js';
 import { makeMigrations, presetMigrations as presets } from './maker.js';
 
 export function createTableMigration(model) {
-  let { url, name } = model;
+  let { url, name, table } = model;
   let fields = [];
 
   let path = 'tables/' + name;
@@ -28,6 +28,10 @@ export function createTableMigration(model) {
     }
 
     fields.push(field);
+  }
+
+  if (table.primary?.length) {
+    fields.push('\n  PRIMARY KEY ("' + table.primary.join('", "') + '")');
   }
 
   up += fields.join(',\n');

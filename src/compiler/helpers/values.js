@@ -1,10 +1,22 @@
 import ts from 'typescript';
+
 import { factoryLiteral, getConstantLiteral } from './expression.js';
 import { getTypeOfTypeNode, isLiteralTypeOrNullType } from './checker.js';
 import { host } from '../host.js';
 
-const { TypeQuery, LiteralType, TypeReference, IndexedAccessType } =
-  ts.SyntaxKind;
+const {
+  TypeQuery,
+  LiteralType,
+  StringLiteral,
+  NumericLiteral,
+  TrueKeyword,
+  FalseKeyword,
+  NullKeyword,
+  TypeReference,
+  IndexedAccessType,
+  ObjectLiteralExpression,
+  ArrayLiteralExpression,
+} = ts.SyntaxKind;
 
 export const getValueOfLiteralType = type =>
   type.value ??
@@ -43,5 +55,42 @@ export function getValueOfTypeNode(node) {
 
     case IndexedAccessType:
       return;
+  }
+}
+
+function getObjectOfObjectLiteral(node) {
+  const object = {};
+
+  for (const { name, initializer } of node.properties) {
+    const key = name.escapedText ?? name.text;
+
+    object[key] = getValueOfLiteral(initializer);
+  }
+
+  return object;
+}
+
+export function getValueOfLiteral(node) {
+  switch (node.kind) {
+    case TrueKeyword:
+      return true;
+
+    case FalseKeyword:
+      return false;
+
+    case NullKeyword:
+      return null;
+
+    case StringLiteral:
+      return node.text;
+
+    case NumericLiteral:
+      return Number(node.text);
+
+    case ObjectLiteralExpression:
+      return getObjectOfObjectLiteral(node);
+
+    case ArrayLiteralExpression:
+      return node.elements.map(getValueOfLiteral);
   }
 }

@@ -113,6 +113,10 @@ class FileSender {
   }
 
   onReadFile(error, bytesRead) {
+    if (error) {
+      this.onError(error);
+    }
+
     if (this.isConnected) {
       if (bytesRead) {
         this.position += bytesRead;
@@ -128,7 +132,6 @@ class FileSender {
           this.response.cork(this.write);
         }
       } else {
-        this.onError(error);
         this.isReadable = false;
         this.response.cork(this.endRespond);
       }

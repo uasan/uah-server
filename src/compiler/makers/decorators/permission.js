@@ -3,7 +3,7 @@ import { decorMethodStatements } from '../../helpers/decorators.js';
 import { factoryAssignPropertyStatement } from '../../helpers/var.js';
 import { host } from '../../host.js';
 
-export function Permission(node, original, permission) {
+export function Permission(node, original, decor) {
   const self = host.factory.createThis();
   const args = [self];
 
@@ -14,7 +14,7 @@ export function Permission(node, original, permission) {
   const ast = factoryAssignPropertyStatement(
     self,
     'permission',
-    factoryAwaitCall(permission, args)
+    factoryAwaitCall(decor.arguments[0], args)
   );
 
   return decorMethodStatements(node, original, [ast]);

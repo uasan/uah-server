@@ -31,6 +31,7 @@ import { Uint8Array } from './types/validators/Uint8Array.js';
 import { TypedArray } from './types/validators/TypedArray.js';
 import { BinaryData } from './types/validators/BinaryData.js';
 
+import { Table } from './decorators/table.js';
 import { Postgres } from './decorators/postgres.js';
 import { Permission } from './decorators/permission.js';
 
@@ -61,6 +62,7 @@ export const lookup = {
   },
 
   decorators: {
+    Table,
     Postgres,
     Permission,
   },
@@ -108,10 +110,10 @@ export function makeDecorator(node) {
   const symbol = getSymbolDecorator(node.expression);
 
   if (decorators.has(symbol)) {
-    const arg = node.expression.arguments?.[0];
+    const { expression } = node;
 
     addTransformer(node.parent, (node, original) =>
-      decorators.get(symbol)(node, original, arg)
+      decorators.get(symbol)(node, original, expression)
     );
   } else {
     return host.visitEachChild(node);
