@@ -105,6 +105,9 @@ export const isNullableType = type =>
   (type.flags & flagVoidLike) !== 0 ||
   type !== host.checker.getNonNullableType(type);
 
+export const isDefiniteType = type =>
+  !(type.flags & flagNever) && !(type.flags & flagAny);
+
 export const isVoidLikeType = type => (type.flags & flagVoidLike) !== 0;
 
 export const isReadonlySymbol = symbol =>

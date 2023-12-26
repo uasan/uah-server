@@ -1,9 +1,7 @@
 import ts from 'typescript';
 
 import { host } from '../../host.js';
-import { factoryString } from '../../helpers/expression.js';
 import {
-  factoryStaticMethod,
   factoryStaticProperty,
   isFieldProperty,
   updateClass,
@@ -39,14 +37,6 @@ const getSqlType = meta =>
             : isNonPrimitiveType(meta.type)
               ? 'jsonb'
               : 'text';
-
-function makeToSQL(model) {
-  return factoryStaticMethod(
-    'toSQL',
-    [],
-    [host.factory.createReturnStatement(factoryString(model.tableName))]
-  );
-}
 
 function getTableReferences(links) {
   let ref = '';
@@ -95,7 +85,6 @@ export function TableModel(node) {
   node = host.visitEachChild(node);
 
   return updateClass(node, node.modifiers, node.name, node.heritageClauses, [
-    //makeToSQL(model),
     factoryStaticProperty('fields', factoryObjectOfMap(model.fields)),
     ...node.members,
   ]);

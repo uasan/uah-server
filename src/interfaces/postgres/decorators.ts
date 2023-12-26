@@ -28,7 +28,7 @@ interface Reference {
 
 interface TableOptions {
   name: string;
-  primary: [string, ...string[]];
+  primary: string[];
   references?: Record<string, Reference>;
   constrains?: Record<string, any>;
   indexes?: Record<string, any>;

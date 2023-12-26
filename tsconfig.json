@@ -52,6 +52,6 @@
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,
     "allowArbitraryExtensions": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": true
   }
 }

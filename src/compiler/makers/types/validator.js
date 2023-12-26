@@ -1,5 +1,6 @@
 import {
   getPropertiesOfTypeNode,
+  isDefiniteType,
   isTrueKeyword,
 } from '../../helpers/checker.js';
 import { getValueOfTypeNode } from '../../helpers/values.js';
@@ -60,6 +61,8 @@ export class Validator {
   }
 
   static isAssignable(type) {
-    return host.checker.isTypeAssignableTo(type, this.type);
+    return (
+      host.checker.isTypeAssignableTo(type, this.type) && isDefiniteType(type)
+    );
   }
 }

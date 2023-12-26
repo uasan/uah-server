@@ -31,13 +31,7 @@ export const factoryClassStaticBlock = statements =>
     host.factory.createBlock(statements, true)
   );
 
-export const updateClass = (
-  node,
-  modifiers,
-  name,
-  heritageClauses,
-  statements
-) =>
+export const updateClass = (node, modifiers, name, heritageClauses, members) =>
   node.kind === ClassDeclaration
     ? host.factory.updateClassDeclaration(
         node,
@@ -45,7 +39,7 @@ export const updateClass = (
         name,
         undefined,
         heritageClauses,
-        statements
+        members
       )
     : host.factory.updateClassExpression(
         node,
@@ -53,7 +47,7 @@ export const updateClass = (
         name,
         undefined,
         heritageClauses,
-        statements
+        members
       );
 
 export const isFieldProperty = member =>

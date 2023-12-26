@@ -15,6 +15,6 @@ export function Postgres({ prototype }, options) {
       : new Client({ signal, ...options });
 }
 
-export function Table(ctor, options) {
-  ctor.table = options;
+export function Table() {
+  //ctor.table = options;
 }

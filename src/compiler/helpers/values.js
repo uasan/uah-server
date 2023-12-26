@@ -1,8 +1,12 @@
 import ts from 'typescript';
 
-import { factoryLiteral, getConstantLiteral } from './expression.js';
-import { getTypeOfTypeNode, isLiteralTypeOrNullType } from './checker.js';
 import { host } from '../host.js';
+import { factoryLiteral, getConstantLiteral } from './expression.js';
+import {
+  getTypeOfTypeNode,
+  getOriginSymbolOfNode,
+  isLiteralTypeOrNullType,
+} from './checker.js';
 
 const {
   TypeQuery,
@@ -14,6 +18,7 @@ const {
   NullKeyword,
   TypeReference,
   IndexedAccessType,
+  VariableDeclaration,
   ObjectLiteralExpression,
   ArrayLiteralExpression,
 } = ts.SyntaxKind;
@@ -92,5 +97,14 @@ export function getValueOfLiteral(node) {
 
     case ArrayLiteralExpression:
       return node.elements.map(getValueOfLiteral);
+
+    case VariableDeclaration:
+      return getValueOfLiteral(node.initializer);
+  }
+
+  const symbol = getOriginSymbolOfNode(node);
+
+  if (symbol?.valueDeclaration) {
+    return getValueOfLiteral(symbol.valueDeclaration);
   }
 }
