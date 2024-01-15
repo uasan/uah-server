@@ -1,5 +1,6 @@
 import {
   isArray,
+  isBigInt,
   isBoolean,
   isEmail,
   isInteger,
@@ -55,6 +56,12 @@ export class Validator {
     return this.skip || isNumber(this.data[this.key])
       ? this
       : this.setError(Errors.typeMismatch, 'number');
+  }
+
+  isBigInt() {
+    return this.skip || isBigInt(this.data[this.key])
+      ? this
+      : this.setError(Errors.typeMismatch, 'bigint');
   }
 
   isBoolean() {

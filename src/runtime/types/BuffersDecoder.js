@@ -46,6 +46,11 @@ export const BuffersDecoder = new (class BuffersDecoder {
     return this.getSlice(this.getUint32());
   }
 
+  getBigInt() {
+    this.offset += 8;
+    return this.view.getBigInt64(this.offset - 8);
+  }
+
   getString() {
     return textDecoder.decode(this.getBuffer());
   }

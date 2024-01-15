@@ -34,6 +34,12 @@ export function createTableMigration(model) {
     fields.push('\n  PRIMARY KEY ("' + table.primary.join('", "') + '")');
   }
 
+  if (table.unique) {
+    for (const key of Object.keys(table.unique)) {
+      fields.push('  CONSTRAINT "' + key + '" UNIQUE ("' + key + '")');
+    }
+  }
+
   up += fields.join(',\n');
   up += '\n)`);';
 

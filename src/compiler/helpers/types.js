@@ -91,6 +91,7 @@ export class MetaType {
 
   isBlob = false;
   isFile = false;
+  isUUID = false;
   isBinary = false;
   isStream = false;
   isBufferStream = false;

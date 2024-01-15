@@ -3,6 +3,7 @@ export const { isArray } = Array;
 export const { isInteger } = Number;
 
 export const isNumber = value => typeof value === 'number';
+export const isBigInt = value => typeof value === 'bigint';
 export const isString = value => typeof value === 'string';
 export const isBoolean = value => typeof value === 'boolean';
 export const isFunction = value => typeof value === 'function';

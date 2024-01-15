@@ -1,16 +1,18 @@
-interface InitOptions {
-  key: ArrayBuffer;
-  algorithm: number;
-}
-
-interface VerifyOptions {
+interface GetterOptions {
   data: ArrayBuffer;
   json: ArrayBuffer;
   signature: ArrayBuffer;
 }
 
+interface VerifyOptions {
+  key: ArrayBuffer;
+  algorithm: number;
+}
+
 export declare class WebAuthn {
-  constructor(options: InitOptions);
+  challenge: Uint8Array;
 
   verify(options: VerifyOptions): Promise<void>;
+
+  static get(options: GetterOptions): Promise<WebAuthn>;
 }

@@ -30,6 +30,7 @@ import { Default } from './types/validators/Default.js';
 import { Uint8Array } from './types/validators/Uint8Array.js';
 import { TypedArray } from './types/validators/TypedArray.js';
 import { BinaryData } from './types/validators/BinaryData.js';
+import { BigIntSerial } from './types/validators/BigIntSerial.js';
 
 import { Table } from './decorators/table.js';
 import { Postgres } from './decorators/postgres.js';
@@ -59,6 +60,7 @@ export const lookup = {
     Uint8Array,
     TypedArray,
     BinaryData,
+    BigIntSerial,
   },
 
   decorators: {
