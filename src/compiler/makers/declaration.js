@@ -27,6 +27,7 @@ import { Email } from './types/validators/Email.js';
 import { Float } from './types/validators/Float.js';
 import { Float32 } from './types/validators/Float32.js';
 import { Default } from './types/validators/Default.js';
+import { DateLike } from './types/validators/DateLike.js';
 import { Uint8Array } from './types/validators/Uint8Array.js';
 import { TypedArray } from './types/validators/TypedArray.js';
 import { BinaryData } from './types/validators/BinaryData.js';
@@ -57,9 +58,10 @@ export const lookup = {
     UUID,
     Email,
     Default,
+    DateLike,
+    BinaryData,
     Uint8Array,
     TypedArray,
-    BinaryData,
     BigIntSerial,
   },
 

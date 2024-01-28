@@ -11,12 +11,14 @@ import {
   isNumberType,
   isObjectType,
   isStringType,
+  getConstructIdentifier,
   hasAnyType,
   isTypeAsValues,
   getIndexTypeOfType,
   getPropertiesOfType,
   isNonPrimitiveType,
   isTupleType,
+  isBigIntType,
 } from './checker.js';
 import {
   factoryIdentifier,
@@ -43,8 +45,6 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
     return ast;
   }
 
-  //console.log(name, host.checker.typeToString(type), isTypeAsValues(type));
-
   if (isTypeAsValues(type)) {
     return factoryCallMethod(ast, 'inArray', [getRefForLiteralTypes(type)]);
   }
@@ -59,6 +59,8 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
     ast = factoryCallMethod(ast, 'isString');
   } else if (isNumberType(type)) {
     ast = factoryCallMethod(ast, 'isNumber');
+  } else if (isBigIntType(type)) {
+    ast = factoryCallMethod(ast, 'isBigInt');
   } else if (isBooleanType(type)) {
     ast = factoryCallMethod(ast, 'isBoolean');
   } else if (isNonPrimitiveType(type)) {
@@ -89,16 +91,22 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
       ]);
     }
   } else if (isObjectType(type)) {
-    const symbols = getPropertiesOfType(type);
+    const ctor = getConstructIdentifier(meta.node);
 
-    if (symbols.length) {
-      const childAst = factoryIdentifier('_');
-
-      ast = factoryCallMethod(ast, 'forObject', [
-        makeValidateFunction(makeValidatorsBySymbols(childAst, [...symbols])),
-      ]);
+    if (ctor) {
+      ast = factoryCallMethod(ast, 'toInstance', [ctor]);
     } else {
-      ast = factoryCallMethod(ast, 'isObject');
+      const symbols = getPropertiesOfType(type);
+
+      if (symbols.length) {
+        const childAst = factoryIdentifier('_');
+
+        ast = factoryCallMethod(ast, 'forObject', [
+          makeValidateFunction(makeValidatorsBySymbols(childAst, [...symbols])),
+        ]);
+      } else {
+        ast = factoryCallMethod(ast, 'isObject');
+      }
     }
   }
 

@@ -7,6 +7,7 @@ export class ServerContext extends Context {
   cookies = new Map();
   connected = true;
   permission = null;
+
   request = {
     headers: {
       etag: '',

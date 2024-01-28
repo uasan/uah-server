@@ -1,16 +1,14 @@
 import ts from 'typescript';
 
 import { host } from '../../host.js';
-import {
-  factoryStaticProperty,
-  isFieldProperty,
-  updateClass,
-} from '../../helpers/class.js';
+import { factoryStaticProperty, updateClass } from '../../helpers/class.js';
 import { MetaType } from '../../helpers/types.js';
 import {
+  getTypeOfNode,
   isBigIntType,
   isBooleanType,
-  isNonPrimitiveType,
+  isNeverType,
+  isObjectType,
   isNumberType,
   isStringType,
 } from '../../helpers/checker.js';
@@ -34,7 +32,7 @@ const getSqlType = meta =>
           ? 'float8'
           : isBooleanType(meta.type)
             ? 'boolean'
-            : isNonPrimitiveType(meta.type)
+            : isObjectType(meta.type)
               ? 'jsonb'
               : 'text';
 
@@ -66,8 +64,12 @@ export function TableModel(node) {
   model.columns = new Map();
   model.comment = host.entity.path.slice(PATH_SRC.length);
 
-  for (const member of node.members.filter(isFieldProperty)) {
-    const meta = MetaType.create(member);
+  for (const symbol of getTypeOfNode(node).properties) {
+    const meta = MetaType.create(symbol.valueDeclaration);
+
+    if (isNeverType(meta.type)) {
+      continue;
+    }
 
     model.columns.set(meta.name, {
       name: meta.name,

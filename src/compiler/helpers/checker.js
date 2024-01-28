@@ -33,11 +33,13 @@ export const {
   ExtendsKeyword,
   NumericLiteral,
   DeclareKeyword,
+  TypeReference,
 } = ts.SyntaxKind;
 
 const { Readonly: CheckFlagReadonly } = ts.CheckFlags;
 const { Readonly: ModifierFlagReadonly } = ts.ModifierFlags;
 const { Const } = ts.NodeFlags;
+const { SignatureConstruct } = ts.SignatureKind;
 const { Interface, TypeAlias, Alias, ExportValue } = ts.SymbolFlags;
 const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } =
   ts;
@@ -52,6 +54,7 @@ export const isDeclareKeyword = ({ kind }) => kind === DeclareKeyword;
 
 export const isAnyType = ({ flags }) => (flags & flagAny) !== 0;
 export const isNullType = ({ flags }) => (flags & flagNull) !== 0;
+export const isNeverType = ({ flags }) => (flags & flagNever) !== 0;
 export const isEnumType = ({ flags }) => (flags & flagEnumLike) !== 0;
 export const isLiteralType = ({ flags }) => (flags & flagLiteral) !== 0;
 export const isNumberType = ({ flags }) => (flags & flagNumberLike) !== 0;
@@ -190,3 +193,17 @@ export const getReturnType = node =>
   host.checker.getReturnTypeOfSignature(
     host.checker.getSignatureFromDeclaration(node)
   );
+
+export const getSignaturesConstructOfType = type =>
+  host.checker.getSignaturesOfType(type, SignatureConstruct);
+
+export const getSignaturesConstructOfSymbol = symbol =>
+  getSignaturesConstructOfType(getTypeOfSymbol(symbol));
+
+export const hasSignatureConstruct = node =>
+  getSignaturesConstructOfSymbol(getSymbolOfNode(node)).length > 0;
+
+export const getConstructIdentifier = node =>
+  node.kind === TypeReference && hasSignatureConstruct(node.typeName)
+    ? node.typeName
+    : null;

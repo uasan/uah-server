@@ -176,6 +176,17 @@ export class Validator {
     return this;
   }
 
+  toInstance(ctor) {
+    if (this.skip === false && this.data[this.key] instanceof ctor === false) {
+      try {
+        this.data[this.key] = new ctor(this.data[this.key]);
+      } catch (e) {
+        this.setError(Errors.typeMismatch, ctor.name);
+      }
+    }
+    return this;
+  }
+
   setParent() {
     this.data = this.data[this.key];
     this.parent = this.parent ? [...this.parent, this.key] : [this.key];

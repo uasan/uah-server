@@ -1,7 +1,7 @@
 import { Validator } from '../Validator.js';
 
-export class BinaryData extends Validator {
-  static sqlType = 'bytea';
+export class DateLike extends Validator {
+  static sqlType = 'timestamptz';
 
   static make() {
     //

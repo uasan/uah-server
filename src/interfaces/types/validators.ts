@@ -81,3 +81,5 @@ export type TypedArray =
   | Float64Array;
 
 export type BinaryData = ArrayBuffer | TypedArray | DataView | Blob | File;
+
+export type DateLike = Date;

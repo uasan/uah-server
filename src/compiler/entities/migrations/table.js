@@ -20,7 +20,13 @@ export function createTableMigration(model) {
     }
 
     if (column.default) {
-      field += ' DEFAULT ' + getSQLValueOfNode(column.default);
+      const value = getSQLValueOfNode(column.default);
+
+      if (value) {
+        field += ' DEFAULT ' + value;
+      } else if (column.type === 'timestamptz') {
+        field += ' DEFAULT CURRENT_TIMESTAMP';
+      }
     }
 
     if (column.references) {

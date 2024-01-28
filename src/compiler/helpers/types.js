@@ -9,6 +9,8 @@ import {
   hasNullType,
   hasUndefinedType,
 } from './checker.js';
+
+import { DateLike } from '../makers/types/validators/DateLike.js';
 import { BinaryData } from '../makers/types/validators/BinaryData.js';
 
 const {
@@ -36,7 +38,7 @@ function makeIndexedAccess(meta, node) {
 }
 
 function makeMetaType(meta, node) {
-  switch (node?.kind) {
+  switch (node.kind) {
     case TypeReference:
       {
         const symbol = getOriginSymbolOfNode(node.typeName);
@@ -45,7 +47,10 @@ function makeMetaType(meta, node) {
           types.get(symbol).make(meta, node.typeArguments);
         } else if (meta.isBinary === false) {
           const typeNode = symbol.declarations?.[0]?.type;
-          makeMetaType(meta, typeNode);
+
+          if (typeNode) {
+            makeMetaType(meta, typeNode);
+          }
         }
       }
       break;
@@ -80,6 +85,7 @@ function makeMetaType(meta, node) {
 
 export class MetaType {
   name = '';
+  node = null;
   type = null;
   defaultValue = null;
 
@@ -94,6 +100,7 @@ export class MetaType {
   isUUID = false;
   isBinary = false;
   isStream = false;
+  isDateLike = false;
   isBufferStream = false;
 
   byteLength = 0;
@@ -105,11 +112,15 @@ export class MetaType {
   validators = new Set();
 
   constructor(node, type = getNonNullableType(getTypeOfTypeNode(node))) {
+    this.node = node;
     this.type = type;
 
-    if (BinaryData.isAssignable(type)) {
+    if (DateLike.isAssignable(type)) {
+      this.isDateLike = true;
+      this.sqlType = DateLike.sqlType;
+    } else if (BinaryData.isAssignable(type)) {
       this.isBinary = true;
-      this.sqlType = 'bytea';
+      this.sqlType = BinaryData.sqlType;
     }
 
     makeMetaType(this, node);

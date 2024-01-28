@@ -4,7 +4,10 @@ export function parseCookies(map, header) {
 
     for (let i = 0; i < list.length; i++) {
       const pos = list[i].indexOf('=');
-      map.set(list[i].slice(0, pos), list[i].slice(pos + 1));
+
+      if (pos !== -1) {
+        map.set(list[i].slice(0, pos), list[i].slice(pos + 1));
+      }
     }
   }
 }
