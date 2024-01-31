@@ -6,4 +6,10 @@ export class BigIntSerial extends Validator {
   make(ast) {
     return super.make(ast, 'isBigInt');
   }
+
+  static make(meta, args) {
+    meta.sqlType = meta.isRefType ? 'int8' : this.sqlType;
+
+    super.make(meta, args);
+  }
 }

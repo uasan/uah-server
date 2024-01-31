@@ -28,6 +28,7 @@ function makeIndexedAccess(meta, node) {
   const symbol = getOriginSymbolOfNode(node.objectType.typeName);
 
   if (symbol.valueDeclaration) {
+    meta.isRefType = true;
     meta.links.push({
       node: symbol.valueDeclaration,
       key: node.indexType.literal.text,
@@ -102,6 +103,8 @@ export class MetaType {
   isStream = false;
   isDateLike = false;
   isBufferStream = false;
+
+  isRefType = false;
 
   byteLength = 0;
   minByteLength = 0;

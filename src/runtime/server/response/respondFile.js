@@ -57,7 +57,8 @@ class FileSender {
   }
 
   sendHeaders() {
-    const { file, context, response } = this;
+    const { file, response } = this;
+    const { headers } = this.context.response;
 
     if (this.range) {
       response.writeStatus('206');
@@ -88,8 +89,8 @@ class FileSender {
       );
     }
 
-    for (let i = 0; i < context.headers.length; i++)
-      response.writeHeader(context.headers[i], context.headers[++i]);
+    for (let i = 0; i < headers.length; i++)
+      response.writeHeader(headers[i], headers[++i]);
 
     this.isWritable = true;
     response.onWritable(this.onWritable);

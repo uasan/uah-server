@@ -77,16 +77,13 @@ export function makeRouteMethod(name, node) {
   ast = factoryAwait(factoryCallMethod(ast, name, payload && [payload]));
 
   if (isVoidLikeType(returnType)) {
-    statements.push(
-      factoryStatement(ast),
-      internals.respondNoContent(res, ctx)
-    );
+    statements.push(factoryStatement(ast), internals.respondNoContent(res));
   } else if (File.isAssignable(returnType)) {
     statements.push(internals.respondFile(res, ast));
   } else if (BinaryData.isAssignable(returnType) || isStringType(returnType)) {
-    statements.push(internals.respondBinary(res, ctx, ast));
+    statements.push(internals.respondBinary(res, ast));
   } else {
-    statements.push(internals.respondJson(res, ctx, ast));
+    statements.push(internals.respondJson(res, ast));
   }
 
   host.entity.route.methods.push({

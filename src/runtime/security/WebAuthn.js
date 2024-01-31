@@ -77,6 +77,14 @@ export class WebAuthn {
     }
   }
 
+  static async create(options) {
+    const self = new this();
+
+    await self.validate(options);
+
+    return self;
+  }
+
   static async get(options) {
     const self = new this();
 

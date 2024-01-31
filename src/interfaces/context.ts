@@ -1,5 +1,5 @@
 import { type PostgresClient } from '@uah/postgres';
-import {  type SQL } from './postgres/sql.ts';
+import { type SQL } from './postgres/sql.ts';
 
 export declare abstract class Context {
   /** @internal */ postgres: PostgresClient;

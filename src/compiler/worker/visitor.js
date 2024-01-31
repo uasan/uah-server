@@ -40,6 +40,7 @@ const makers = {
   [SyntaxKind.NumberKeyword]: returnUndefined,
   [SyntaxKind.SymbolKeyword]: returnUndefined,
   [SyntaxKind.TypePredicate]: returnUndefined,
+  [SyntaxKind.BigIntKeyword]: returnUndefined,
   [SyntaxKind.BooleanKeyword]: returnUndefined,
   [SyntaxKind.UnknownKeyword]: returnUndefined,
   [SyntaxKind.IntersectionType]: returnUndefined,

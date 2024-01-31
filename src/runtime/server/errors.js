@@ -1,4 +1,4 @@
-export const notImplemented = (response, request) => {
+export function notImplemented(response, request) {
   response
     .writeStatus('501')
     .writeHeader('cache-control', 'no-store')
@@ -11,9 +11,9 @@ export const notImplemented = (response, request) => {
         method: request.getMethod(),
       })
     );
-};
+}
 
-export const respondContentTooLarge = response => {
+export function respondContentTooLarge(response) {
   response
     .writeStatus('413')
     .writeHeader('cache-control', 'no-store')
@@ -24,6 +24,6 @@ export const respondContentTooLarge = response => {
         type: 'ContentTooLarge',
       })
     );
-};
+}
 
 export const errors = {};

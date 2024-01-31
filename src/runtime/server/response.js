@@ -2,40 +2,54 @@ export { respondError } from './response/respondError.js';
 
 const { stringify } = JSON;
 
-function sendBlob(res, ctx, data) {
-  if (ctx.status) {
-    res.writeStatus(ctx.status + '');
+function writeResponse(res, status, headers, body) {
+  if (status !== 0) {
+    res.writeStatus(status + '');
   }
 
-  for (let i = 0; i < ctx.headers.length; i++)
-    res.writeHeader(ctx.headers[i], ctx.headers[++i]);
+  for (let i = 0; i < headers.length; i++)
+    res.writeHeader(headers[i], headers[++i]);
 
-  res.end(data);
+  res.end(body);
 }
 
-export function respondNoContent(res, ctx) {
-  if (ctx.connected) {
+export function respondNoContent(res) {
+  if (res.context.connected) {
     res.cork(() => {
-      res.writeStatus((ctx.status || 204) + '');
-      res.end();
+      writeResponse(
+        res,
+        res.context.response.status || 204,
+        res.context.response.headers,
+        undefined
+      );
     });
   }
 }
 
-export function respondBinary(res, ctx, data) {
-  if (ctx.connected) {
+export function respondBinary(res, body) {
+  if (res.context.connected) {
     res.cork(() => {
-      sendBlob(res, ctx, data);
+      writeResponse(
+        res,
+        res.context.response.status,
+        res.context.response.headers,
+        body
+      );
     });
   }
 }
 
-export function respondJson(res, ctx, data) {
-  if (ctx.connected) {
-    ctx.headers.push('content-type', 'application/json');
+export function respondJson(res, data) {
+  if (res.context.connected) {
+    res.context.response.headers.push('content-type', 'application/json');
 
     res.cork(() => {
-      sendBlob(res, ctx, stringify({ data }));
+      writeResponse(
+        res,
+        res.context.response.status,
+        res.context.response.headers,
+        stringify({ data })
+      );
     });
   }
 }

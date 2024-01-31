@@ -12,18 +12,26 @@ export function parseCookies(map, header) {
   }
 }
 
-export function setCookie(name, value, options) {
-  value = name + '=' + value;
-  value += '; path=' + (options?.path || '/');
+export function setCookie(options, value) {
+  value = options.name + '=' + value;
+  value += '; path=' + (options.path || '/');
 
-  if (options?.maxAge != null) {
+  if (options.maxAge != null) {
     value += '; max-age=' + options.maxAge;
-  } else if (options?.expires) {
+  } else if (options.expires) {
     value += '; expires=' + options.expires.toGMTString();
   }
 
-  if (options?.httpOnly) value += '; httponly';
-  if (options?.sameSite) value += '; samesite=' + options.sameSite;
+  if (options.secure) value += '; secure';
+  if (options.httpOnly) value += '; httponly';
+  if (options.partitioned) value += '; partitioned';
 
-  return value;
+  if (options.domain) value += '; domain=' + options.domain;
+  if (options.sameSite) value += '; samesite=' + options.sameSite;
+
+  this.headers.push('set-cookie', value);
+}
+
+export function deleteCookie(options) {
+  setCookie({ ...options, maxAge: 0 }, '');
 }
