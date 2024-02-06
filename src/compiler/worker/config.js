@@ -38,7 +38,7 @@ export const compilerOptions = {
   target: ts.ScriptTarget.ESNext,
   moduleDetection: 'force',
   useDefineForClassFields: true,
-  exactOptionalPropertyTypes: true,
+  exactOptionalPropertyTypes: false,
   forceConsistentCasingInFileNames: true,
   assumeChangesOnlyAffectDirectDependencies: false,
   moduleResolution: ts.ModuleResolutionKind.Bundler,

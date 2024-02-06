@@ -9,6 +9,7 @@ export * from './src/interfaces/types/File.ts';
 export * from './src/interfaces/types/validators.ts';
 export * from './src/interfaces/postgres/model.ts';
 export * from './src/interfaces/postgres/decorators.ts';
+export * from './src/interfaces/utils/io.ts';
 
 export * from './src/interfaces/exceptions/BadRequest.ts';
 export * from './src/interfaces/exceptions/Conflict.ts';

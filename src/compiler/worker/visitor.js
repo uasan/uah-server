@@ -31,6 +31,7 @@ const makers = {
   [SyntaxKind.UnionType]: returnUndefined,
   [SyntaxKind.AnyKeyword]: returnUndefined,
   [SyntaxKind.LiteralType]: returnUndefined,
+  [SyntaxKind.FunctionType]: returnUndefined,
   [SyntaxKind.TypeLiteral]: returnUndefined,
   [SyntaxKind.AsExpression]: returnExpression,
   [SyntaxKind.TypeParameter]: returnUndefined,

@@ -43,7 +43,7 @@
     "target": "ESNext",
     "moduleDetection": "force",
     "useDefineForClassFields": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "forceConsistentCasingInFileNames": true,
     "assumeChangesOnlyAffectDirectDependencies": false,
     "moduleResolution": "bundler",

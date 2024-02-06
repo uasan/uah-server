@@ -68,8 +68,12 @@ export const isNonPrimitiveType = ({ flags }) =>
 
 export const isObjectType = ({ flags, types }) =>
   (flags & ObjectFlagsType) !== 0 &&
-  (flags & flagAny) === 0 &&
+  (flags & flagUndefined) === 0 &&
   (flags & flagNull) === 0 &&
+  (flags & flagAny) === 0 &&
+  (flags & flagUnknown) === 0 &&
+  (flags & flagNever) === 0 &&
+  (flags & flagVoidLike) === 0 &&
   (!types || every(types, isObjectType));
 
 export const isLiteralTypeOrNullType = type =>
@@ -100,12 +104,12 @@ export const isObjectNode = node =>
   isObjectType(host.checker.getTypeAtLocation(node));
 
 export const isNullableType = type =>
-  (type.flags & flagAny) !== 0 ||
-  (type.flags & flagNull) !== 0 ||
   (type.flags & flagUndefined) !== 0 ||
+  (type.flags & flagNull) !== 0 ||
+  (type.flags & flagVoidLike) !== 0 ||
+  (type.flags & flagAny) !== 0 ||
   (type.flags & flagUnknown) !== 0 ||
   (type.flags & flagNever) !== 0 ||
-  (type.flags & flagVoidLike) !== 0 ||
   type !== host.checker.getNonNullableType(type);
 
 export const isDefiniteType = type =>
