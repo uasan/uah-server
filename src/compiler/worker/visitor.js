@@ -8,14 +8,18 @@ import {
   makeFunctionDeclaration,
   makePropertyDeclaration,
 } from '../makers/class.js';
-import { isNotThisIdentifier } from '../helpers/checker.js';
 
 const { SyntaxKind, visitEachChild, nullTransformationContext } = ts;
 
 const returnUndefined = () => undefined;
 const returnExpression = node => host.visit(node.expression);
-const makeParameter = node =>
-  isNotThisIdentifier(node.name) ? host.visitEachChild(node) : undefined;
+
+function makeParameter(node) {
+  node.questionToken = undefined;
+  return node.name.escapedText !== 'this'
+    ? host.visitEachChild(node)
+    : undefined;
+}
 
 const makers = {
   [SyntaxKind.Decorator]: makeDecorator,
@@ -31,6 +35,7 @@ const makers = {
   [SyntaxKind.UnionType]: returnUndefined,
   [SyntaxKind.AnyKeyword]: returnUndefined,
   [SyntaxKind.LiteralType]: returnUndefined,
+  [SyntaxKind.TupleType]: returnUndefined,
   [SyntaxKind.FunctionType]: returnUndefined,
   [SyntaxKind.TypeLiteral]: returnUndefined,
   [SyntaxKind.AsExpression]: returnExpression,
