@@ -4,6 +4,7 @@ import { makePayloadFromBody, makePayloadFromQuery } from './payload.js';
 
 import { factoryRouteFunction } from '../../helpers/function.js';
 import {
+  factoryCall,
   factoryCallMethod,
   factoryCallThisMethod,
 } from '../../helpers/call.js';
@@ -13,6 +14,7 @@ import {
   factoryIdentifier,
   factoryAwait,
   factoryAwaitStatement,
+  factoryPropertyParenthesized,
 } from '../../helpers/expression.js';
 import {
   factoryStatement,
@@ -25,6 +27,7 @@ import {
   isVoidLikeType,
   isNotThisParameter,
   isStringType,
+  isBigIntType,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
@@ -82,6 +85,16 @@ export function makeRouteMethod(name, node) {
     statements.push(internals.respondFile(res, ast));
   } else if (BinaryData.isAssignable(returnType) || isStringType(returnType)) {
     statements.push(internals.respondBinary(res, ast));
+  } else if (isBigIntType(returnType)) {
+    statements.push(
+      internals.respondBinary(
+        res,
+        factoryPropertyParenthesized(
+          ast,
+          factoryCall(factoryIdentifier('toString'))
+        )
+      )
+    );
   } else {
     statements.push(internals.respondJson(res, ast));
   }

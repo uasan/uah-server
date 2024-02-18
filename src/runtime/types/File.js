@@ -74,6 +74,7 @@ export class File {
         .pipeThrough(hash.stream)
         .pipeTo(IO.createFileWriteStream(path));
 
+      this.path = path;
       this.hash = hash.digest(this.hashEncoding);
     } catch (error) {
       await unlink(path).catch(noop);
