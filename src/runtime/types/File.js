@@ -83,4 +83,8 @@ export class File {
 
     return path;
   }
+
+  [Symbol.dispose]() {
+    console.log('File dispose');
+  }
 }

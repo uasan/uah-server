@@ -48,7 +48,7 @@ export type BigIntSerial = bigint;
 
 export type Int<T extends NumberOptions = undefined> = number;
 export type Int8<T extends NumberOptions = undefined> = number;
-export type Int15<T extends NumberOptions = undefined> = number;
+export type Int16<T extends NumberOptions = undefined> = number;
 export type Int32<T extends NumberOptions = undefined> = number;
 export type Uint<T extends NumberOptions = undefined> = number;
 export type Uint8<T extends NumberOptions = undefined> = number;

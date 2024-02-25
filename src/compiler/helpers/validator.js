@@ -114,7 +114,7 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
 }
 
 function makeValidatorsByMeta(ast, meta) {
-  if (meta.isBinary) {
+  if (meta.isConstruct) {
     return ast;
   }
 
@@ -167,17 +167,20 @@ export function makePayloadValidator(node, type) {
     let initAst = host.factory.createIdentifier('_');
     let ast = makeValidatorsBySymbols(initAst, metaType.props);
 
-    if (initAst !== ast) {
-      addTransformer(node, node => {
-        node = ensureArgument(node);
+    addTransformer(node, node => {
+      node = ensureArgument(node);
+
+      if (initAst !== ast) {
         Object.assign(initAst, internals.newValidator(node.parameters[0].name));
 
         return updateMethodStatements(node, [
           factoryStatement(factoryCallMethod(ast, 'validate')),
           ...node.body.statements,
         ]);
-      });
-    }
+      } else {
+        return node;
+      }
+    });
   }
 
   return metaType;

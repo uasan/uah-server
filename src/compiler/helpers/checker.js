@@ -23,6 +23,14 @@ export const {
   ObjectFlagsType,
 } = ts.TypeFlags;
 
+const {
+  Interface,
+  TypeAlias,
+  Alias,
+  ExportValue,
+  Value: ValueSymbol,
+} = ts.SymbolFlags;
+
 export const {
   Decorator,
   TrueKeyword,
@@ -40,7 +48,6 @@ const { Readonly: CheckFlagReadonly } = ts.CheckFlags;
 const { Readonly: ModifierFlagReadonly } = ts.ModifierFlags;
 const { Const } = ts.NodeFlags;
 const { SignatureConstruct } = ts.SignatureKind;
-const { Interface, TypeAlias, Alias, ExportValue } = ts.SymbolFlags;
 const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } =
   ts;
 
@@ -132,6 +139,7 @@ export const getSymbolOfNode = node => host.checker.getSymbolAtLocation(node);
 export const isTypeSymbol = ({ flags }) =>
   (flags & TypeAlias) !== 0 || (flags & Interface) !== 0;
 
+export const isValueSymbol = ({ flags }) => (flags & ValueSymbol) !== 0;
 export const isAliasSymbol = symbol => (symbol.flags & Alias) !== 0;
 export const isExportSymbol = symbol => (symbol.flags & ExportValue) !== 0;
 export const isExportKeyword = ({ kind }) => kind === ExportKeyword;
@@ -204,10 +212,11 @@ export const getSignaturesConstructOfType = type =>
 export const getSignaturesConstructOfSymbol = symbol =>
   getSignaturesConstructOfType(getTypeOfSymbol(symbol));
 
-export const hasSignatureConstruct = node =>
-  getSignaturesConstructOfSymbol(getSymbolOfNode(node)).length > 0;
+export const hasSignatureConstruct = symbol =>
+  getSignaturesConstructOfSymbol(symbol).length > 0;
 
 export const getConstructIdentifier = node =>
-  node.kind === TypeReference && hasSignatureConstruct(node.typeName)
+  node.kind === TypeReference &&
+  hasSignatureConstruct(getSymbolOfNode(node.typeName))
     ? node.typeName
     : null;

@@ -75,8 +75,8 @@ export function TableModel(node) {
       name: meta.name,
       type: getSqlType(meta),
       default: meta.defaultValue,
-      isNotNull: !meta.isNullable,
       references: getTableReferences(meta.links),
+      isNotNull: !meta.isNullable && !meta.isUndefined,
     });
 
     model.fields.set(meta.name, [

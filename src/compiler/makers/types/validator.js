@@ -57,6 +57,7 @@ export class Validator {
 
   static make(meta, args) {
     meta.sqlType ||= this.sqlType;
+
     meta.validators.add(new this().setProps(meta, args?.[0]));
   }
 

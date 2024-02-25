@@ -7,6 +7,7 @@ import {
   getTypeOfNode,
   getTypeOfTypeNode,
   hasNullType,
+  hasSignatureConstruct,
   hasUndefinedType,
 } from './checker.js';
 
@@ -46,7 +47,9 @@ function makeMetaType(meta, node) {
 
         if (types.has(symbol)) {
           types.get(symbol).make(meta, node.typeArguments);
-        } else if (meta.isBinary === false) {
+        } else if (hasSignatureConstruct(symbol)) {
+          meta.isConstruct = true;
+        } else {
           const typeNode = symbol.declarations?.[0]?.type;
 
           if (typeNode) {
@@ -95,6 +98,8 @@ export class MetaType {
 
   isNullable = false;
   isOptional = false;
+  isUndefined = false;
+  isTypeTrusted = false;
 
   isBlob = false;
   isFile = false;
@@ -102,6 +107,7 @@ export class MetaType {
   isBinary = false;
   isStream = false;
   isDateLike = false;
+  isConstruct = false;
   isBufferStream = false;
 
   isRefType = false;
@@ -118,14 +124,7 @@ export class MetaType {
     this.node = node;
     this.type = type;
 
-    if (DateLike.isAssignable(type)) {
-      this.isDateLike = true;
-      this.sqlType = DateLike.sqlType;
-    } else if (BinaryData.isAssignable(type)) {
-      this.isBinary = true;
-      this.sqlType = BinaryData.sqlType;
-    }
-
+    //console.log(host.checker.typeToString(type), DateLike.isAssignable(type));
     makeMetaType(this, node);
   }
 
@@ -145,12 +144,21 @@ export class MetaType {
 
     if (hasUndefinedType(self.type)) {
       self.isOptional = true;
+      self.isUndefined = true;
       self.type = getNonUndefinedType(self.type);
     }
 
     if (node.initializer) {
       self.isOptional = true;
       self.defaultValue = node.initializer;
+    }
+
+    if (DateLike.isAssignable(self.type)) {
+      self.isDateLike = true;
+      self.sqlType = DateLike.sqlType;
+    } else if (BinaryData.isAssignable(self.type)) {
+      self.isBinary = true;
+      self.sqlType = BinaryData.sqlType;
     }
 
     return self;

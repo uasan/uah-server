@@ -15,7 +15,8 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": 2 // Means error
+    "prettier/prettier": 2,
+    "@typescript-eslint/no-explicit-any": 1
   },
   "env": {
     "browser": true,
