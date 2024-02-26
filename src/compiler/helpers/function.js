@@ -56,7 +56,7 @@ export const factoryRouteFunction = statements =>
     host.factory.createBlock(statements, false)
   );
 
-export const updateMethodParameters = (node, parameters) =>
+export const updateMethod = (node, parameters, statements) =>
   host.factory.updateMethodDeclaration(
     node,
     node.modifiers,
@@ -66,7 +66,7 @@ export const updateMethodParameters = (node, parameters) =>
     undefined,
     parameters,
     undefined,
-    node.body
+    host.factory.updateBlock(node.body, statements)
   );
 
 export const updateMethodStatements = (node, statements) =>
@@ -102,7 +102,7 @@ export function ensureArgument(node, index = 0) {
     undefined
   );
 
-  return updateMethodStatements(updateMethodParameters(node, parameters), [
+  return updateMethod(node, parameters, [
     factoryLet(parameter.name, arg),
     ...node.body.statements,
   ]);
