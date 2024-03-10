@@ -6,7 +6,7 @@ import {
 
 import { signal } from '../process.js';
 import { Router } from './router.js';
-import { blue, green, red } from '#utils/console.js';
+import { style } from '#utils/console.js';
 
 export const Server = {
   url: '',
@@ -48,8 +48,13 @@ function onListen(token) {
     };
 
     signal.addEventListener('abort', onAbort);
-    console.log(green('Listen ') + blue(Server.url) + '\n');
+    console.log(
+      style.bgGreenBright(style.bold(' LISTEN ')) +
+        ' ' +
+        style.blueBright(Server.url) +
+        '\n'
+    );
   } else {
-    console.error(new Error(red('Server start ' + Server.url)));
+    console.error(new Error(style.red('Server start ' + Server.url)));
   }
 }

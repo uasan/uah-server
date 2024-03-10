@@ -1,66 +1,112 @@
-import process from 'node:process';
+import { styleText } from 'node:util';
 
-let FORCE_COLOR,
-  NODE_DISABLE_COLORS,
-  NO_COLOR,
-  TERM,
-  isTTY = true;
-if (typeof process !== 'undefined') {
-  ({ FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM } = process.env || {});
-  //isTTY = process.stdout && process.stdout.isTTY;
-}
+export const style = {
+  bold(text) {
+    return styleText('bold', text);
+  },
+  italic(text) {
+    return styleText('italic', text);
+  },
+  underline(text) {
+    return styleText('underline', text);
+  },
 
-export const $ = {
-  enabled:
-    !NODE_DISABLE_COLORS &&
-    NO_COLOR == null &&
-    TERM !== 'dumb' &&
-    ((FORCE_COLOR != null && FORCE_COLOR !== '0') || isTTY),
+  cyan(text) {
+    return styleText('cyan', text);
+  },
+  magenta(text) {
+    return styleText('magenta', text);
+  },
+  white(text) {
+    return styleText('white', text);
+  },
+  gray(text) {
+    return styleText('gray', text);
+  },
+  yellow(text) {
+    return styleText('yellow', text);
+  },
+  red(text) {
+    return styleText('red', text);
+  },
+  blue(text) {
+    return styleText('blue', text);
+  },
+  green(text) {
+    return styleText('green', text);
+  },
+  black(text) {
+    return styleText('black', text);
+  },
+
+  yellowBright(text) {
+    return styleText('yellowBright', text);
+  },
+  magentaBright(text) {
+    return styleText('magentaBright', text);
+  },
+  cyanBright(text) {
+    return styleText('cyanBright', text);
+  },
+  whiteBright(text) {
+    return styleText('whiteBright', text);
+  },
+  redBright(text) {
+    return styleText('redBright', text);
+  },
+  blueBright(text) {
+    return styleText('blueBright', text);
+  },
+  greenBright(text) {
+    return styleText('greenBright', text);
+  },
+
+  bgBlack(text) {
+    return styleText('bgBlack', text);
+  },
+  bgYellow(text) {
+    return styleText('bgYellow', text);
+  },
+  bgBlue(text) {
+    return styleText('bgBlue', text);
+  },
+  bgMagenta(text) {
+    return styleText('bgMagenta', text);
+  },
+  bgCyan(text) {
+    return styleText('bgCyan', text);
+  },
+  bgWhite(text) {
+    return styleText('bgWhite', text);
+  },
+  bgGray(text) {
+    return styleText('bgGray', text);
+  },
+  bgRedBright(text) {
+    return styleText('bgRedBright', text);
+  },
+  bgRed(text) {
+    return styleText('bgRed', text);
+  },
+  bgGreen(text) {
+    return styleText('bgGreen', text);
+  },
+  bgGreenBright(text) {
+    return styleText('bgGreenBright', text);
+  },
+  bgYellowBright(text) {
+    return styleText('bgYellowBright', text);
+  },
+  bgBlueBright(text) {
+    return styleText('bgBlueBright', text);
+  },
+  bgMagentaBright(text) {
+    return styleText('bgMagentaBright', text);
+  },
+  bgCyanBright(text) {
+    return styleText('bgCyanBright', text);
+  },
+  bgWhiteBright(text) {
+    return styleText('bgWhiteBright', text);
+  },
 };
-
-function init(x, y) {
-  let rgx = new RegExp(`\\x1b\\[${y}m`, 'g');
-  let open = `\x1b[${x}m`,
-    close = `\x1b[${y}m`;
-
-  return function (txt) {
-    if (!$.enabled || txt == null) return txt;
-    return (
-      open +
-      (~('' + txt).indexOf(close) ? txt.replace(rgx, close + open) : txt) +
-      close
-    );
-  };
-}
-
-// modifiers
-export const reset = init(0, 0);
-export const bold = init(1, 22);
-export const dim = init(2, 22);
-export const italic = init(3, 23);
-export const underline = init(4, 24);
-export const inverse = init(7, 27);
-export const hidden = init(8, 28);
-export const strikethrough = init(9, 29);
-
-// colors
-export const black = init(30, 39);
-export const red = init(31, 39);
-export const green = init(32, 39);
-export const yellow = init(33, 39);
-export const blue = init(94, 94);
-export const magenta = init(35, 39);
-export const cyan = init(36, 39);
-export const white = init(37, 39);
-export const gray = init(90, 39);
-export const grey = init(90, 39);
-
-// background colors
-export const bgBlack = init(40, 49);
-export const bgRed = init(41, 49);
-export const bgGreen = init(42, 49);
-export const bgYellow = init(43, 49);
-export const bgBlue = init(44, 49);
-export const bgMagenta = init(45, 49);
-export const bgCyan = init(46, 49);
-export const bgWhite = init(47, 49);

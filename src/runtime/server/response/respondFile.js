@@ -1,4 +1,4 @@
-import { openSync, read, close } from 'node:fs';
+import { read, close, openSync, fstatSync } from 'node:fs';
 import { parseRange } from '../utils/parseRange.js';
 
 const files = new Map();
@@ -11,6 +11,7 @@ class FileSender {
   context = null;
 
   fd = 0;
+  size = 0;
   length = 0;
   position = 0;
   bytesRead = 0;
@@ -36,19 +37,26 @@ class FileSender {
     this.endRespond = this.endRespond.bind(this);
 
     if (files.has(file.path)) {
-      this.fd = files.get(file.path).fd;
+      const { fd, size } = files.get(file.path);
+      this.fd = fd;
+      this.size = size;
     } else {
       this.fd = openSync(file.path, 'r', 0o444);
-      files.set(this.file.path, { fd: this.fd });
+      this.size = file.size || fstatSync(this.fd).size;
+
+      files.set(this.file.path, {
+        fd: this.fd,
+        size: this.size,
+      });
     }
 
-    this.range = parseRange(this.context.request.headers.range, file.size);
+    this.range = parseRange(this.context.request.headers.range, this.size);
 
     if (this.range) {
       this.position = this.range.offset;
       this.length = this.range.length;
     } else {
-      this.length = file.size;
+      this.length = this.size;
     }
 
     this.readFile();
@@ -172,6 +180,7 @@ class FileSender {
     if (this.fd) {
       this.fd = 0;
     }
+    this.isReadable = false;
   }
 
   onError(error) {
