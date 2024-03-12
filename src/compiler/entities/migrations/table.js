@@ -42,14 +42,12 @@ export function createTableMigration(model) {
 
   if (table.unique) {
     for (const key of Object.keys(table.unique)) {
-      const { columns } = table.unique[key];
+      const columns = table.unique[key];
 
-      if (columns) {
+      if (Array.isArray(columns)) {
         fields.push(
           '  CONSTRAINT "' + key + '" UNIQUE ("' + columns.join('", "') + '")'
         );
-      } else {
-        fields.push('  CONSTRAINT "' + key + '" UNIQUE ("' + key + '")');
       }
     }
   }
