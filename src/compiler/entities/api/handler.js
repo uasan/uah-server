@@ -28,6 +28,9 @@ import {
   isNotThisParameter,
   isStringType,
   isBigIntType,
+  typeToString,
+  hasUndefinedType,
+  getNonUndefinedType,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
@@ -44,9 +47,15 @@ export function makeRouteMethod(name, node) {
   const res = factoryIdentifier('res');
   const ctx = factoryIdentifier('ctx');
 
-  const returnType = getAwaitedType(getReturnType(node));
-  const payloadNode = node.parameters.find(isNotThisParameter);
-  const payloadType = payloadNode && getTypeOfNode(payloadNode);
+  let returnType = getAwaitedType(getReturnType(node));
+  let payloadNode = node.parameters.find(isNotThisParameter);
+  let payloadType = payloadNode && getTypeOfNode(payloadNode);
+
+  const hasUndefinedReturnType = hasUndefinedType(returnType);
+
+  if (hasUndefinedReturnType) {
+    returnType = getNonUndefinedType(returnType);
+  }
 
   let ast = ctx;
   let payload;
@@ -91,7 +100,8 @@ export function makeRouteMethod(name, node) {
         res,
         factoryPropertyParenthesized(
           ast,
-          factoryCall(factoryIdentifier('toString'))
+          factoryCall(factoryIdentifier('toString')),
+          hasUndefinedReturnType
         )
       )
     );

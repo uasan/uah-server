@@ -30,7 +30,9 @@ export const makeImportDeclaration = node => {
       else {
         const symbol = getOriginSymbolOfNode(spec.name);
 
-        if (isTypeSymbol(symbol)) continue;
+        if (isTypeSymbol(symbol)) {
+          continue;
+        }
 
         if (declarations.has(symbol)) {
           url = declarations.get(symbol).url;
@@ -50,5 +52,12 @@ export const makeImportDeclaration = node => {
         }
       }
     }
+  } else if (entities.has(resolveImportPath(node))) {
+    url = toRelativeURL(
+      host.entity.url,
+      entities.get(resolveImportPath(node)).url
+    );
+
+    imports.set(url, []);
   }
 };

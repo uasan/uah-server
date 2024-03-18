@@ -1,6 +1,6 @@
 import { UnProcessable } from '../exceptions/UnProcessable.js';
 
-export class Errors extends UnProcessable {
+export class ValidationErrors extends UnProcessable {
   static tooLong = 'tooLong';
   static tooShort = 'tooShort';
   static rangeUnderflow = 'rangeUnderflow';
@@ -11,7 +11,7 @@ export class Errors extends UnProcessable {
   static patternMismatch = 'patternMismatch';
 
   constructor(errors) {
-    super('Input errors');
+    super('Validation Errors');
     this.errors = errors;
   }
 }

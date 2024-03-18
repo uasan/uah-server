@@ -1,12 +1,13 @@
 import { factoryCallMethod } from '../../helpers/call.js';
 import {
-  isNullableType,
   getTypeOfSymbol,
   hasStringType,
   isNumberType,
   isStringType,
   isBooleanType,
   isBigIntType,
+  hasUndefinedType,
+  hasBigIntType,
 } from '../../helpers/checker.js';
 import {
   factoryString,
@@ -32,16 +33,18 @@ export function makePayloadFromQuery(type) {
 
     const req = factoryIdentifier('req');
     const type = getTypeOfSymbol(symbol);
-    const isNullable = isNullableType(type);
+    const isOptional = hasUndefinedType(type);
 
-    if (isNullable) {
+    if (isOptional) {
       value = factoryCallMethod(req, 'getQuery', [factoryString(name)]);
     } else {
       path += '/:' + name;
       value = factoryCallMethod(req, 'getParameter', [factoryNumber(++index)]);
     }
 
-    if (hasStringType(type) === false) {
+    if (hasBigIntType(type)) {
+      value = internals.tryParseBigInt(value);
+    } else if (hasStringType(type) === false) {
       value = internals.tryParseJson(value);
     }
 

@@ -88,16 +88,22 @@ export const isLiteralTypeOrNullType = type =>
 
 export const hasAnyType = type =>
   isAnyType(type) || some(type.types, hasAnyType);
+
 export const hasNullType = type =>
   isNullType(type) || some(type.types, hasNullType);
+
 export const hasNumberType = type =>
   isNumberType(type) || some(type.types, hasNumberType);
+
 export const hasStringType = type =>
   isStringType(type) || some(type.types, hasStringType);
-export const hasBooleanType = type =>
-  isBooleanType(type) || some(type.types, hasBooleanType);
+
 export const hasBigIntType = type =>
   isBigIntType(type) || some(type.types, hasBigIntType);
+
+export const hasBooleanType = type =>
+  isBooleanType(type) || some(type.types, hasBooleanType);
+
 export const hasUndefinedType = type =>
   isUndefinedType(type) || some(type.types, hasUndefinedType);
 

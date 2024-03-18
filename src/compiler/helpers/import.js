@@ -9,9 +9,9 @@ export const resolveImportPath = node =>
   )?.resolvedModule?.resolvedFileName;
 
 export const createAssertClause = type =>
-  host.factory.createAssertClause(
+  host.factory.createImportAttributes(
     [
-      host.factory.createAssertEntry(
+      host.factory.createImportAttribute(
         factoryIdentifier('type'),
         host.factory.createStringLiteral(type)
       ),
@@ -19,12 +19,12 @@ export const createAssertClause = type =>
     false
   );
 
-export const createImportDeclaration = (importClause, url, assert) =>
+export const createImportDeclaration = (importClause, url, type) =>
   host.factory.createImportDeclaration(
     undefined,
     importClause,
     host.factory.createStringLiteral(url),
-    assert ? createAssertClause(assert) : undefined
+    type ? createAssertClause(type) : undefined
   );
 
 export const createImportsOfMap = map => {
@@ -34,11 +34,13 @@ export const createImportsOfMap = map => {
     imports.push(
       host.factory.createImportDeclaration(
         undefined,
-        host.factory.createImportClause(
-          false,
-          undefined,
-          host.factory.createNamedImports(elements)
-        ),
+        elements.length
+          ? host.factory.createImportClause(
+              false,
+              undefined,
+              host.factory.createNamedImports(elements)
+            )
+          : undefined,
         host.factory.createStringLiteral(url)
       )
     );

@@ -13,4 +13,5 @@ export declare class File<
   //ReadableStream
   constructor(path: string, type?: string);
   save(path?: string): Promise<string>;
+  move(path: string): Promise<string>;
 }

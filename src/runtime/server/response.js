@@ -27,7 +27,9 @@ export function respondNoContent(res) {
 }
 
 export function respondBinary(res, body) {
-  if (res.context.connected) {
+  if (body === undefined) {
+    respondNoContent(res);
+  } else if (res.context.connected) {
     res.cork(() => {
       writeResponse(
         res,
@@ -40,7 +42,9 @@ export function respondBinary(res, body) {
 }
 
 export function respondJson(res, data) {
-  if (res.context.connected) {
+  if (data === undefined) {
+    respondNoContent(res);
+  } else if (res.context.connected) {
     res.context.response.headers.push('content-type', 'application/json');
 
     res.cork(() => {

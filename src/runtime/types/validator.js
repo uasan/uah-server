@@ -9,7 +9,7 @@ import {
   isString,
   isUUID,
 } from './checker.js';
-import { Errors } from './errors.js';
+import { ValidationErrors as Errors } from './errors.js';
 import { UnProcessable } from '../exceptions/UnProcessable.js';
 
 export class Validator {
@@ -62,6 +62,17 @@ export class Validator {
     return this.skip || isBigInt(this.data[this.key])
       ? this
       : this.setError(Errors.typeMismatch, 'bigint');
+  }
+
+  toBigInt() {
+    if (!this.skip && !isBigInt(this.data[this.key])) {
+      try {
+        this.data[this.key] = BigInt(this.data[this.key]);
+      } catch {
+        this.setError(Errors.typeMismatch, 'bigint');
+      }
+    }
+    return this;
   }
 
   isBoolean() {

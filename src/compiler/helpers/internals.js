@@ -67,6 +67,9 @@ export const internals = {
   tryParseJson: (...args) =>
     factoryCall(getInternalImport('types/json', 'tryParseJson'), args),
 
+  tryParseBigInt: (...args) =>
+    factoryCall(getInternalImport('types/bigint', 'tryParseBigInt'), args),
+
   decodeJSON: (...args) =>
     factoryCall(getInternalImport('types/json', 'decodeJSON'), args),
 

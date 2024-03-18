@@ -60,7 +60,7 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
   } else if (isNumberType(type)) {
     ast = factoryCallMethod(ast, 'isNumber');
   } else if (isBigIntType(type)) {
-    ast = factoryCallMethod(ast, 'isBigInt');
+    ast = factoryCallMethod(ast, 'toBigInt');
   } else if (isBooleanType(type)) {
     ast = factoryCallMethod(ast, 'isBoolean');
   } else if (isNonPrimitiveType(type)) {

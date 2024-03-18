@@ -27,6 +27,7 @@ export const {
   ExclamationToken,
   VariableDeclaration,
   ObjectBindingPattern,
+  QuestionDotToken,
   QuestionQuestionToken,
   ElementAccessExpression,
   EqualsEqualsEqualsToken,
@@ -127,11 +128,21 @@ export const factoryAwaitParenthesized = node =>
     host.factory.createAwaitExpression(node)
   );
 
-export const factoryPropertyParenthesized = (left, right) =>
-  host.factory.createPropertyAccessExpression(
-    host.factory.createParenthesizedExpression(left),
-    right
-  );
+export const factoryPropertyParenthesized = (
+  left,
+  right,
+  isNullable = false
+) =>
+  isNullable
+    ? host.factory.createPropertyAccessChain(
+        host.factory.createParenthesizedExpression(left),
+        host.factory.createToken(QuestionDotToken),
+        right
+      )
+    : host.factory.createPropertyAccessExpression(
+        host.factory.createParenthesizedExpression(left),
+        right
+      );
 
 export const factoryAwaitStatement = node =>
   host.factory.createExpressionStatement(
