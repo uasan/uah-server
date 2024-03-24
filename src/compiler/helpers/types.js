@@ -40,7 +40,7 @@ function makeIndexedAccess(meta, node) {
 }
 
 function makeMetaType(meta, node) {
-  switch (node.kind) {
+  switch (node?.kind) {
     case TypeReference:
       {
         const symbol = getOriginSymbolOfNode(node.typeName);

@@ -1,7 +1,11 @@
 import { URL_LIB_RUNTIME } from '../../config.js';
 import { host } from '../host.js';
 import { factoryIdentifier } from './expression.js';
-import { factoryCall, factoryCallStatement, factoryNew } from './call.js';
+import {
+  factoryCall,
+  factoryCallStatement,
+  factoryCallMethod,
+} from './call.js';
 
 function getInternalImport(url, name) {
   if (host.module.internalImports.has(url) === false) {
@@ -77,5 +81,9 @@ export const internals = {
     getInternalImport('types//BuffersDecoder', 'BuffersDecoder'),
 
   newValidator: (...args) =>
-    factoryNew(getInternalImport('types/validator', 'Validator'), args),
+    factoryCallMethod(
+      getInternalImport('types/validator', 'Validator'),
+      'of',
+      args
+    ),
 };

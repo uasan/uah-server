@@ -1,4 +1,4 @@
-import { yellow, red } from '#utils/console.js';
+import { style } from '#utils/console.js';
 import { ERRORS } from '@uah/postgres/src/constants.js';
 import { LOCK_ID } from '../constants.js';
 
@@ -24,7 +24,9 @@ export async function lockMigrate(ctx) {
     await ctx.sql`SELECT pg_try_advisory_lock(${LOCK_ID}::bigint)`.asValue();
 
   if (isLock === false) {
-    console.log(yellow(`Migrate: `) + red(`waiting release lock ${LOCK_ID}`));
+    console.log(
+      style.yellow(`Migrate: `) + style.red(`waiting release lock ${LOCK_ID}`)
+    );
 
     await ctx.sql`SELECT pg_advisory_lock(${LOCK_ID}::bigint)`;
   }

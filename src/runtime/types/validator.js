@@ -1,29 +1,42 @@
 import {
+  isUUID,
   isArray,
-  isBigInt,
-  isBoolean,
   isEmail,
-  isInteger,
   isNumber,
+  isBigInt,
   isObject,
   isString,
-  isUUID,
+  isBoolean,
+  isInteger,
+  nullArray,
+  nullObject,
 } from './checker.js';
 import { ValidationErrors as Errors } from './errors.js';
 import { UnProcessable } from '../exceptions/UnProcessable.js';
 
-export class Validator {
+export const Validator = new (class Validator {
   key = '';
-  data = null;
-  skip = false;
-  parent = null;
-  errors = null;
 
-  constructor(data) {
-    if (isObject(data) === false) {
+  skip = false;
+  data = nullObject;
+
+  parent = nullArray;
+  errors = nullArray;
+
+  of(data) {
+    if (isObject(data)) {
+      this.key = '';
+
+      this.skip = false;
+      this.data = data;
+
+      this.parent = nullArray;
+      this.errors = nullArray;
+    } else {
       throw new UnProcessable(Errors.typeMismatch);
     }
-    this.data = data;
+
+    return this;
   }
 
   setKey(key, isOptional = false, defaultValue = undefined) {
@@ -200,7 +213,8 @@ export class Validator {
 
   setParent() {
     this.data = this.data[this.key];
-    this.parent = this.parent ? [...this.parent, this.key] : [this.key];
+    this.parent =
+      this.parent === nullArray ? [this.key] : [...this.parent, this.key];
 
     return this;
   }
@@ -208,12 +222,15 @@ export class Validator {
   setError(type, expected) {
     this.skip = true;
 
-    this.errors ??= [];
+    if (this.errors === nullArray) {
+      this.errors = [];
+    }
+
     this.errors.push({
       type,
       expected,
       value: this.data[this.key],
-      path: this.parent ? [...this.parent, this.key] : [this.key],
+      path: this.parent === nullArray ? [this.key] : [...this.parent, this.key],
     });
 
     return this;
@@ -251,6 +268,6 @@ export class Validator {
   }
 
   validate() {
-    if (this.errors) throw new Errors(this.errors);
+    if (this.errors !== nullArray) throw new Errors(this.errors);
   }
-}
+})();

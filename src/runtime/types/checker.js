@@ -1,3 +1,6 @@
+export const nullArray = Object.freeze([]);
+export const nullObject = Object.freeze(Object.create(null));
+
 export const { hasOwn } = Object;
 export const { isArray } = Array;
 export const { isInteger } = Number;

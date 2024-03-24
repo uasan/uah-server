@@ -154,6 +154,9 @@ export const isExtendsToken = ({ token }) => token === ExtendsKeyword;
 export const isNotThisIdentifier = node => node.escapedText !== 'this';
 export const isNotThisParameter = node => isNotThisIdentifier(node.name);
 
+export const hasDeclareModifier = node =>
+  some(node.modifiers, isDeclareKeyword);
+
 export function isNativeModifier({ kind }) {
   switch (kind) {
     case Decorator:

@@ -11,6 +11,7 @@ import {
   isObjectType,
   isNumberType,
   isStringType,
+  hasDeclareModifier,
 } from '../../helpers/checker.js';
 import { makeFieldValidate } from '../../helpers/validator.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
@@ -67,21 +68,24 @@ export function TableModel(node) {
   for (const symbol of getTypeOfNode(node).properties) {
     const meta = MetaType.create(symbol.valueDeclaration);
 
-    if (isNeverType(meta.type)) {
-      continue;
+    if (hasDeclareModifier(symbol.valueDeclaration)) {
+      switch (meta.name) {
+        case 'relations':
+          console.log(meta.name, symbol.flags);
+      }
+    } else if (!isNeverType(meta.type)) {
+      model.columns.set(meta.name, {
+        name: meta.name,
+        type: getSqlType(meta),
+        default: meta.defaultValue,
+        references: getTableReferences(meta.links),
+        isNotNull: !meta.isNullable && !meta.isUndefined,
+      });
+
+      model.fields.set(meta.name, [
+        factoryProperty('validate', makeFieldValidate(meta)),
+      ]);
     }
-
-    model.columns.set(meta.name, {
-      name: meta.name,
-      type: getSqlType(meta),
-      default: meta.defaultValue,
-      references: getTableReferences(meta.links),
-      isNotNull: !meta.isNullable && !meta.isUndefined,
-    });
-
-    model.fields.set(meta.name, [
-      factoryProperty('validate', makeFieldValidate(meta)),
-    ]);
   }
 
   node = host.visitEachChild(node);
