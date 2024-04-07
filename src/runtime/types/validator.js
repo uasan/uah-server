@@ -12,7 +12,6 @@ import {
   nullObject,
 } from './checker.js';
 import { ValidationErrors as Errors } from './errors.js';
-import { UnProcessable } from '../exceptions/UnProcessable.js';
 
 export const Validator = new (class Validator {
   key = '';
@@ -23,18 +22,14 @@ export const Validator = new (class Validator {
   parent = nullArray;
   errors = nullArray;
 
-  of(data) {
-    if (isObject(data)) {
-      this.key = '';
+  set(data) {
+    this.key = '';
 
-      this.skip = false;
-      this.data = data;
+    this.skip = false;
+    this.data = data;
 
-      this.parent = nullArray;
-      this.errors = nullArray;
-    } else {
-      throw new UnProcessable(Errors.typeMismatch);
-    }
+    this.parent = nullArray;
+    this.errors = nullArray;
 
     return this;
   }
@@ -268,6 +263,12 @@ export const Validator = new (class Validator {
   }
 
   validate() {
-    if (this.errors !== nullArray) throw new Errors(this.errors);
+    const { errors } = this;
+
+    this.set(nullObject);
+
+    if (errors !== nullArray) {
+      throw new Errors(errors);
+    }
   }
 })();

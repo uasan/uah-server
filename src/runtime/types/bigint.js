@@ -5,3 +5,7 @@ export function tryParseBigInt(value) {
     return value;
   }
 }
+
+BigInt.prototype.toJSON = function toJSON() {
+  return this.toString();
+};

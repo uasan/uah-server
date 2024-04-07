@@ -80,10 +80,10 @@ export const internals = {
   decodeBuffers: () =>
     getInternalImport('types//BuffersDecoder', 'BuffersDecoder'),
 
-  newValidator: (...args) =>
+  setValidator: (...args) =>
     factoryCallMethod(
       getInternalImport('types/validator', 'Validator'),
-      'of',
+      'set',
       args
     ),
 };

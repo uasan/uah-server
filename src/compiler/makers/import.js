@@ -4,7 +4,7 @@ import { resolveImportPath } from '../helpers/import.js';
 import { getOriginSymbolOfNode, isTypeSymbol } from '../helpers/checker.js';
 import { factoryIdentifier } from '../helpers/expression.js';
 
-export const makeImportDeclaration = node => {
+export function makeImportDeclaration(node) {
   if (node.importClause?.isTypeOnly) return;
 
   const { imports } = host.module;
@@ -26,8 +26,7 @@ export const makeImportDeclaration = node => {
     }
 
     for (let spec of elements) {
-      if (spec.isTypeOnly) continue;
-      else {
+      if (!spec.isTypeOnly) {
         const symbol = getOriginSymbolOfNode(spec.name);
 
         if (isTypeSymbol(symbol)) {
@@ -42,6 +41,7 @@ export const makeImportDeclaration = node => {
             entities.get(resolveImportPath(node)).url
           );
         } else if (internalSymbols.has(symbol)) {
+          console.log('AAAA');
           continue;
         }
 
@@ -60,4 +60,4 @@ export const makeImportDeclaration = node => {
 
     imports.set(url, []);
   }
-};
+}

@@ -45,7 +45,7 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
     return ast;
   }
 
-  if (isTypeAsValues(type)) {
+  if (!isBooleanType(type) && isTypeAsValues(type)) {
     return factoryCallMethod(ast, 'inArray', [getRefForLiteralTypes(type)]);
   }
 
@@ -171,7 +171,7 @@ export function makePayloadValidator(node, type) {
       node = ensureArgument(node);
 
       if (initAst !== ast) {
-        Object.assign(initAst, internals.newValidator(node.parameters[0].name));
+        Object.assign(initAst, internals.setValidator(node.parameters[0].name));
 
         return updateMethodStatements(node, [
           factoryStatement(factoryCallMethod(ast, 'validate')),
