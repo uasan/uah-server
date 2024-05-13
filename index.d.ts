@@ -1,6 +1,7 @@
 export * from './src/interfaces/server/app.ts';
 export * from './src/interfaces/server/context.ts';
 export * from './src/interfaces/migration/context.js';
+export * from './src/interfaces/server/cache.ts';
 export * from './src/interfaces/security/WebAuthn.js';
 export * from './src/interfaces/security/Challenge.ts';
 export * from './src/interfaces/security/decorators.ts';

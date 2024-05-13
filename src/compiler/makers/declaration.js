@@ -33,6 +33,7 @@ import { TypedArray } from './types/validators/TypedArray.js';
 import { BinaryData } from './types/validators/BinaryData.js';
 import { BigIntSerial } from './types/validators/BigIntSerial.js';
 
+import { Cache } from './decorators/cache.js';
 import { Table } from './decorators/table.js';
 import { Postgres } from './decorators/postgres.js';
 import { Permission } from './decorators/permission.js';
@@ -66,6 +67,7 @@ export const lookup = {
   },
 
   decorators: {
+    Cache,
     Table,
     Postgres,
     Permission,

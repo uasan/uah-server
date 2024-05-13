@@ -34,6 +34,7 @@ const {
 export const {
   Decorator,
   TrueKeyword,
+  AsyncKeyword,
   FalseKeyword,
   StaticKeyword,
   ExportKeyword,
@@ -58,6 +59,7 @@ export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;
 export const isFalseKeyword = ({ kind }) => kind === FalseKeyword;
 export const isStaticKeyword = ({ kind }) => kind === StaticKeyword;
 export const isDeclareKeyword = ({ kind }) => kind === DeclareKeyword;
+export const isAsyncKeyword = ({ kind }) => kind === AsyncKeyword;
 
 export const isAnyType = ({ flags }) => (flags & flagAny) !== 0;
 export const isNullType = ({ flags }) => (flags & flagNull) !== 0;
@@ -154,6 +156,7 @@ export const isExtendsToken = ({ token }) => token === ExtendsKeyword;
 export const isNotThisIdentifier = node => node.escapedText !== 'this';
 export const isNotThisParameter = node => isNotThisIdentifier(node.name);
 
+export const hasAsyncModifier = node => some(node.modifiers, isAsyncKeyword);
 export const hasDeclareModifier = node =>
   some(node.modifiers, isDeclareKeyword);
 

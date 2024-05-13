@@ -52,7 +52,7 @@ export function ServerContext(node) {
     if (
       member.kind === MethodDeclaration &&
       methods.has(member.name.escapedText) &&
-      !member.modifiers.some(isStaticKeyword)
+      !member.modifiers?.some(isStaticKeyword)
     )
       members.push(makeRouteMethod(member.name.escapedText, member));
   }

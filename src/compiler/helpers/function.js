@@ -43,9 +43,9 @@ export const factoryBodyFunction = statements =>
     host.factory.createBlock(statements, false)
   );
 
-export const factoryRouteFunction = statements =>
+export const factoryRouteFunction = (isAsync, statements) =>
   host.factory.createArrowFunction(
-    [factoryToken(AsyncKeyword)],
+    isAsync ? [factoryToken(AsyncKeyword)] : undefined,
     undefined,
     [
       factoryParameter(factoryIdentifier('res')),

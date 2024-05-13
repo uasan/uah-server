@@ -79,10 +79,6 @@ class FileSender {
       response.writeHeader('content-type', file.type);
     }
 
-    if (file.hash) {
-      response.writeHeader('etag', file.hash);
-    }
-
     if (file.lastModified) {
       response.writeHeader(
         'last-modified',

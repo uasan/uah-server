@@ -28,9 +28,9 @@ import {
   isNotThisParameter,
   isStringType,
   isBigIntType,
-  typeToString,
   hasUndefinedType,
   getNonUndefinedType,
+  hasAsyncModifier,
 } from '../../helpers/checker.js';
 import { methods } from './constants.js';
 import { makePayloadValidator } from '../../helpers/validator.js';
@@ -39,6 +39,7 @@ import { lookup } from '../../makers/declaration.js';
 
 import { File } from '../../makers/types/validators/File.js';
 import { BinaryData } from '../../makers/types/validators/BinaryData.js';
+import { makeCache } from '#compiler/makers/decorators/cache.js';
 
 export function makeRouteMethod(name, node) {
   const statements = [];
@@ -51,6 +52,22 @@ export function makeRouteMethod(name, node) {
   let payloadNode = node.parameters.find(isNotThisParameter);
   let payloadType = payloadNode && getTypeOfNode(payloadNode);
 
+  let isAsyncAction = hasAsyncModifier(node);
+  let isAsyncHandler = isAsyncAction;
+
+  const isPrivate = node.modifiers?.some(
+    hasDecorator,
+    lookup.decorators.Permission
+  );
+
+  const cache = makeCache(
+    node.modifiers?.find(hasDecorator, lookup.decorators.Cache),
+    req,
+    res,
+    ctx,
+    isPrivate
+  );
+
   const hasUndefinedReturnType = hasUndefinedType(returnType);
 
   if (hasUndefinedReturnType) {
@@ -61,6 +78,10 @@ export function makeRouteMethod(name, node) {
   let payload;
   let pathParameters = '';
 
+  if (cache?.check) {
+    statements.push(cache.check);
+  }
+
   statements.push(
     factoryConstant(ctx, factoryCallThisMethod('create', [req, res]))
   );
@@ -68,7 +89,7 @@ export function makeRouteMethod(name, node) {
   if (payloadType) {
     const metaType = makePayloadValidator(node, payloadType);
 
-    if (name === 'get') {
+    if (name === 'get' || name === 'head') {
       payload = factoryIdentifier('data');
       const query = makePayloadFromQuery(payloadType);
 
@@ -76,38 +97,46 @@ export function makeRouteMethod(name, node) {
       statements.push(factoryConstant(payload, query.data));
     } else {
       const body = makePayloadFromBody(metaType);
-
       payload = body.data;
       statements.push(factoryConstant(factoryIdentifier('data'), body.init));
     }
   }
 
-  if (node.modifiers?.some(hasDecorator, lookup.decorators.Permission)) {
+  if (isPrivate) {
+    isAsyncHandler = true;
     statements.push(factoryAwaitStatement(factoryCallMethod(ctx, 'auth')));
   }
 
-  ast = factoryAwait(factoryCallMethod(ast, name, payload && [payload]));
+  ast = factoryCallMethod(ast, name, payload && [payload]);
+
+  if (cache?.preset) {
+    statements.push(cache.preset);
+  }
+
+  if (isAsyncAction) {
+    ast = factoryAwait(ast);
+  }
 
   if (isVoidLikeType(returnType)) {
-    statements.push(factoryStatement(ast), internals.respondNoContent(res));
+    (ast = factoryStatement(ast)), internals.respondNoContent(res);
   } else if (File.isAssignable(returnType)) {
-    statements.push(internals.respondFile(res, ast));
+    ast = internals.respondFile(res, ast);
   } else if (BinaryData.isAssignable(returnType) || isStringType(returnType)) {
-    statements.push(internals.respondBinary(res, ast));
+    ast = internals.respondBinary(res, ast);
   } else if (isBigIntType(returnType)) {
-    statements.push(
-      internals.respondBinary(
-        res,
-        factoryPropertyParenthesized(
-          ast,
-          factoryCall(factoryIdentifier('toString')),
-          hasUndefinedReturnType
-        )
+    ast = internals.respondBinary(
+      res,
+      factoryPropertyParenthesized(
+        ast,
+        factoryCall(factoryIdentifier('toString')),
+        hasUndefinedReturnType
       )
     );
   } else {
-    statements.push(internals.respondJson(res, ast));
+    ast = internals.respondJson(res, ast);
   }
+
+  statements.push(ast);
 
   host.entity.route.methods.push({
     name: methods.get(name),
@@ -116,7 +145,7 @@ export function makeRouteMethod(name, node) {
 
   return factoryStaticProperty(
     factoryIdentifier(methods.get(name)),
-    factoryRouteFunction([
+    factoryRouteFunction(isAsyncHandler, [
       factoryTryStatement(statements, factoryIdentifier('e'), [
         internals.respondError(res, factoryIdentifier('e')),
       ]),

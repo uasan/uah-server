@@ -1,5 +1,7 @@
 import type { BlobOptions } from './Blob.ts';
 
+
+
 export declare class File<
   T extends BlobOptions = undefined,
 > extends globalThis.Blob {

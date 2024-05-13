@@ -8,7 +8,6 @@ export class ServerContext extends Context {
   request = {
     cookies: new Map(),
     headers: {
-      etag: '',
       range: '',
     },
   };
@@ -33,7 +32,6 @@ export class ServerContext extends Context {
 
     parseCookies(context.request.cookies, req.getHeader('cookie'));
 
-    context.request.headers.etag = req.getHeader('etag') ?? '';
     context.request.headers.range = req.getHeader('range') ?? '';
 
     return context;

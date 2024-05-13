@@ -3,7 +3,7 @@ export function respondError(res, error) {
 
   let status = error.status || 500;
 
-  if (res.context.connected) {
+  if (res.context?.connected) {
     const type = error.constructor?.name || 'Error';
 
     res.cork(() => {
