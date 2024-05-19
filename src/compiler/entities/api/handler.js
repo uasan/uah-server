@@ -118,7 +118,7 @@ export function makeRouteMethod(name, node) {
   }
 
   if (isVoidLikeType(returnType)) {
-    (ast = factoryStatement(ast)), internals.respondNoContent(res);
+    ast = internals.respondNoContent(res, ast);
   } else if (File.isAssignable(returnType)) {
     ast = internals.respondFile(res, ast);
   } else if (BinaryData.isAssignable(returnType) || isStringType(returnType)) {

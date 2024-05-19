@@ -6,7 +6,4 @@ interface CacheOptions {
 
 export declare function Cache(
   options: boolean | number | CacheOptions
-): (
-  target: (payload?: any) => any,
-  context: ClassMethodDecoratorContext
-) => void;
+): (target: unknown, context: ClassMethodDecoratorContext) => void;

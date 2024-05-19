@@ -2,10 +2,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Buffer } from 'node:buffer';
 import { Writable } from 'node:stream';
-import { createWriteStream } from 'node:fs';
+import { exec } from 'node:child_process';
+import { statSync, createWriteStream } from 'node:fs';
 import { TransformStream } from 'node:stream/web';
 import { open as openFile, rename as moveFile } from 'node:fs/promises';
 import { randomUUID, createHash, webcrypto as crypto } from 'node:crypto';
+
+export { env } from 'node:process';
 
 export const getRandomString = length =>
   Buffer.from(crypto.getRandomValues(new Uint8Array(length)))
@@ -22,6 +25,7 @@ export const IO = {
     ),
 
   getTempFileName: () => join(tmpdir(), randomUUID()),
+  getFileSize: path => statSync(path).size,
 
   createFileWriteStream: (path, options) =>
     Writable.toWeb(createWriteStream(path, options)),
@@ -37,5 +41,16 @@ export const IO = {
     });
 
     return hash;
+  },
+
+  exec(command, options) {
+    return {
+      then(resolve, reject) {
+        exec(command, options, (error, stdout) => {
+          if (error) reject(error);
+          else resolve(stdout);
+        });
+      },
+    };
   },
 };
