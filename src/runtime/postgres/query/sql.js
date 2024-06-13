@@ -4,6 +4,7 @@ import {
   FETCH_ONE_VALUE,
   TYPE_BLOB,
   TYPE_NATIVE,
+  FETCH_VALUES,
 } from '@uah/postgres/src/constants.js';
 
 import { concat } from './utils.js';
@@ -40,6 +41,11 @@ export class SQL {
 
   asValue() {
     this.mode = FETCH_ONE_VALUE | TYPE_NATIVE;
+    return this;
+  }
+
+  asValues() {
+    this.mode = FETCH_VALUES | TYPE_NATIVE;
     return this;
   }
 

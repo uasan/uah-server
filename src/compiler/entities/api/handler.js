@@ -16,10 +16,7 @@ import {
   factoryAwaitStatement,
   factoryPropertyParenthesized,
 } from '../../helpers/expression.js';
-import {
-  factoryStatement,
-  factoryTryStatement,
-} from '../../helpers/statements.js';
+import { factoryTryStatement } from '../../helpers/statements.js';
 import {
   getAwaitedType,
   getReturnType,

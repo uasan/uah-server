@@ -4,6 +4,7 @@ export interface SQL {
   asObject(): this;
   asValue(): this;
   asBlob(): this;
+  asValues(): this;
 
   sql(strings: TemplateStringsArray, ...params: unknown[]): this;
   sql(

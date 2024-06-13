@@ -36,7 +36,7 @@ export const compilerOptions = {
   jsx: ts.JsxEmit.Preserve,
   module: ts.ModuleKind.ESNext,
   target: ts.ScriptTarget.ESNext,
-  moduleDetection: 'force',
+  moduleDetection: ts.ModuleDetectionKind.Force,
   useDefineForClassFields: true,
   exactOptionalPropertyTypes: false,
   forceConsistentCasingInFileNames: true,
