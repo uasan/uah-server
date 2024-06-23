@@ -38,7 +38,6 @@ const makers = {
   [SyntaxKind.TupleType]: returnUndefined,
   [SyntaxKind.FunctionType]: returnUndefined,
   [SyntaxKind.TypeLiteral]: returnUndefined,
-  [SyntaxKind.AsExpression]: returnExpression,
   [SyntaxKind.TypeParameter]: returnUndefined,
   [SyntaxKind.TypeReference]: returnUndefined,
   [SyntaxKind.DeclareKeyword]: returnUndefined,
@@ -53,6 +52,9 @@ const makers = {
   [SyntaxKind.ModuleDeclaration]: returnUndefined,
   [SyntaxKind.TypeAliasDeclaration]: returnUndefined,
   [SyntaxKind.InterfaceDeclaration]: returnUndefined,
+
+  [SyntaxKind.AsExpression]: returnExpression,
+  [SyntaxKind.NonNullExpression]: returnExpression,
   [SyntaxKind.SatisfiesExpression]: returnExpression,
 };
 
