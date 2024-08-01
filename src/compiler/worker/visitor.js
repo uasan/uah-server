@@ -38,6 +38,7 @@ const makers = {
   [SyntaxKind.TupleType]: returnUndefined,
   [SyntaxKind.FunctionType]: returnUndefined,
   [SyntaxKind.TypeLiteral]: returnUndefined,
+  [SyntaxKind.TypeOperator]: returnUndefined,
   [SyntaxKind.TypeParameter]: returnUndefined,
   [SyntaxKind.TypeReference]: returnUndefined,
   [SyntaxKind.DeclareKeyword]: returnUndefined,
