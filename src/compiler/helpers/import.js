@@ -2,10 +2,9 @@ import { host } from '../host.js';
 import { factoryIdentifier } from './expression.js';
 
 export const resolveImportPath = node =>
-  host.program.getResolvedModule(
-    host.file,
-    node.moduleSpecifier.text,
-    host.file.impliedNodeFormat
+  host.program.getResolvedModuleFromModuleSpecifier(
+    node.moduleSpecifier,
+    host.file
   )?.resolvedModule?.resolvedFileName;
 
 export const createAssertClause = type =>

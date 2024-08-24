@@ -15,7 +15,7 @@ const emitResult = {
 };
 
 export function emit() {
-  const state = this.getState();
+  const { state } = this;
   const { program, fileInfos } = state;
 
   host.program = program;
