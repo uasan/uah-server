@@ -13,11 +13,11 @@ export declare function Postgres(
 
 type Deferrable = 'not' | 'immediate' | 'deferred';
 type ReferenceAction =
-  | 'cascade'
-  | 'restrict'
   | 'noAction'
-  | 'setDefault'
-  | 'setNull';
+  | 'cascade'
+  | 'setNull'
+  | 'restrict'
+  | 'setDefault';
 
 interface Reference {
   keys: Record<string, any>;
