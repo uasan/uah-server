@@ -33,10 +33,10 @@ export function emit() {
   try {
     let entity, files;
 
+    setDeclarations();
+
     if (host.bootstrap) {
       files = state.affectedFilesPendingEmit.keys();
-
-      setDeclarations();
     } else {
       files = state.seenAffectedFiles;
 
