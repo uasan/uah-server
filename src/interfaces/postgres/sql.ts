@@ -1,10 +1,9 @@
 export interface SQL {
   log(): this;
 
-  asObject(): this;
   asValue(): this;
-  asBlob(): this;
-  asValues(): this;
+  asTuples(): this;
+  asObject(): this;
 
   sql(strings: TemplateStringsArray, ...params: unknown[]): this;
   sql(
