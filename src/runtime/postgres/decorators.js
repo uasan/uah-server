@@ -1,7 +1,7 @@
-import { Pool } from '@uah/postgres/src/pool.js';
-import { Client } from '@uah/postgres/src/client.js';
+import { PostgresPool } from '@uah/postgres/src/pool.js';
+import { PostgresClient } from '@uah/postgres/src/client.js';
 
-import { sql } from './query/SQL.js';
+import { sql } from './sql.js';
 import { signal } from '../process.js';
 import { startTransaction } from './transaction.js';
 
@@ -11,8 +11,8 @@ export function Postgres({ prototype }, options) {
 
   prototype.postgres =
     options.maxConnections > 1
-      ? new Pool({ signal, ...options })
-      : new Client({ signal, ...options });
+      ? new PostgresPool({ signal, ...options })
+      : new PostgresClient({ signal, ...options });
 }
 
 export function Table() {

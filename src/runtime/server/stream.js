@@ -67,16 +67,13 @@ export class BufferStreamReader {
   }
 
   readStream(chunk, done) {
-    if (chunk.byteLength === 0) {
-      this.closeStream();
-      return;
-    }
-
-    if (this.controller.byobRequest === null) {
-      this.controller.enqueue(new Uint8Array(chunk.slice(0)));
-    } else {
-      this.controller.byobRequest.view.set(new Uint8Array(chunk), 0);
-      this.controller.byobRequest.respond(chunk.byteLength);
+    if (chunk.byteLength) {
+      if (this.controller.byobRequest) {
+        this.controller.byobRequest.view.set(new Uint8Array(chunk), 0);
+        this.controller.byobRequest.respond(chunk.byteLength);
+      } else {
+        this.controller.enqueue(new Uint8Array(chunk.slice(0)));
+      }
     }
 
     if (done) {

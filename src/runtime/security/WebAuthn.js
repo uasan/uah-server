@@ -51,6 +51,7 @@ export class WebAuthn {
   }
 
   async verify(options) {
+    console.log(options)
     if (!options) {
       throw new Unauthorized();
     }

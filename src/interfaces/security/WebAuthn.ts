@@ -3,13 +3,13 @@ interface CreatorOptions {
 }
 
 interface GetterOptions {
-  data: ArrayBuffer;
-  json: ArrayBuffer;
-  signature: ArrayBuffer;
+  data: Uint8Array;
+  json: Uint8Array;
+  signature: Uint8Array;
 }
 
 interface VerifyOptions {
-  key: ArrayBuffer;
+  key: Uint8Array;
   algorithm: number;
 }
 
