@@ -72,7 +72,7 @@ export class BufferStreamReader {
         this.controller.byobRequest.view.set(new Uint8Array(chunk), 0);
         this.controller.byobRequest.respond(chunk.byteLength);
       } else {
-        this.controller.enqueue(new Uint8Array(chunk.slice(0)));
+        this.controller.enqueue(new Uint8Array(chunk.transfer()));
       }
     }
 

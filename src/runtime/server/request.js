@@ -5,9 +5,7 @@ import { LengthRequired } from '../exceptions/LengthRequired.js';
 import { BufferStreamReader } from './stream.js';
 
 export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
-  let offset = 0;
-  let buffer = null;
-  let length = +req.getHeader('content-length');
+  const length = +req.getHeader('content-length');
 
   if (isNaN(length)) {
     throw new LengthRequired();
@@ -18,17 +16,21 @@ export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
   }
 
   return new Promise((resolve, reject) => {
+    let offset = 0;
+    let buffer = null;
     res.context.onAborted = reject;
 
     res.onData((chunk, done) => {
       if (chunk.byteLength === length) {
-        resolve(new Uint8Array(chunk.slice(0)));
-      } else {
-        buffer ??= new Uint8Array(length);
+        resolve(new Uint8Array(chunk.transfer()));
+      } else if (buffer) {
         buffer.set(new Uint8Array(chunk), offset);
 
         if (done) resolve(buffer);
         else offset += chunk.byteLength;
+      } else {
+        offset = chunk.byteLength;
+        buffer = new Uint8Array(chunk.transfer(length));
       }
     });
   });
