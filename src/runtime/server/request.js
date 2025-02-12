@@ -20,14 +20,14 @@ export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
     let buffer = null;
     res.context.onAborted = reject;
 
-    res.onData((chunk, done) => {
-      if (chunk.byteLength === length) {
-        resolve(new Uint8Array(chunk.transfer()));
-      } else if (buffer) {
+    res.onData((chunk, isDone) => {
+      if (buffer) {
         buffer.set(new Uint8Array(chunk), offset);
 
-        if (done) resolve(buffer);
+        if (isDone) resolve(buffer);
         else offset += chunk.byteLength;
+      } else if (isDone) {
+        resolve(new Uint8Array(chunk.transfer()));
       } else {
         offset = chunk.byteLength;
         buffer = new Uint8Array(chunk.transfer(length));
@@ -38,13 +38,13 @@ export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
 
 export function readBufferStream(req, res) {
   const reader = new BufferStreamReader(res);
+  const { promise, resolve, reject } = Promise.withResolvers()
 
-  return new Promise((resolve, reject) => {
-    reader.resolve = resolve;
-    reader.reject = reject;
+  reader.reject = reject;
+  reader.resolve = resolve;
+  
+  res.context.onAborted = reject;
+  res.onData(reader.onData);
 
-    res.context.onAborted = reject;
-
-    res.onData(reader.onData);
-  });
+  return promise;
 }
