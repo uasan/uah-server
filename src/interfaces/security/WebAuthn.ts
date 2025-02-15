@@ -1,5 +1,5 @@
 interface CreatorOptions {
-  json: ArrayBuffer;
+  json: Uint8Array;
 }
 
 interface GetterOptions {
