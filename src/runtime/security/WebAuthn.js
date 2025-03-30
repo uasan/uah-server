@@ -1,5 +1,5 @@
-import { webcrypto } from 'node:crypto';
 import { Buffer } from 'node:buffer';
+import { webcrypto } from 'node:crypto';
 
 import { Unauthorized } from '../exceptions/Unauthorized.js';
 import { UnProcessable } from '../exceptions/UnProcessable.js';
@@ -9,11 +9,17 @@ import { decodeJSON } from '../types/json.js';
 const { subtle } = webcrypto;
 const keyUsages = ['verify'];
 
+const EDDSA = -8;
 const ES256 = -7;
 const PS256 = -37;
 const RS256 = -257;
 
 const algorithms = {
+  [EDDSA]: {
+    name: 'Ed25519',
+    namedCurve: 'Ed25519',
+    hash: { name: 'SHA-256' },
+  },
   [ES256]: {
     name: 'ECDSA',
     namedCurve: 'P-256',
@@ -46,12 +52,11 @@ export class WebAuthn {
   async validate(options) {
     this.challenge = Buffer.from(
       decodeJSON(options.json).challenge,
-      'base64url'
+      'base64url',
     );
   }
 
   async verify(options) {
-    console.log(options)
     if (!options) {
       throw new Unauthorized();
     }
@@ -60,7 +65,7 @@ export class WebAuthn {
     const jsonHash = await subtle.digest(algorithm.hash.name, this.json);
 
     const signedData = new Uint8Array(
-      this.data.byteLength + jsonHash.byteLength
+      this.data.byteLength + jsonHash.byteLength,
     );
 
     signedData.set(new Uint8Array(this.data));
@@ -70,7 +75,7 @@ export class WebAuthn {
       algorithm,
       await subtle.importKey('spki', options.key, algorithm, false, keyUsages),
       this.signature,
-      signedData.buffer
+      signedData.buffer,
     );
 
     if (verified !== true) {

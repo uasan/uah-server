@@ -1,6 +1,6 @@
-import { Server } from './app.js';
 import { ContentTooLarge } from '../exceptions/ContentTooLarge.js';
 import { LengthRequired } from '../exceptions/LengthRequired.js';
+import { Server } from './app.js';
 
 import { BufferStreamReader } from './stream.js';
 
@@ -27,7 +27,7 @@ export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
         if (isDone) resolve(buffer);
         else offset += chunk.byteLength;
       } else if (isDone) {
-        resolve(new Uint8Array(chunk.transfer()));
+        resolve(new Uint8Array(chunk.slice()));
       } else {
         offset = chunk.byteLength;
         buffer = new Uint8Array(chunk.transfer(length));
@@ -38,11 +38,11 @@ export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
 
 export function readBufferStream(req, res) {
   const reader = new BufferStreamReader(res);
-  const { promise, resolve, reject } = Promise.withResolvers()
+  const { promise, resolve, reject } = Promise.withResolvers();
 
   reader.reject = reject;
   reader.resolve = resolve;
-  
+
   res.context.onAborted = reject;
   res.onData(reader.onData);
 
