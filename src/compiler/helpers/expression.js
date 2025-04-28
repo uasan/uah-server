@@ -12,6 +12,7 @@ export const {
   Identifier,
   Parameter,
   PlusToken,
+  MinusToken,
   ColonToken,
   ArrowFunction,
   JsxExpression,
@@ -36,20 +37,17 @@ export const {
   AmpersandAmpersandToken,
 } = ts.SyntaxKind;
 
-export const factoryToken = kind =>
-  (tokens[kind] ??= host.factory.createToken(kind));
+export const factoryToken = kind => (tokens[kind] ??= host.factory.createToken(kind));
 
-export const factoryNumber = number =>
-  (numbers[number] ??= host.factory.createNumericLiteral(number));
+export const factoryNumber = number => (numbers[number] ??= Number(number) < 0
+  ? factoryMinusExpression(host.factory.createNumericLiteral(Math.abs(number)))
+  : host.factory.createNumericLiteral(number));
 
-export const factoryString = string =>
-  (strings[string] ??= host.factory.createStringLiteral(string));
+export const factoryString = string => (strings[string] ??= host.factory.createStringLiteral(string));
 
-export const factoryBigInt = string =>
-  (bigints[string] ??= host.factory.createBigIntLiteral(string));
+export const factoryBigInt = string => (bigints[string] ??= host.factory.createBigIntLiteral(string));
 
-export const factoryIdentifier = string =>
-  (identifiers[string] ??= host.factory.createIdentifier(string));
+export const factoryIdentifier = string => (identifiers[string] ??= host.factory.createIdentifier(string));
 
 export const factoryNull = () => host.factory.createNull();
 export const factoryTrue = () => host.factory.createTrue();
@@ -68,8 +66,7 @@ export function factoryLiteral(value) {
   if (value === null) return factoryNull();
 }
 
-export const getConstantLiteral = node =>
-  factoryLiteral(host.checker.getConstantValue(node));
+export const getConstantLiteral = node => factoryLiteral(host.checker.getConstantValue(node));
 
 export function getValueOfLiteral(node) {
   switch (node.kind) {
@@ -91,16 +88,16 @@ export function getValueOfLiteral(node) {
 export const factoryIfEqual = (
   left,
   right = host.factory.createVoidZero(),
-  expression
+  expression,
 ) =>
   host.factory.createIfStatement(
     host.factory.createBinaryExpression(
       left,
       factoryToken(EqualsEqualsEqualsToken),
-      right
+      right,
     ),
     isStatement(expression) ? expression : toStatement(expression),
-    undefined
+    undefined,
   );
 
 export const getLiteralNode = node => {
@@ -115,36 +112,34 @@ export const getLiteralNode = node => {
   }
 };
 
-export const factoryNotExpression = node =>
-  host.factory.createPrefixUnaryExpression(ExclamationToken, node);
-
-export const factoryPlusExpression = node =>
-  host.factory.createPrefixUnaryExpression(PlusToken, node);
+export const factoryNotExpression = node => host.factory.createPrefixUnaryExpression(ExclamationToken, node);
+export const factoryPlusExpression = node => host.factory.createPrefixUnaryExpression(PlusToken, node);
+export const factoryMinusExpression = node => host.factory.createPrefixUnaryExpression(MinusToken, node);
 
 export const factoryAwait = node => host.factory.createAwaitExpression(node);
 
 export const factoryAwaitParenthesized = node =>
   host.factory.createParenthesizedExpression(
-    host.factory.createAwaitExpression(node)
+    host.factory.createAwaitExpression(node),
   );
 
 export const factoryPropertyParenthesized = (
   left,
   right,
-  isNullable = false
+  isNullable = false,
 ) =>
   isNullable
     ? host.factory.createPropertyAccessChain(
-        host.factory.createParenthesizedExpression(left),
-        host.factory.createToken(QuestionDotToken),
-        right
-      )
+      host.factory.createParenthesizedExpression(left),
+      host.factory.createToken(QuestionDotToken),
+      right,
+    )
     : host.factory.createPropertyAccessExpression(
-        host.factory.createParenthesizedExpression(left),
-        right
-      );
+      host.factory.createParenthesizedExpression(left),
+      right,
+    );
 
 export const factoryAwaitStatement = node =>
   host.factory.createExpressionStatement(
-    host.factory.createAwaitExpression(node)
+    host.factory.createAwaitExpression(node),
   );
