@@ -5,6 +5,7 @@ export class UUID extends Validator {
 
   static make(meta, args) {
     meta.isUUID = true;
+
     super.make(meta, args);
   }
 }

@@ -19,5 +19,16 @@ export const printNodes = nodes => {
 export const printNode = node => printNodes([node]);
 
 console.info = (node, ...args) => {
-  console.log(printNodes(Array.isArray(node) ? node : [node]), ...args);
+  switch (node?.constructor?.name) {
+    case 'TypeObject':
+      console.log(host.checker.typeToString(node), ...args);
+      break;
+
+    case 'SymbolObject':
+      console.log(host.checker.symbolToString(node), ...args);
+      break;
+
+    default:
+      console.log(printNodes(Array.isArray(node) ? node : [node]), ...args);
+  }
 };

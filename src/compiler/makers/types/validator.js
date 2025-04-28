@@ -1,10 +1,6 @@
-import {
-  getPropertiesOfTypeNode,
-  isDefiniteType,
-  isTrueKeyword,
-} from '../../helpers/checker.js';
-import { getValueOfTypeNode } from '../../helpers/values.js';
 import { factoryCallMethod } from '../../helpers/call.js';
+import { getPropertiesOfTypeNode, isDefiniteType, isTrueKeyword } from '../../helpers/checker.js';
+import { getValueOfTypeNode } from '../../helpers/values.js';
 import { host } from '../../host.js';
 
 export class Validator {

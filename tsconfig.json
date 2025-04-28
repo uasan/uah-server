@@ -1,9 +1,6 @@
 {
   "display": "UAH",
   "compilerOptions": {
-    "lib": [
-      "ESNext"
-    ],
     "typeRoots": [
       "@types/node",
       "@uah/server"

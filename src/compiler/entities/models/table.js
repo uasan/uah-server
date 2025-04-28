@@ -1,20 +1,20 @@
 import ts from 'typescript';
 
-import { host } from '../../host.js';
-import { factoryStaticProperty, updateClass } from '../../helpers/class.js';
-import { MetaType } from '../../helpers/types.js';
 import {
   getTypeOfNode,
+  hasDeclareModifier,
   isBigIntType,
   isBooleanType,
   isNeverType,
-  isObjectType,
   isNumberType,
+  isObjectType,
   isStringType,
-  hasDeclareModifier,
 } from '../../helpers/checker.js';
-import { makeFieldValidate } from '../../helpers/validator.js';
+import { factoryStaticProperty, updateClass } from '../../helpers/class.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
+import { MetaType } from '../../helpers/types.js';
+import { makeFieldValidate } from '../../helpers/validator.js';
+import { host } from '../../host.js';
 
 import { PATH_SRC } from '../../../config.js';
 
@@ -26,21 +26,21 @@ const getSqlType = meta =>
   meta.sqlType
     ? meta.sqlType
     : isStringType(meta.type)
-      ? 'text'
-      : isBigIntType(meta.type)
-        ? 'bigint'
-        : isNumberType(meta.type)
-          ? 'float8'
-          : isBooleanType(meta.type)
-            ? 'boolean'
-            : isObjectType(meta.type)
-              ? 'jsonb'
-              : 'text';
+    ? 'text'
+    : isBigIntType(meta.type)
+    ? 'bigint'
+    : isNumberType(meta.type)
+    ? 'float8'
+    : isBooleanType(meta.type)
+    ? 'boolean'
+    : isObjectType(meta.type)
+    ? 'jsonb'
+    : 'text';
 
 function getTableReferences(links) {
   let ref = '';
 
-  for (let i = 0; i < links.length; i++)
+  for (let i = 0; i < links.length; i++) {
     if (tableModels.has(links[i].node)) {
       const { node, key } = links[i];
       const { name } = tableModels.get(node);
@@ -48,6 +48,7 @@ function getTableReferences(links) {
       ref += 'REFERENCES ' + name + '("' + key + '") ';
       ref += 'ON UPDATE cascade ON DELETE cascade';
     }
+  }
 
   return ref;
 }

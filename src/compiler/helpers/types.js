@@ -11,8 +11,8 @@ import {
   hasUndefinedType,
 } from './checker.js';
 
-import { DateLike } from '../makers/types/validators/DateLike.js';
 import { BinaryData } from '../makers/types/validators/BinaryData.js';
+import { DateLike } from '../makers/types/validators/DateLike.js';
 
 const {
   RestType,
@@ -46,6 +46,7 @@ function makeMetaType(meta, node) {
         const symbol = getOriginSymbolOfNode(node.typeName);
 
         if (types.has(symbol)) {
+          meta.isTypePredefined = true;
           types.get(symbol).make(meta, node.typeArguments);
         } else if (hasSignatureConstruct(symbol)) {
           meta.isConstruct = true;
@@ -99,7 +100,8 @@ export class MetaType {
   isNullable = false;
   isOptional = false;
   isUndefined = false;
-  isTypeTrusted = false;
+
+  isTypePredefined = false;
 
   isBlob = false;
   isFile = false;
@@ -124,7 +126,7 @@ export class MetaType {
     this.node = node;
     this.type = type;
 
-    //console.log(host.checker.typeToString(type), DateLike.isAssignable(type));
+    // console.log(host.checker.typeToString(type), DateLike.isAssignable(type));
     makeMetaType(this, node);
   }
 
@@ -153,12 +155,14 @@ export class MetaType {
       self.defaultValue = node.initializer;
     }
 
-    if (DateLike.isAssignable(self.type)) {
-      self.isDateLike = true;
-      self.sqlType = DateLike.sqlType;
-    } else if (BinaryData.isAssignable(self.type)) {
-      self.isBinary = true;
-      self.sqlType = BinaryData.sqlType;
+    if (self.isTypePredefined === false) {
+      if (DateLike.isAssignable(self.type)) {
+        self.isDateLike = true;
+        self.sqlType = DateLike.sqlType;
+      } else if (BinaryData.isAssignable(self.type)) {
+        self.isBinary = true;
+        self.sqlType = BinaryData.sqlType;
+      }
     }
 
     return self;
