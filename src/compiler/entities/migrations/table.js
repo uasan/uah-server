@@ -1,12 +1,11 @@
 import { afterEmit } from '../../host.js';
-import { createFileMigration, getSQLValueOfNode } from './utils.js';
 import { makeMigrations, presetMigrations as presets } from './maker.js';
+import { createFileMigration, getSQLValueOfNode } from './utils.js';
 
 export function createTableMigration(model) {
-  let { url, name, table } = model;
   let fields = [];
+  let { url, name, path, table } = model;
 
-  let path = 'tables/' + name;
   let className = name.slice(name.indexOf('.') + 1) + 'Table';
 
   let up = `await this.postgres.query(\`CREATE TABLE ${model.tableName} (\n`;
@@ -46,7 +45,7 @@ export function createTableMigration(model) {
 
       if (Array.isArray(columns)) {
         fields.push(
-          '  CONSTRAINT "' + key + '" UNIQUE ("' + columns.join('", "') + '")'
+          '  CONSTRAINT "' + key + '" UNIQUE ("' + columns.join('", "') + '")',
         );
       }
     }
@@ -58,7 +57,7 @@ export function createTableMigration(model) {
   if (model.comment) {
     up += '\nawait this.postgres.query("';
     up += `COMMENT ON TABLE ${model.tableName} IS '`;
-    up += model.comment.replaceAll("'", "''");
+    up += model.comment.replaceAll('\'', '\'\'');
     up += '\'");';
   }
 
@@ -68,6 +67,6 @@ export function createTableMigration(model) {
 
   presets.set(
     url,
-    createFileMigration({ path, className, members: { up, down } })
+    createFileMigration({ path, className, members: { up, down } }),
   );
 }

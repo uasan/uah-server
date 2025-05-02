@@ -1,11 +1,5 @@
-import {
-  host,
-  entities,
-  beforeEmit,
-  afterEmit,
-  emitEntities,
-} from '../host.js';
 import { factoryEntity } from '../entities/factory.js';
+import { afterEmit, beforeEmit, emitEntities, entities, host } from '../host.js';
 import { setDeclarations } from '../makers/declaration.js';
 
 const emitResult = {
@@ -40,14 +34,16 @@ export function emit() {
     } else {
       files = state.seenAffectedFiles;
 
-      for (const key of entities.keys())
+      for (const key of entities.keys()) {
         if (fileInfos.has(key) === false) entities.get(key).delete();
+      }
     }
 
     if (files) {
-      //path.endsWith('/hello.tsx') &&
-      for (const path of files)
+      // path.endsWith('/hello.tsx') &&
+      for (const path of files) {
         if ((entity = factoryEntity(path))) emitEntities.add(entity);
+      }
 
       if (beforeEmit.size) {
         for (const task of beforeEmit) task();

@@ -1,5 +1,5 @@
-import { TypeScriptEntity } from '../typescript/entity.js';
 import { PATH_SRC_APP } from '#config';
+import { TypeScriptEntity } from '../typescript/entity.js';
 
 export class ModelEntity extends TypeScriptEntity {
   static {
@@ -9,10 +9,6 @@ export class ModelEntity extends TypeScriptEntity {
   model = {
     name: '',
     url: this.url,
-    migration: {
-      url: '',
-      className: '',
-    },
   };
 
   delete() {

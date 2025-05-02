@@ -10,14 +10,16 @@ export function getSQLValueOfNode(node) {
   let value = getValueOfLiteral(node);
 
   if (typeof value === 'string') {
-    value = "'" + value.replaceAll("'", "''") + "'";
+    value = '\'' + value.replaceAll('\'', '\'\'') + '\'';
   }
 
   return value;
 }
 
+export const getMigrationURL = path => DIR_MIGRATIONS + '/' + path + '.js';
+
 export function createFileMigration(migration) {
-  migration.url = DIR_MIGRATIONS + '/' + migration.path + '.js';
+  migration.url = getMigrationURL(migration.path);
   migration.className = toPascalCase(migration.className);
 
   let source = 'import { Migration } from ';
