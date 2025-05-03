@@ -29,7 +29,7 @@ async function getStateMigrations(ctx, migrations) {
   } catch (error) {
     if (error.code === ERRORS.RELATION_NOT_EXIST) {
       await createTableMigrations(ctx);
-      return await query;
+      return await query.asValue();
     }
     throw error;
   }
