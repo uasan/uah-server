@@ -9,7 +9,8 @@ import { createFileMigration, getMigrationURL } from './utils.js';
 export const migrations = new Map();
 export const presetMigrations = new Map();
 
-export const isNotExistsMigration = path => migrations.has(getMigrationURL(path)) === false;
+export const hasMigration = path => migrations.has(getMigrationURL(path));
+export const getMigration = path => migrations.get(getMigrationURL(path));
 
 export function setSchema(name) {
   if (name.includes('.')) {
@@ -37,28 +38,31 @@ export function setSchema(name) {
 }
 
 export function makeMigrations() {
+  const classes = [];
+  const imports = new Set();
+
   let index = 0;
-  let classes = [];
   let source = `import { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
 
   source += `import { Migration } from '../${DIR_LIB}/Migration.js';\n`;
 
-  for (const { url, className } of presetMigrations.values()) {
-    if (migrations.has(url) === false) {
-      const alias = '_' + index++;
-
-      classes.push(alias);
-      source += `import { ${className} as ${alias} } from '../${url}';\n`;
+  for (const meta of presetMigrations.values()) {
+    if (meta.isValid) {
+      imports.add(meta);
     }
   }
 
-  for (const { url, isValid, className } of migrations.values()) {
-    if (isValid) {
-      const alias = '_' + index++;
-
-      classes.push(alias);
-      source += `import { ${className} as ${alias} } from '../${url}';\n`;
+  for (const meta of migrations.values()) {
+    if (meta.isValid) {
+      imports.add(meta);
     }
+  }
+
+  for (const meta of imports) {
+    const alias = '_' + index++;
+
+    classes.push(alias);
+    source += `import { ${meta.className} as ${alias} } from '../${meta.url}';\n`;
   }
 
   source += `\nawait migrate(Migration, [${classes.join(', ')}]);\n`;
@@ -79,8 +83,8 @@ export function MigrationContext(node) {
 
   if (!migration.isValid || migration.className !== className) {
     migration.isValid = true;
-    afterEmit.add(makeMigrations);
     migration.className = className;
+    afterEmit.add(makeMigrations);
   }
 
   return updateClass(node, node.modifiers, node.name, node.heritageClauses, [

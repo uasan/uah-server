@@ -1,4 +1,4 @@
-import { isNotExistsMigration, setSchema } from '../../entities/migrations/maker.js';
+import { getMigration, hasMigration, presetMigrations, setSchema } from '../../entities/migrations/maker.js';
 import { createTableMigration } from '../../entities/migrations/table.js';
 import { tableModels } from '../../entities/models/table.js';
 import { factoryCallStatement } from '../../helpers/call.js';
@@ -17,7 +17,9 @@ export function Table(node, original, decor) {
     model.name = model.tableName.replaceAll('"', '');
     model.path = 'tables/' + model.name;
 
-    if (isNotExistsMigration(model.path)) {
+    if (hasMigration(model.path)) {
+      presetMigrations.set(model.url, getMigration(model.path));
+    } else {
       createTableMigration(model);
     }
 

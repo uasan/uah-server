@@ -19,6 +19,7 @@ export function getSQLValueOfNode(node) {
 export const getMigrationURL = path => DIR_MIGRATIONS + '/' + path + '.js';
 
 export function createFileMigration(migration) {
+  migration.isValid = true;
   migration.url = getMigrationURL(migration.path);
   migration.className = toPascalCase(migration.className);
 
