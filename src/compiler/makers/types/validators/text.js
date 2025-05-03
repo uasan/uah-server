@@ -1,3 +1,4 @@
+import { getValueOfLiteral } from '#compiler/helpers/values.js';
 import { Validator } from '../Validator.js';
 
 export class Text extends Validator {
@@ -12,13 +13,29 @@ export class Text extends Validator {
 
     if (this.props.has('length')) {
       this.makeCall('isLength', 'length');
+
+      if (this.meta.sql) {
+        const length = getValueOfLiteral(this.props.get('length'));
+
+        if (length > 0) {
+          this.meta.sql.type = length === 1 ? '"char"' : `char(${length})`;
+        }
+      }
     } else {
       if (this.props.has('minLength')) {
-        this.makeCall('isMinLength', 'min');
+        this.makeCall('isMinLength', 'minLength');
       }
 
       if (this.props.has('maxLength')) {
-        this.makeCall('isMaxLength', 'max');
+        this.makeCall('isMaxLength', 'maxLength');
+
+        if (this.meta.sql) {
+          const length = getValueOfLiteral(this.props.get('maxLength'));
+
+          if (length > 0) {
+            this.meta.sql.type = `varchar(${length})`;
+          }
+        }
       }
     }
 
@@ -33,5 +50,13 @@ export class Text extends Validator {
     }
 
     return this.ast;
+  }
+
+  static make(meta) {
+    if (meta.sql) {
+      meta.sql.type = 'text';
+    }
+
+    super.make(meta);
   }
 }

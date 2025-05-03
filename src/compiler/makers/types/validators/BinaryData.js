@@ -1,9 +1,9 @@
 import { Validator } from '../Validator.js';
 
 export class BinaryData extends Validator {
-  static sqlType = 'bytea';
-
-  static make() {
-    //
+  static make(meta) {
+    if (meta.sql) {
+      meta.sql.type = 'bytea';
+    }
   }
 }

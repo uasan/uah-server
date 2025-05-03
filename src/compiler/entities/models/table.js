@@ -23,8 +23,8 @@ export const { PropertyDeclaration } = ts.SyntaxKind;
 export const tableModels = new WeakMap();
 
 const getSqlType = meta =>
-  meta.sqlType
-    ? meta.sqlType
+  meta.sql.type
+    ? meta.sql.type
     : isStringType(meta.type)
     ? 'text'
     : isBigIntType(meta.type)
@@ -53,6 +53,13 @@ function getTableReferences(links) {
   return ref;
 }
 
+class MetaTypeSQL extends MetaType {
+  sql = {
+    type: '',
+    length: 0,
+  };
+}
+
 export function TableModel(node) {
   const { model } = host.entity;
 
@@ -67,7 +74,7 @@ export function TableModel(node) {
   model.comment = host.entity.path.slice(PATH_SRC.length);
 
   for (const symbol of getTypeOfNode(node).properties) {
-    const meta = MetaType.create(symbol.valueDeclaration);
+    const meta = MetaTypeSQL.create(symbol.valueDeclaration);
 
     if (hasDeclareModifier(symbol.valueDeclaration)) {
       switch (meta.name) {

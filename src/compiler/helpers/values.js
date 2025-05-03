@@ -1,12 +1,8 @@
 import ts from 'typescript';
 
 import { host } from '../host.js';
+import { getOriginSymbolOfNode, getTypeOfTypeNode, isLiteralTypeOrNullType } from './checker.js';
 import { factoryLiteral, getConstantLiteral } from './expression.js';
-import {
-  getTypeOfTypeNode,
-  getOriginSymbolOfNode,
-  isLiteralTypeOrNullType,
-} from './checker.js';
 
 const {
   TypeQuery,
@@ -24,16 +20,16 @@ const {
 } = ts.SyntaxKind;
 
 export const getValueOfLiteralType = type =>
-  type.value ??
-  (type === host.checker.getTrueType()
-    ? true
-    : type === host.checker.getFalseType()
+  type.value
+    ?? (type === host.checker.getTrueType()
+      ? true
+      : type === host.checker.getFalseType()
       ? false
       : type === host.checker.getNullType()
-        ? null
-        : undefined);
+      ? null
+      : undefined);
 
-export function getValueOfTypeNode(node) {
+export function getLiteralNodeOfTypeNode(node) {
   switch (node.kind) {
     case LiteralType:
       return factoryLiteral(getValueOfLiteralType(getTypeOfTypeNode(node)));
@@ -56,7 +52,7 @@ export function getValueOfTypeNode(node) {
       return node.exprName;
 
     case TypeReference:
-      return getConstantLiteral(node) ?? getValueOfTypeNode(node.typeName);
+      return getConstantLiteral(node) ?? getLiteralNodeOfTypeNode(node.typeName);
 
     case IndexedAccessType:
       return;

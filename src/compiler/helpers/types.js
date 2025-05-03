@@ -90,12 +90,12 @@ function makeMetaType(meta, node) {
 
 export class MetaType {
   name = '';
+  numberType = '';
+
+  sql = null;
   node = null;
   type = null;
   defaultValue = null;
-
-  sqlType = '';
-  numberType = '';
 
   isNullable = false;
   isOptional = false;
@@ -127,15 +127,19 @@ export class MetaType {
     this.type = type;
 
     // console.log(host.checker.typeToString(type), DateLike.isAssignable(type));
-    makeMetaType(this, node);
+  }
+
+  make() {
+    makeMetaType(this, this.node);
+    return this;
   }
 
   add(node) {
-    this.children.push(new MetaType(node));
+    this.children.push(new MetaType(node).make());
   }
 
   static create(node) {
-    const self = new this(node.type, getTypeOfNode(node));
+    const self = new this(node.type, getTypeOfNode(node)).make();
 
     self.name = node.name.escapedText;
 
@@ -158,10 +162,17 @@ export class MetaType {
     if (self.isTypePredefined === false) {
       if (DateLike.isAssignable(self.type)) {
         self.isDateLike = true;
-        self.sqlType = DateLike.sqlType;
+
+        if (self.sql) {
+          self.sql.length = 8;
+          self.sql.type = 'timestamptz';
+        }
       } else if (BinaryData.isAssignable(self.type)) {
         self.isBinary = true;
-        self.sqlType = BinaryData.sqlType;
+
+        if (self.sql) {
+          self.sql.type = 'bytea';
+        }
       }
     }
 

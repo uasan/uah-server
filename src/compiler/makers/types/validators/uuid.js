@@ -1,10 +1,13 @@
 import { Validator } from '../Validator.js';
 
 export class UUID extends Validator {
-  static sqlType = 'uuid';
-
   static make(meta, args) {
     meta.isUUID = true;
+
+    if (meta.sql) {
+      meta.sql.type = 'uuid';
+      meta.sql.length = 16;
+    }
 
     super.make(meta, args);
   }

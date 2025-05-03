@@ -1,15 +1,12 @@
 import { Validator } from '../Validator.js';
 
 export class Int extends Validator {
-  static sqlType = 'int';
-
   byteLength = 4;
   numberType = 'Int32';
 
   make(ast, method = 'isInt') {
     super.make(ast, method);
 
-    //this.meta.sqlType = this.sqlType;
     this.meta.bytelength = this.bytelength;
     this.meta.numberType = this.numberType;
 
@@ -22,5 +19,14 @@ export class Int extends Validator {
     }
 
     return this.ast;
+  }
+
+  static make(meta) {
+    if (meta.sql) {
+      meta.sql.length = 4;
+      meta.sql.type = 'int';
+    }
+
+    super.make(meta);
   }
 }
