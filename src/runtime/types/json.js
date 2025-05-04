@@ -1,8 +1,7 @@
 import { BadRequest } from '../exceptions/BadRequest.js';
+import { textDecoder } from './text.js';
 
 export const { parse, stringify } = JSON;
-
-const { utf8Slice } = Buffer.prototype;
 
 class JsonError extends BadRequest {}
 
@@ -16,7 +15,7 @@ export function tryParseJson(value) {
 
 export function decodeJSON(buffer) {
   try {
-    return parse(utf8Slice.call(buffer));
+    return parse(textDecoder.decode(buffer));
   } catch (error) {
     throw new JsonError(error.message);
   }

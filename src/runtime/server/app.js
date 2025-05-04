@@ -1,12 +1,8 @@
-import {
-  App,
-  us_listen_socket_close,
-  LIBUS_LISTEN_EXCLUSIVE_PORT,
-} from 'uWebSockets.js';
+import { App, LIBUS_LISTEN_EXCLUSIVE_PORT, us_listen_socket_close } from 'uWebSockets.js';
 
+import { style } from '#utils/console.js';
 import { signal } from '../process.js';
 import { Router } from './router.js';
-import { style } from '#utils/console.js';
 
 export const Server = {
   url: '',
@@ -35,7 +31,7 @@ export const Server = {
       this.host,
       this.port,
       LIBUS_LISTEN_EXCLUSIVE_PORT,
-      onListen
+      onListen,
     );
   },
 };
@@ -49,10 +45,10 @@ function onListen(token) {
 
     signal.addEventListener('abort', onAbort);
     console.log(
-      style.bgGreenBright(style.bold(' LISTEN ')) +
-        ' ' +
-        style.blueBright(Server.url) +
-        '\n'
+      style.bgGreenBright(style.bold(' LISTEN '))
+        + ' '
+        + style.blueBright(Server.url)
+        + '\n',
     );
   } else {
     console.error(new Error(style.red('Server start ' + Server.url)));

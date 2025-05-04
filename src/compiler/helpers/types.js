@@ -159,20 +159,18 @@ export class MetaType {
       self.defaultValue = node.initializer;
     }
 
-    if (self.isTypePredefined === false) {
-      if (DateLike.isAssignable(self.type)) {
-        self.isDateLike = true;
+    if (DateLike.isAssignable(self.type)) {
+      self.isDateLike = true;
 
-        if (self.sql) {
-          self.sql.length = 8;
-          self.sql.type = 'timestamptz';
-        }
-      } else if (BinaryData.isAssignable(self.type)) {
-        self.isBinary = true;
+      if (self.sql) {
+        self.sql.length = 8;
+        self.sql.type = 'timestamptz';
+      }
+    } else if (BinaryData.isAssignable(self.type)) {
+      self.isBinary = true;
 
-        if (self.sql) {
-          self.sql.type = 'bytea';
-        }
+      if (self.sql) {
+        self.sql.type = 'bytea';
       }
     }
 

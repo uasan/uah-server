@@ -29,7 +29,14 @@ interface Response {
 export declare abstract class ServerContext extends Context {
   connected: boolean;
 
+  abstract auth(): Promise<void>;
+
   user: User;
   request: Request;
   response: Response;
+
+  subscribeToChannel(name: string): void;
+
+  static sendMessageToChannel(name: string, payload: any): void;
+  static sendMessageToUser(uid: string | number | bigint, payload: any): void;
 }

@@ -1,7 +1,6 @@
 import { streams } from '../utils/stream.js';
 import { File } from './File.js';
-
-const textDecoder = new TextDecoder();
+import { textDecoder } from './text.js';
 
 export const BuffersDecoder = new (class BuffersDecoder {
   offset = 0;
@@ -39,7 +38,7 @@ export const BuffersDecoder = new (class BuffersDecoder {
   }
 
   getSlice(length) {
-    return this.uint8.subarray(this.offset, (this.offset += length));
+    return this.uint8.subarray(this.offset, this.offset += length);
   }
 
   getBuffer() {
