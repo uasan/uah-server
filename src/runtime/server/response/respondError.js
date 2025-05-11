@@ -3,7 +3,7 @@ export function respondError(res, error) {
 
   let status = error.status || 500;
 
-  if (res.context?.connected) {
+  if (res.context?.isConnected) {
     const type = error.constructor?.name || 'Error';
 
     res.cork(() => {
@@ -15,8 +15,8 @@ export function respondError(res, error) {
           JSON.stringify(
             status === 500
               ? { type, status, message: error.message }
-              : { type, status, ...error }
-          )
+              : { type, status, ...error },
+          ),
         );
     });
   }

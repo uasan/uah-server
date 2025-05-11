@@ -1,4 +1,7 @@
-import type { ServerContext } from './context.ts';
+interface SocketIdentifier {
+  peerId?: number | bigint | string;
+  userId?: number | bigint | string;
+}
 
 export interface WebSocket {
   onOpen(): Promise<void>;
@@ -6,11 +9,7 @@ export interface WebSocket {
   onClose(): Promise<void>;
 }
 
-type MethodsRPC = Record<string, (context: ServerContext, payload?: unknown) => Promise<unknown>>;
-
 export interface WebSocketRPC {
-  methods: MethodsRPC;
-
-  onOpen(): Promise<void>;
+  onOpen(payload?: unknown): Promise<SocketIdentifier | void>;
   onClose(): Promise<void>;
 }

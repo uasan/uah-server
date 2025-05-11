@@ -1,12 +1,13 @@
 import ts from 'typescript';
 
-import { host } from '../../host.js';
-import { makeRouteMethod } from './handler.js';
-import { methods } from './constants.js';
+import { getImplement } from '#compiler/makers/class.js';
+import { HTTP } from '#compiler/makers/protocols/HTTP.js';
 import { URL_LIB_RUNTIME } from '../../../config.js';
-import { updateClass } from '../../helpers/class.js';
 import { isExportNode, isStaticKeyword } from '../../helpers/checker.js';
+import { updateClass } from '../../helpers/class.js';
 import { getNodeTextName } from '../../helpers/var.js';
+import { host } from '../../host.js';
+import { makeRouteMethodHTTP } from './handler.js';
 
 const { MethodDeclaration } = ts.SyntaxKind;
 
@@ -17,18 +18,13 @@ export function makeImportRoutes() {
 
   source += 'await Promise.all([';
 
-  for (const route of routes)
+  for (const route of routes) {
     if (route.methods.length) {
       source += `import ('./${route.url}').then(m => {`;
-
-      for (const method of route.methods) {
-        source += 'Router.set(';
-        source += "'" + route.path + method.params + "',";
-        source += 'm.' + route.class + '.' + method.name + ');';
-      }
-
+      source += route.methods.join(';');
       source += '}),\n';
     }
+  }
   source += ']);';
   host.hooks.saveFile('api.js', source);
 }
@@ -40,21 +36,23 @@ export function ServerContext(node) {
     return host.visitEachChild(node);
   }
 
-  if (routes.has(route)) {
+  if (route.methods.length) {
     route.methods.length = 0;
   }
 
   const members = [];
 
   route.class = getNodeTextName(node);
+  route.protocol = getImplement(node) ?? HTTP;
 
   for (const member of node.members) {
     if (
-      member.kind === MethodDeclaration &&
-      methods.has(member.name.escapedText) &&
-      !member.modifiers?.some(isStaticKeyword)
-    )
-      members.push(makeRouteMethod(member.name.escapedText, member));
+      member.kind === MethodDeclaration
+      && route.protocol.methods.has(member.name.escapedText)
+      && !member.modifiers?.some(isStaticKeyword)
+    ) {
+      route.protocol.methods.get(member.name.escapedText).make(route, members, member);
+    }
   }
 
   node = host.visitEachChild(node);

@@ -13,14 +13,14 @@ export const {
   ParenthesizedExpression,
 } = ts.SyntaxKind;
 
-const factoryParameter = node =>
+export const factoryParameter = node =>
   host.factory.createParameterDeclaration(
     undefined,
     undefined,
     node,
     undefined,
     undefined,
-    undefined
+    undefined,
   );
 
 export const factoryArrowFunction = (params, body) =>
@@ -30,7 +30,7 @@ export const factoryArrowFunction = (params, body) =>
     Array.isArray(params) ? params : [factoryParameter(params)],
     undefined,
     factoryToken(EqualsGreaterThanToken),
-    body
+    body,
   );
 
 export const factoryBodyFunction = statements =>
@@ -40,7 +40,7 @@ export const factoryBodyFunction = statements =>
     undefined,
     undefined,
     factoryToken(EqualsGreaterThanToken),
-    host.factory.createBlock(statements, false)
+    host.factory.createBlock(statements, false),
   );
 
 export const factoryRouteFunction = (isAsync, statements) =>
@@ -53,7 +53,7 @@ export const factoryRouteFunction = (isAsync, statements) =>
     ],
     undefined,
     factoryToken(EqualsGreaterThanToken),
-    host.factory.createBlock(statements, false)
+    host.factory.createBlock(statements, false),
   );
 
 export const updateMethod = (node, parameters, statements) =>
@@ -66,7 +66,7 @@ export const updateMethod = (node, parameters, statements) =>
     undefined,
     parameters,
     undefined,
-    host.factory.updateBlock(node.body, statements)
+    host.factory.updateBlock(node.body, statements),
   );
 
 export const updateMethodStatements = (node, statements) =>
@@ -79,7 +79,7 @@ export const updateMethodStatements = (node, statements) =>
     undefined,
     node.parameters,
     undefined,
-    host.factory.updateBlock(node.body, statements)
+    host.factory.updateBlock(node.body, statements),
   );
 
 export function ensureArgument(node, index = 0) {
@@ -99,7 +99,7 @@ export function ensureArgument(node, index = 0) {
     arg,
     undefined,
     undefined,
-    undefined
+    undefined,
   );
 
   return updateMethod(node, parameters, [

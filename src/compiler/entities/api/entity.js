@@ -1,7 +1,7 @@
-import { TypeScriptEntity } from '../typescript/entity.js';
 import { PATH_SRC_APP } from '#config';
-import { routes, makeImportRoutes, makeRoutePath } from './maker.js';
 import { afterEmit } from '../../host.js';
+import { TypeScriptEntity } from '../typescript/entity.js';
+import { makeImportRoutes, makeRoutePath, routes } from './maker.js';
 
 export class AppRouteEntity extends TypeScriptEntity {
   static {
@@ -12,6 +12,7 @@ export class AppRouteEntity extends TypeScriptEntity {
     class: '',
     methods: [],
     url: this.url,
+    protocol: null,
     path: makeRoutePath(this),
   };
 

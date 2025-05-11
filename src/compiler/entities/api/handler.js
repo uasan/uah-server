@@ -1,45 +1,41 @@
-import { host } from '../../host.js';
 import { internals } from '../../helpers/internals.js';
+import { host } from '../../host.js';
 import { makePayloadFromBody, makePayloadFromQuery } from './payload.js';
 
-import { factoryRouteFunction } from '../../helpers/function.js';
-import {
-  factoryCall,
-  factoryCallMethod,
-  factoryCallThisMethod,
-} from '../../helpers/call.js';
-import { factoryConstant } from '../../helpers/var.js';
-import { hasDecorator } from '../../helpers/decorators.js';
-import {
-  factoryIdentifier,
-  factoryAwait,
-  factoryAwaitStatement,
-  factoryPropertyParenthesized,
-} from '../../helpers/expression.js';
-import { factoryTryStatement } from '../../helpers/statements.js';
+import { factoryCall, factoryCallMethod, factoryCallThisMethod } from '../../helpers/call.js';
 import {
   getAwaitedType,
+  getNonUndefinedType,
   getReturnType,
   getTypeOfNode,
-  isVoidLikeType,
+  hasAsyncModifier,
+  hasUndefinedType,
+  isBigIntType,
   isNotThisParameter,
   isStringType,
-  isBigIntType,
-  hasUndefinedType,
-  getNonUndefinedType,
-  hasAsyncModifier,
+  isVoidLikeType,
 } from '../../helpers/checker.js';
-import { methods } from './constants.js';
-import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryStaticProperty } from '../../helpers/class.js';
+import { hasDecorator } from '../../helpers/decorators.js';
+import {
+  factoryAwait,
+  factoryAwaitStatement,
+  factoryIdentifier,
+  factoryPropertyParenthesized,
+} from '../../helpers/expression.js';
+import { factoryRouteFunction } from '../../helpers/function.js';
+import { factoryTryStatement } from '../../helpers/statements.js';
+import { makePayloadValidator } from '../../helpers/validator.js';
+import { factoryConstant } from '../../helpers/var.js';
 import { lookup } from '../../makers/declaration.js';
 
-import { File } from '../../makers/types/validators/File.js';
-import { BinaryData } from '../../makers/types/validators/BinaryData.js';
 import { makeCache } from '#compiler/makers/decorators/cache.js';
+import { BinaryData } from '../../makers/types/validators/BinaryData.js';
+import { File } from '../../makers/types/validators/File.js';
 
-export function makeRouteMethod(name, node) {
+export function makeRouteMethodHTTP(route, members, node) {
   const statements = [];
+  const name = node.name.escapedText;
 
   const req = factoryIdentifier('req');
   const res = factoryIdentifier('res');
@@ -54,7 +50,7 @@ export function makeRouteMethod(name, node) {
 
   const isPrivate = node.modifiers?.some(
     hasDecorator,
-    lookup.decorators.Permission
+    lookup.decorators.Permission,
   );
 
   const cache = makeCache(
@@ -62,7 +58,7 @@ export function makeRouteMethod(name, node) {
     req,
     res,
     ctx,
-    isPrivate
+    isPrivate,
   );
 
   const hasUndefinedReturnType = hasUndefinedType(returnType);
@@ -80,7 +76,7 @@ export function makeRouteMethod(name, node) {
   }
 
   statements.push(
-    factoryConstant(ctx, factoryCallThisMethod('create', [req, res]))
+    factoryConstant(ctx, factoryCallThisMethod('create', [req, res])),
   );
 
   if (payloadType) {
@@ -126,8 +122,8 @@ export function makeRouteMethod(name, node) {
       factoryPropertyParenthesized(
         ast,
         factoryCall(factoryIdentifier('toString')),
-        hasUndefinedReturnType
-      )
+        hasUndefinedReturnType,
+      ),
     );
   } else {
     ast = internals.respondJson(res, ast);
@@ -135,17 +131,14 @@ export function makeRouteMethod(name, node) {
 
   statements.push(ast);
 
-  host.entity.route.methods.push({
-    name: methods.get(name),
-    params: pathParameters,
-  });
-
-  return factoryStaticProperty(
-    factoryIdentifier(methods.get(name)),
+  members.push(factoryStaticProperty(
+    factoryIdentifier(this.name),
     factoryRouteFunction(isAsyncHandler, [
       factoryTryStatement(statements, factoryIdentifier('e'), [
         internals.respondError(res, factoryIdentifier('e')),
       ]),
-    ])
-  );
+    ]),
+  ));
+
+  route.methods.push(`Router.set('${route.path + pathParameters}', m.${route.class + '.' + this.name})`);
 }

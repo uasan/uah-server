@@ -1,13 +1,16 @@
+import { Exception } from '#runtime/exceptions/Exception.js';
 import { Context } from '../context.js';
-import { parseCookies, setCookie, deleteCookie } from './cookies.js';
+import { deleteCookie, parseCookies, setCookie } from './cookies.js';
 
 export class ServerContext extends Context {
-  connected = true;
+  socket = null;
   permission = null;
+  isConnected = true;
 
   request = {
     cookies: new Map(),
     headers: {
+      etag: '',
       range: '',
     },
   };
@@ -21,12 +24,40 @@ export class ServerContext extends Context {
 
   onAborted() {}
 
+  subscribeToChannel(name) {
+    if (this.socket) {
+      this.socket.subscribe(name);
+    } else {
+      throw new Exception('Not implemented subscribe to channel');
+    }
+  }
+
+  unsubscribeFromChannel(name) {
+    if (this.socket) {
+      this.socket.unsubscribe(name);
+    } else {
+      throw new Exception('Not implemented unsubscribe from channel');
+    }
+  }
+
+  static sendMessageToPeer() {
+    throw new Exception('Not implemented send message to peer');
+  }
+
+  static sendMessageToUser() {
+    throw new Exception('Not implemented send message to user');
+  }
+
+  static sendMessageToChannel() {
+    throw new Exception('Not implemented send message to channel');
+  }
+
   static create(req, res) {
     const context = new this();
     res.context = context;
 
     res.onAborted(() => {
-      context.connected = false;
+      context.isConnected = false;
       context.onAborted();
     });
 

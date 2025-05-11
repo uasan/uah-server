@@ -20,6 +20,7 @@ export const {
   StringLiteral,
   NumericLiteral,
   BindingElement,
+  StaticKeyword,
   NullKeyword,
   TrueKeyword,
   FalseKeyword,
@@ -38,6 +39,7 @@ export const {
 } = ts.SyntaxKind;
 
 export const factoryToken = kind => (tokens[kind] ??= host.factory.createToken(kind));
+export const factoryStaticToken = () => factoryToken(StaticKeyword);
 
 export const factoryNumber = number => (numbers[number] ??= Number(number) < 0
   ? factoryMinusExpression(host.factory.createNumericLiteral(Math.abs(number)))

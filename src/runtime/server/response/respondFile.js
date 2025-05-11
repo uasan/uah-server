@@ -1,4 +1,4 @@
-import { read, close, openSync, fstatSync } from 'node:fs';
+import { close, fstatSync, openSync, read } from 'node:fs';
 import { parseRange } from '../utils/parseRange.js';
 
 const files = new Map();
@@ -82,19 +82,20 @@ class FileSender {
     if (file.lastModified) {
       response.writeHeader(
         'last-modified',
-        new Date(file.lastModified).toUTCString()
+        new Date(file.lastModified).toUTCString(),
       );
     }
 
     if (file.name) {
       response.writeHeader(
         'content-disposition',
-        `attachment; filename="${encodeURIComponent(file.name)}"`
+        `attachment; filename="${encodeURIComponent(file.name)}"`,
       );
     }
 
-    for (let i = 0; i < headers.length; i++)
+    for (let i = 0; i < headers.length; i++) {
       response.writeHeader(headers[i], headers[++i]);
+    }
 
     this.isWritable = true;
     response.onWritable(this.onWritable);
@@ -111,7 +112,7 @@ class FileSender {
       0,
       this.bufferLength,
       this.position,
-      this.onReadFile
+      this.onReadFile,
     );
 
     this.isReadable = false;
@@ -148,7 +149,7 @@ class FileSender {
       this.offsetWrite === 0
         ? this.buffer
         : this.buffer.buffer.slice(this.offsetWrite),
-      this.length
+      this.length,
     )[0];
 
     if (this.isWritable && this.isReadable) {
@@ -197,7 +198,7 @@ class FileSender {
 }
 
 export function respondFile(res, file) {
-  if (res.context.connected) {
+  if (res.context.isConnected) {
     new FileSender(res, file);
   }
 }

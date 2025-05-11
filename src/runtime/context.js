@@ -1,1 +1,3 @@
-export class Context {}
+export class Context {
+  error = null;
+}

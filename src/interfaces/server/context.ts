@@ -12,8 +12,10 @@ export interface CookieOptions {
   sameSite?: 'None' | 'Lax' | 'Strict';
 }
 
+type ID = string | number | bigint;
+
 interface User {
-  id: bigint;
+  id: ID;
 }
 interface Request {
   cookies: Map<string, string>;
@@ -27,7 +29,7 @@ interface Response {
 }
 
 export declare abstract class ServerContext extends Context {
-  connected: boolean;
+  isConnected: boolean;
 
   abstract auth(): Promise<void>;
 
@@ -36,7 +38,9 @@ export declare abstract class ServerContext extends Context {
   response: Response;
 
   subscribeToChannel(name: string): void;
+  unsubscribeFromChannel(name: string): void;
 
+  static sendMessageToPeer(uid: ID, payload: any): void;
+  static sendMessageToUser(uid: ID, payload: any): void;
   static sendMessageToChannel(name: string, payload: any): void;
-  static sendMessageToUser(uid: string | number | bigint, payload: any): void;
 }

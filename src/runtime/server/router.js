@@ -1,5 +1,6 @@
 import { URL_BUILD } from '../../config.js';
 import { notImplemented } from './errors.js';
+import { createWebSocketRPC } from './websocket.js';
 
 export const Router = {
   instance: null,
@@ -15,5 +16,9 @@ export const Router = {
 
   set(path, method) {
     this.instance[method.name](this.pathname + path, method);
+  },
+
+  setWebSocketRPC(path, ctor) {
+    this.instance.ws(this.pathname + path, createWebSocketRPC(ctor));
   },
 };

@@ -7,20 +7,21 @@ function writeResponse(res, status, headers, body) {
     res.writeStatus(status + '');
   }
 
-  for (let i = 0; i < headers.length; i++)
+  for (let i = 0; i < headers.length; i++) {
     res.writeHeader(headers[i], headers[++i]);
+  }
 
   res.end(body);
 }
 
 export function respondNoContent(res) {
-  if (res.context.connected) {
+  if (res.context.isConnected) {
     res.cork(() => {
       writeResponse(
         res,
         res.context.response.status || 204,
         res.context.response.headers,
-        undefined
+        undefined,
       );
     });
   }
@@ -29,13 +30,13 @@ export function respondNoContent(res) {
 export function respondBinary(res, body) {
   if (body === undefined) {
     respondNoContent(res);
-  } else if (res.context.connected) {
+  } else if (res.context.isConnected) {
     res.cork(() => {
       writeResponse(
         res,
         res.context.response.status,
         res.context.response.headers,
-        body
+        body,
       );
     });
   }
@@ -44,7 +45,7 @@ export function respondBinary(res, body) {
 export function respondJson(res, data) {
   if (data === undefined) {
     respondNoContent(res);
-  } else if (res.context.connected) {
+  } else if (res.context.isConnected) {
     res.context.response.headers.push('content-type', 'application/json');
 
     res.cork(() => {
@@ -52,7 +53,7 @@ export function respondJson(res, data) {
         res,
         res.context.response.status,
         res.context.response.headers,
-        stringify({ data })
+        stringify({ data }),
       );
     });
   }
