@@ -22,12 +22,12 @@
   },
   "dependencies": {
     "typescript": "latest",
-    "@types/node": "latest",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.52.0",
     "@uah/postgres": "file:../../Postgres"
   },
   "devDependencies": {
     "dprint": "latest",
+    "@types/node": "latest",
     "@dprint/formatter": "latest",
     "@dprint/typescript": "latest"
   }

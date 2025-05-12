@@ -1,3 +1,4 @@
+import { Conflict } from '#runtime/exceptions/Conflict.js';
 import { stringify } from '#runtime/types/json.js';
 import { SHARED_COMPRESSOR } from 'uWebSockets.js';
 import { Server } from './app.js';
@@ -100,7 +101,16 @@ function onOpen(ws) {
     }
 
     if (ws.peerId) {
-      this.peers.set(ws.peerId, ws);
+      if (this.peers.has(ws.peerId)) {
+        const error = new Conflict(`Duplicate peer id "${ws.peerId}"`);
+
+        ws.end(error.status, error.message);
+        console.error(error);
+
+        return;
+      } else {
+        this.peers.set(ws.peerId, ws);
+      }
     }
 
     if (ws.userId) {

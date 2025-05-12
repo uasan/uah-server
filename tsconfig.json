@@ -1,10 +1,6 @@
 {
   "display": "UAH",
   "compilerOptions": {
-    "typeRoots": [
-      "@types/node",
-      "@uah/server"
-    ],
     "strict": true,
     "noEmit": true,
     "allowJs": false,
