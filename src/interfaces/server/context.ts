@@ -41,6 +41,6 @@ export declare abstract class ServerContext extends Context {
   unsubscribeFromChannel(name: string): void;
 
   static sendMessageToUser(uid: ID, payload: any): void;
-  static sendMessageToSession(sid: ID, payload: any): void;
+  static sendMessageToSocket(sid: ID, payload: any): void;
   static sendMessageToChannel(name: string, payload: any): void;
 }

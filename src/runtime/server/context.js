@@ -40,8 +40,8 @@ export class ServerContext extends Context {
     }
   }
 
-  static sendMessageToSession() {
-    throw new Exception('Not implemented send message to session');
+  static sendMessageToSocket() {
+    throw new Exception('Not implemented send message to socket');
   }
 
   static sendMessageToUser() {

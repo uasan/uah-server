@@ -3,9 +3,9 @@ import { stringify } from '#runtime/types/json.js';
 import { SHARED_COMPRESSOR } from 'uWebSockets.js';
 import { Server } from './app.js';
 
-function sendMessageToSession(id, payload) {
-  if (this.sessions.has(id)) {
-    this.sessions.get(id).send(stringify(payload));
+function sendMessageToSocket(id, payload) {
+  if (this.sockets.has(id)) {
+    this.sockets.get(id).send(stringify(payload));
     return true;
   } else {
     return false;
@@ -101,15 +101,15 @@ function onOpen(ws) {
     }
 
     if (ws.sid) {
-      if (this.sessions.has(ws.sid)) {
-        const error = new Conflict(`Duplicate session id "${ws.sid}"`);
+      if (this.sockets.has(ws.sid)) {
+        const error = new Conflict(`Duplicate socket id "${ws.sid}"`);
 
         ws.end(error.status, error.message);
         console.error(error);
 
         return;
       } else {
-        this.sessions.set(ws.sid, ws);
+        this.sockets.set(ws.sid, ws);
       }
     }
 
@@ -136,7 +136,7 @@ async function onClose(ws) {
   ws.context.isConnected = false;
 
   if (ws.sid) {
-    this.sessions.delete(ws.sid);
+    this.sockets.delete(ws.sid);
   }
 
   if (ws.uid) {
@@ -160,7 +160,7 @@ async function onClose(ws) {
 
 export function createWebSocketRPC(ctor) {
   ctor.sendMessageToUser = sendMessageToUser;
-  ctor.sendMessageToSession = sendMessageToSession;
+  ctor.sendMessageToSocket = sendMessageToSocket;
   ctor.sendMessageToChannel = sendMessageToChannel;
 
   return {
