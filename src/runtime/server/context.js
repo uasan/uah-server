@@ -40,8 +40,8 @@ export class ServerContext extends Context {
     }
   }
 
-  static sendMessageToPeer() {
-    throw new Exception('Not implemented send message to peer');
+  static sendMessageToSession() {
+    throw new Exception('Not implemented send message to session');
   }
 
   static sendMessageToUser() {

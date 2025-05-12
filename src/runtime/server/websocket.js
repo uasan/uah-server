@@ -3,9 +3,9 @@ import { stringify } from '#runtime/types/json.js';
 import { SHARED_COMPRESSOR } from 'uWebSockets.js';
 import { Server } from './app.js';
 
-function sendMessageToPeer(id, payload) {
-  if (this.peers.has(id)) {
-    this.peers.get(id).send(stringify(payload));
+function sendMessageToSession(id, payload) {
+  if (this.sessions.has(id)) {
+    this.sessions.get(id).send(stringify(payload));
     return true;
   } else {
     return false;
@@ -49,7 +49,7 @@ class SocketStore {
 
 async function upgrade(res, req, ctx) {
   const context = this.create(req, res);
-  const meta = { context, peerId: undefined, userId: undefined };
+  const meta = { context, sid: undefined, uid: undefined };
 
   const secWebSocketKey = req.getHeader('sec-websocket-key');
   const secWebSocketProtocol = req.getHeader('sec-websocket-protocol');
@@ -63,11 +63,11 @@ async function upgrade(res, req, ctx) {
     await context.auth();
     const result = await context.onOpen(payload);
 
-    if (result?.peerId) {
-      meta.peerId = result.peerId;
+    if (result?.sid) {
+      meta.sid = result.sid;
     }
-    if (result?.userId) {
-      meta.userId = result.userId;
+    if (result?.uid) {
+      meta.uid = result.uid;
     }
   } catch (error) {
     context.error = error || { status: 400, message: 'Cancel' };
@@ -100,24 +100,24 @@ function onOpen(ws) {
       ws.send(message.payload, message.isBinary);
     }
 
-    if (ws.peerId) {
-      if (this.peers.has(ws.peerId)) {
-        const error = new Conflict(`Duplicate peer id "${ws.peerId}"`);
+    if (ws.sid) {
+      if (this.sessions.has(ws.sid)) {
+        const error = new Conflict(`Duplicate session id "${ws.sid}"`);
 
         ws.end(error.status, error.message);
         console.error(error);
 
         return;
       } else {
-        this.peers.set(ws.peerId, ws);
+        this.sessions.set(ws.sid, ws);
       }
     }
 
-    if (ws.userId) {
-      if (this.users.has(ws.userId)) {
-        this.users.get(ws.userId).add(ws);
+    if (ws.uid) {
+      if (this.users.has(ws.uid)) {
+        this.users.get(ws.uid).add(ws);
       } else {
-        this.users.set(ws.userId, new Set().add(ws));
+        this.users.set(ws.uid, new Set().add(ws));
       }
     }
   }
@@ -135,18 +135,18 @@ async function onClose(ws) {
   ws.context.socket = null;
   ws.context.isConnected = false;
 
-  if (ws.peerId) {
-    this.peers.delete(ws.peerId);
+  if (ws.sid) {
+    this.sessions.delete(ws.sid);
   }
 
-  if (ws.userId) {
-    const users = this.users.get(ws.userId);
+  if (ws.uid) {
+    const users = this.users.get(ws.uid);
 
     if (users) {
       if (users.size > 1) {
         users.delete(ws);
       } else {
-        this.users.delete(ws.userId);
+        this.users.delete(ws.uid);
       }
     }
   }
@@ -159,8 +159,8 @@ async function onClose(ws) {
 }
 
 export function createWebSocketRPC(ctor) {
-  ctor.sendMessageToPeer = sendMessageToPeer;
   ctor.sendMessageToUser = sendMessageToUser;
+  ctor.sendMessageToSession = sendMessageToSession;
   ctor.sendMessageToChannel = sendMessageToChannel;
 
   return {

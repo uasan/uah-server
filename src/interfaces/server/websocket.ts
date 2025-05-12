@@ -1,6 +1,6 @@
 interface SocketIdentifier {
-  peerId?: number | bigint | string;
-  userId?: number | bigint | string;
+  sid?: number | bigint | string;
+  uid?: number | bigint | string;
 }
 
 export interface WebSocket {

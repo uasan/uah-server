@@ -29,7 +29,7 @@ function makeOnOpen(route, members, node) {
   }
 
   members.push(factoryStaticProperty(
-    factoryIdentifier('peers'),
+    factoryIdentifier('sessions'),
     factoryNew(factoryIdentifier('Map')),
   ));
 
