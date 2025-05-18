@@ -42,8 +42,6 @@ export declare abstract class ServerContext extends Context {
   request: Request;
   response: Response;
 
-  constructor(preset?: Record<string, any>);
-
   subscribeToChannel(name: string): void;
   unsubscribeFromChannel(name: string): void;
   sendMessageToSocket(payload: any, isBinary?: boolean): boolean;

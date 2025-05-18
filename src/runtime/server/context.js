@@ -1,5 +1,6 @@
 import { Exception } from '#runtime/exceptions/Exception.js';
 import { Context } from '../context.js';
+import { noop } from '../utils/native.js';
 import { deleteCookie, parseCookies, setCookie } from './cookies.js';
 
 export class ServerContext extends Context {
@@ -24,8 +25,12 @@ export class ServerContext extends Context {
 
   onAborted() {}
 
-  sendMessageToSocket() {
-    throw new Exception('Not implemented send message to socket');
+  sendMessageToSocket(payload) {
+    if (this.socket) {
+      return this.socket.sendMessage(payload);
+    } else {
+      throw new Exception('Not implemented send message to socket');
+    }
   }
 
   subscribeToChannel(name) {
@@ -56,8 +61,10 @@ export class ServerContext extends Context {
     throw new Exception('Not implemented send message to channel');
   }
 
+  static getParamsOfRoute = noop;
+
   static create(req, res) {
-    const context = new this();
+    const context = this.getParamsOfRoute === noop ? new this() : new this(this.getParamsOfRoute(req));
     res.context = context;
 
     res.onAborted(() => {
