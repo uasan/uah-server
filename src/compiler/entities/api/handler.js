@@ -84,7 +84,7 @@ export function makeRouteMethodHTTP(route, members, node) {
 
     if (name === 'get' || name === 'head') {
       payload = factoryIdentifier('data');
-      const query = makePayloadFromQuery(payloadType);
+      const query = makePayloadFromQuery(payloadType, route.meta.countRoutParams);
 
       pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));

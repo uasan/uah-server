@@ -1,10 +1,9 @@
 import { ContentTooLarge } from '../exceptions/ContentTooLarge.js';
 import { LengthRequired } from '../exceptions/LengthRequired.js';
-import { Server } from './app.js';
 
 import { BufferStreamReader } from './stream.js';
 
-export function readBuffer(req, res, maxLength = Server.maxByteLengthBody) {
+export function readBuffer(req, res, maxLength = 65_535) {
   const length = +req.getHeader('content-length');
 
   if (isNaN(length)) {

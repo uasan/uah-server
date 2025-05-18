@@ -17,6 +17,7 @@ type ID = string | number | bigint;
 interface User {
   id: ID;
 }
+
 interface Request {
   cookies: Map<string, string>;
 }
@@ -28,6 +29,10 @@ interface Response {
   deleteCookie(options: CookieOptions): void;
 }
 
+interface Server {
+  start(): Promise<void>;
+}
+
 export declare abstract class ServerContext extends Context {
   isConnected: boolean;
 
@@ -37,10 +42,14 @@ export declare abstract class ServerContext extends Context {
   request: Request;
   response: Response;
 
+  constructor(preset?: Record<string, any>);
+
   subscribeToChannel(name: string): void;
   unsubscribeFromChannel(name: string): void;
+  sendMessageToSocket(payload: any, isBinary?: boolean): boolean;
 
-  static sendMessageToUser(uid: ID, payload: any): void;
-  static sendMessageToSocket(sid: ID, payload: any): void;
-  static sendMessageToChannel(name: string, payload: any): void;
+  static server: Server;
+  static sendMessageToUser(uid: ID, payload: any): boolean;
+  static sendMessageToSocket(sid: ID, payload: any): boolean;
+  static sendMessageToChannel(name: string, payload: any): boolean;
 }

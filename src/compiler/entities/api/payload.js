@@ -1,30 +1,23 @@
 import { factoryCallMethod } from '../../helpers/call.js';
 import {
   getTypeOfSymbol,
+  hasBigIntType,
   hasStringType,
+  hasUndefinedType,
+  isBigIntType,
+  isBooleanType,
   isNumberType,
   isStringType,
-  isBooleanType,
-  isBigIntType,
-  hasUndefinedType,
-  hasBigIntType,
 } from '../../helpers/checker.js';
-import {
-  factoryString,
-  factoryNumber,
-  factoryIdentifier,
-  factoryAwait,
-} from '../../helpers/expression.js';
+import { factoryAwait, factoryIdentifier, factoryNumber, factoryString } from '../../helpers/expression.js';
 import { internals } from '../../helpers/internals.js';
-import { factoryProperty, factoryObjectLiteral } from '../../helpers/object.js';
+import { factoryObjectLiteral, factoryProperty } from '../../helpers/object.js';
 
 const isBinary = ({ isBinary }) => isBinary;
 const isBufferStream = ({ isBufferStream }) => isBufferStream;
 
-export function makePayloadFromQuery(type) {
-  let index = 0;
+export function makePayloadFromQuery(type, index = 0) {
   let path = '';
-
   const nodes = [];
 
   for (const symbol of type.getApparentProperties()) {
@@ -33,13 +26,12 @@ export function makePayloadFromQuery(type) {
 
     const req = factoryIdentifier('req');
     const type = getTypeOfSymbol(symbol);
-    const isOptional = hasUndefinedType(type);
 
-    if (isOptional) {
+    if (hasUndefinedType(type)) {
       value = factoryCallMethod(req, 'getQuery', [factoryString(name)]);
     } else {
       path += '/:' + name;
-      value = factoryCallMethod(req, 'getParameter', [factoryNumber(++index)]);
+      value = factoryCallMethod(req, 'getParameter', [factoryNumber(index++)]);
     }
 
     if (hasBigIntType(type)) {
@@ -59,14 +51,14 @@ function makeDecodeMethod(ast, metaType) {
     return metaType.isFile
       ? factoryCallMethod(ast, 'getFile')
       : metaType.isBlob
-        ? factoryCallMethod(ast, 'getBlob')
-        : metaType.isStream
-          ? factoryCallMethod(ast, 'getStream')
-          : metaType.byteLength
-            ? factoryCallMethod(ast, 'getSlice', [
-                factoryNumber(metaType.byteLength),
-              ])
-            : factoryCallMethod(ast, 'getBuffer');
+      ? factoryCallMethod(ast, 'getBlob')
+      : metaType.isStream
+      ? factoryCallMethod(ast, 'getStream')
+      : metaType.byteLength
+      ? factoryCallMethod(ast, 'getSlice', [
+        factoryNumber(metaType.byteLength),
+      ])
+      : factoryCallMethod(ast, 'getBuffer');
   } else if (metaType.isUUID) {
     return factoryCallMethod(ast, 'getSlice', [factoryNumber(16)]);
   } else if (isNumberType(metaType.type)) {
@@ -92,25 +84,23 @@ function makeDecodeBuffers(data, props) {
         props[i].name,
         makeDecodeMethod(
           i ? decodeAst : factoryCallMethod(decodeAst, 'from', [data]),
-          props[i]
-        )
-      )
+          props[i],
+        ),
+      ),
     );
   }
 
   return factoryObjectLiteral(nodes);
 }
 
-const decodeBuffersFrom = data =>
-  factoryCallMethod(internals.decodeBuffers(), 'from', [data]);
+const decodeBuffersFrom = data => factoryCallMethod(internals.decodeBuffers(), 'from', [data]);
 
 export function makePayloadFromBody(metaType) {
   const args = [factoryIdentifier('req'), factoryIdentifier('res')];
 
-  let init =
-    metaType.isBufferStream || metaType.props.some(isBufferStream)
-      ? internals.readBufferStream(args)
-      : internals.readBuffer(args);
+  let init = metaType.isBufferStream || metaType.props.some(isBufferStream)
+    ? internals.readBufferStream(args)
+    : internals.readBuffer(args);
 
   let data = factoryAwait(factoryIdentifier('data'));
 

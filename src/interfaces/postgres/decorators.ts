@@ -8,8 +8,8 @@ interface PostgresOptions {
 }
 
 export declare function Postgres(
-  options: PostgresOptions
-): (target: new () => object, context: ClassDecoratorContext) => void;
+  options: PostgresOptions,
+): (target: new(preset?: any) => object, context: ClassDecoratorContext) => void;
 
 type Deferrable = 'not' | 'immediate' | 'deferred';
 type ReferenceAction =
@@ -36,5 +36,5 @@ interface TableOptions {
 }
 
 export declare function Table(
-  options: TableOptions
-): (target: new () => object, context: ClassDecoratorContext) => void;
+  options: TableOptions,
+): (target: new() => object, context: ClassDecoratorContext) => void;

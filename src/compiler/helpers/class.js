@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { host } from '../host.js';
+import { isStaticKeyword, StaticKeyword } from './checker.js';
 import { factoryToken } from './expression.js';
-import { StaticKeyword, isStaticKeyword } from './checker.js';
 
 export const { ClassDeclaration, PropertyDeclaration } = ts.SyntaxKind;
 
@@ -11,7 +11,7 @@ export const factoryStaticProperty = (name, value) =>
     name,
     undefined,
     undefined,
-    value
+    value,
   );
 
 export const factoryStaticMethod = (name, args, statements) =>
@@ -23,39 +23,45 @@ export const factoryStaticMethod = (name, args, statements) =>
     undefined,
     args,
     undefined,
-    host.factory.createBlock(statements, true)
+    host.factory.createBlock(statements, true),
   );
 
 export const factoryClassStaticBlock = statements =>
   host.factory.createClassStaticBlockDeclaration(
-    host.factory.createBlock(statements, true)
+    host.factory.createBlock(statements, true),
   );
 
 export const updateClass = (node, modifiers, name, heritageClauses, members) =>
   node.kind === ClassDeclaration
     ? host.factory.updateClassDeclaration(
-        node,
-        modifiers,
-        name,
-        undefined,
-        heritageClauses,
-        members
-      )
+      node,
+      modifiers,
+      name,
+      undefined,
+      heritageClauses,
+      members,
+    )
     : host.factory.updateClassExpression(
-        node,
-        modifiers,
-        name,
-        undefined,
-        heritageClauses,
-        members
-      );
+      node,
+      modifiers,
+      name,
+      undefined,
+      heritageClauses,
+      members,
+    );
 
 export const isFieldProperty = member =>
-  member.kind === PropertyDeclaration &&
-  !member.modifiers?.some(isStaticKeyword);
+  member.kind === PropertyDeclaration
+  && !member.modifiers?.some(isStaticKeyword);
 
 export const addToStaticBlock = (node, statements) =>
   updateClass(node, node.modifiers, node.name, node.heritageClauses, [
     ...node.members,
     factoryClassStaticBlock(statements),
+  ]);
+
+export const addToStaticProperty = (node, name, value) =>
+  updateClass(node, node.modifiers, node.name, node.heritageClauses, [
+    ...node.members,
+    factoryStaticProperty(name, value),
   ]);

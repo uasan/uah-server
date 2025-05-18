@@ -12,6 +12,7 @@ export class AppRouteEntity extends TypeScriptEntity {
     class: '',
     methods: [],
     url: this.url,
+    meta: null,
     protocol: null,
     path: makeRoutePath(this),
   };

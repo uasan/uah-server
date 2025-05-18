@@ -52,7 +52,7 @@ const { Const } = ts.NodeFlags;
 const { SignatureConstruct } = ts.SignatureKind;
 const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } = ts;
 
-export const { isLiteralExpression, isStringLiteralLike } = ts;
+export const { isLiteralExpression, isStringLiteralLike, isConstructorDeclaration } = ts;
 
 export const isVarConst = ({ flags }) => (flags & Const) !== 0;
 export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;
@@ -87,21 +87,14 @@ export const isObjectType = ({ flags, types }) =>
 export const isLiteralTypeOrNullType = type => isLiteralType(type) || isNullType(type);
 
 export const hasAnyType = type => isAnyType(type) || some(type.types, hasAnyType);
-
 export const hasNullType = type => isNullType(type) || some(type.types, hasNullType);
-
 export const hasNumberType = type => isNumberType(type) || some(type.types, hasNumberType);
-
 export const hasStringType = type => isStringType(type) || some(type.types, hasStringType);
-
 export const hasBigIntType = type => isBigIntType(type) || some(type.types, hasBigIntType);
-
 export const hasBooleanType = type => isBooleanType(type) || some(type.types, hasBooleanType);
-
 export const hasUndefinedType = type => isUndefinedType(type) || some(type.types, hasUndefinedType);
 
 export const isTypeAsValues = ({ types }) => !!types && every(types, isLiteralTypeOrNullType);
-
 export const isTupleType = type => host.checker.isTupleType(type);
 export const isArrayLikeType = type => host.checker.isArrayLikeType(type);
 
@@ -125,11 +118,8 @@ export const isReadonlySymbol = symbol =>
   || (getDeclarationModifierFlagsFromSymbol(symbol) & ModifierFlagReadonly) !== 0;
 
 export const isReadonly = node => isReadonlySymbol(host.checker.getSymbolAtLocation(node));
-
 export const isDeclareSymbol = symbol => some(symbol.valueDeclaration?.modifiers, isDeclareKeyword);
-
 export const getSymbolOfNode = node => host.checker.getSymbolAtLocation(node);
-
 export const isTypeSymbol = ({ flags }) => (flags & TypeAlias) !== 0 || (flags & Interface) !== 0;
 
 export const isValueSymbol = ({ flags }) => (flags & ValueSymbol) !== 0;
@@ -188,7 +178,7 @@ export const typeToString = type => host.checker.typeToString(type);
 export const getNonUndefinedType = type => getUnionType(type.types.filter(isNotUndefinedType));
 
 export const getPropertiesOfType = type => host.checker.getPropertiesOfType(type);
-
+export const getPropertiesOfNode = node => getPropertiesOfType(getTypeOfNode(node));
 export const getPropertiesOfTypeNode = node => getPropertiesOfType(getTypeOfTypeNode(node));
 
 export const getExportsOfModule = node => host.checker.getExportsOfModule(getSymbolOfNode(node));

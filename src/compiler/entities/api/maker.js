@@ -29,7 +29,7 @@ export function makeImportRoutes() {
   host.hooks.saveFile('api.js', source);
 }
 
-export function ServerContext(node) {
+export function ServerContext(node, { meta }) {
   const { route } = host.entity;
 
   if (!route || !isExportNode(node)) {
@@ -40,10 +40,11 @@ export function ServerContext(node) {
     route.methods.length = 0;
   }
 
-  const members = [];
-
+  route.meta = meta;
   route.class = getNodeTextName(node);
   route.protocol = getImplement(node) ?? HTTP;
+
+  const members = [];
 
   for (const member of node.members) {
     if (

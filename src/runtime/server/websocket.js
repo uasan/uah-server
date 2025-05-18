@@ -1,7 +1,6 @@
 import { Conflict } from '#runtime/exceptions/Conflict.js';
 import { stringify } from '#runtime/types/json.js';
 import { SHARED_COMPRESSOR } from 'uWebSockets.js';
-import { Server } from './app.js';
 
 function sendMessageToSocket(id, payload) {
   if (this.sockets.has(id)) {
@@ -19,23 +18,26 @@ function sendMessageToUser(id, payload) {
     for (const ws of this.users.get(id)) {
       ws.send(data);
     }
-
     return true;
   } else {
     return false;
   }
 }
 
+function sendMessage(payload) {
+  throw new Exception('Not implemented send message to socket');
+}
+
 function sendMessageToChannel(name, payload) {
-  Server.instance.publish(name, stringify(payload));
+  this.server.app.publish(name, stringify(payload));
 }
 
 class SocketStore {
-  message = null;
+  messages = [];
   channels = new Set();
 
-  send(payload, isBinary) {
-    this.message = { isBinary, payload };
+  send(payload) {
+    this.messages.push(stringify(payload));
   }
 
   subscribe(name) {
@@ -56,6 +58,7 @@ async function upgrade(res, req, ctx) {
   const secWebSocketExtensions = req.getHeader('sec-websocket-extensions');
 
   context.socket = new SocketStore();
+  context.sendMessageToSocket = context.socket.send.bind(context.socket);
 
   try {
     const payload = this.getPayload?.(req);
@@ -87,7 +90,7 @@ function onOpen(ws) {
   if (ws.context.error) {
     ws.end(ws.context.error.status || 500, String(ws.context.error.message || ''));
   } else {
-    const { message, channels } = ws.context.socket;
+    const { messages, channels } = ws.context.socket;
     ws.context.socket = ws;
 
     if (channels.size) {
@@ -96,8 +99,10 @@ function onOpen(ws) {
       }
     }
 
-    if (message) {
-      ws.send(message.payload, message.isBinary);
+    if (messages.length) {
+      for (const message of messages) {
+        ws.send(message);
+      }
     }
 
     if (ws.sid) {

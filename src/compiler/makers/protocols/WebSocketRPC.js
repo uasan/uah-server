@@ -18,7 +18,7 @@ function makeOnOpen(route, members, node) {
   if (payloadType) {
     makePayloadValidator(node, payloadType);
 
-    const query = makePayloadFromQuery(payloadType);
+    const query = makePayloadFromQuery(payloadType, route.meta.countRoutParams);
 
     path += query.path;
 

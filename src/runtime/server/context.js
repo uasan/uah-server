@@ -24,9 +24,13 @@ export class ServerContext extends Context {
 
   onAborted() {}
 
+  sendMessageToSocket() {
+    throw new Exception('Not implemented send message to socket');
+  }
+
   subscribeToChannel(name) {
     if (this.socket) {
-      this.socket.subscribe(name);
+      return this.socket.subscribe(name);
     } else {
       throw new Exception('Not implemented subscribe to channel');
     }
@@ -34,7 +38,7 @@ export class ServerContext extends Context {
 
   unsubscribeFromChannel(name) {
     if (this.socket) {
-      this.socket.unsubscribe(name);
+      return this.socket.unsubscribe(name);
     } else {
       throw new Exception('Not implemented unsubscribe from channel');
     }

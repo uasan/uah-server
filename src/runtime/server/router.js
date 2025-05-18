@@ -3,15 +3,16 @@ import { notImplemented } from './errors.js';
 import { createWebSocketRPC } from './websocket.js';
 
 export const Router = {
+  pathname: '',
   instance: null,
 
-  async init({ instance, pathname }) {
-    this.instance = instance;
+  async init({ app, pathname }) {
+    this.instance = app;
     this.pathname = pathname;
 
     await import(URL_BUILD + 'api.js');
 
-    instance.any('/*', notImplemented);
+    app.any('/*', notImplemented);
   },
 
   set(path, method) {

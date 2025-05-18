@@ -30,6 +30,7 @@ import { UUID } from './types/validators/UUID.js';
 import { Cache } from './decorators/cache.js';
 import { Permission } from './decorators/permission.js';
 import { Postgres } from './decorators/postgres.js';
+import { Server } from './decorators/server.js';
 import { Table } from './decorators/table.js';
 
 import { ServerContext } from '../entities/api/maker.js';
@@ -65,6 +66,7 @@ export const lookup = {
   decorators: {
     Cache,
     Table,
+    Server,
     Postgres,
     Permission,
   },

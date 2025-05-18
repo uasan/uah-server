@@ -1,4 +1,5 @@
 import {
+  getOriginSymbol,
   getOriginSymbolOfNode,
   getPropertiesOfTypeNode,
   getTypeOfSymbol,
@@ -8,7 +9,7 @@ import {
   isNativeModifier,
 } from '../helpers/checker.js';
 import { updateClass } from '../helpers/class.js';
-import { declarations, host, types } from '../host.js';
+import { declarations, host, metaSymbols, types } from '../host.js';
 
 const getMemberEntry = symbol => [symbol.escapedName, getTypeOfSymbol(symbol)];
 const getTypeArgument = ({ typeArguments }) =>
@@ -39,9 +40,20 @@ function makeInternalClassOfExtends(node, extend = node) {
       const symbol = getOriginSymbolOfNode(type.expression);
 
       if (symbol) {
-        return declarations.has(symbol)
-          ? declarations.get(symbol).make(node, getTypeArgument(type))
-          : makeInternalClassOfExtends(node, symbol.valueDeclaration);
+        if (declarations.has(symbol)) {
+          const maker = declarations.get(symbol);
+
+          if (maker.make.length === 1) {
+            return maker.make(node);
+          } else {
+            return maker.make(node, {
+              arg: getTypeArgument(type),
+              meta: metaSymbols.get(getOriginSymbol(extend.symbol)),
+            });
+          }
+        } else {
+          return makeInternalClassOfExtends(node, symbol.valueDeclaration);
+        }
       }
     }
   }
