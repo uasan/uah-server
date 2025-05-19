@@ -1,5 +1,7 @@
 import { Conflict } from '#runtime/exceptions/Conflict.js';
-import { stringify } from '#runtime/types/json.js';
+import { hasOwn, isObject } from '#runtime/types/checker.js';
+import { parse, stringify } from '#runtime/types/json.js';
+import { textDecoder } from '#runtime/types/text.js';
 import { SHARED_COMPRESSOR } from 'uWebSockets.js';
 
 function sendMessageToSocket(id, payload) {
@@ -25,7 +27,9 @@ function sendMessageToUser(id, payload) {
 }
 
 function sendMessage(payload) {
-  throw new Exception('Not implemented send message to socket');
+  this.cork(() => {
+    this.send(stringify(payload));
+  });
 }
 
 function sendMessageToChannel(name, payload) {
@@ -36,7 +40,7 @@ class SocketStore {
   messages = [];
   channels = new Set();
 
-  send(payload) {
+  sendMessage(payload) {
     this.messages.push(stringify(payload));
   }
 
@@ -51,14 +55,13 @@ class SocketStore {
 
 async function upgrade(res, req, ctx) {
   const context = this.create(req, res);
-  const meta = { context, sid: undefined, uid: undefined };
+  const meta = { context, sendMessage, sid: undefined, uid: undefined };
 
   const secWebSocketKey = req.getHeader('sec-websocket-key');
   const secWebSocketProtocol = req.getHeader('sec-websocket-protocol');
   const secWebSocketExtensions = req.getHeader('sec-websocket-extensions');
 
   context.socket = new SocketStore();
-  context.sendMessageToSocket = context.socket.send.bind(context.socket);
 
   try {
     const payload = this.getPayload?.(req);
@@ -128,12 +131,45 @@ function onOpen(ws) {
   }
 }
 
-function onMessage(ws, message) {
-  // try {
-  //   onMessage(ws, parse(textDecoder.decode(new Uint8Array(message))));
-  // } catch (error) {
-  //   ws.end(400, error?.message);
-  // }
+async function onMessage(ws, buffer) {
+  let id = 0;
+
+  try {
+    const data = parse(textDecoder.decode(new Uint8Array(buffer)));
+
+    id = data?.id;
+
+    if (hasOwn(ws.context.methods, data?.method)) {
+      const result = await ws.context.methods[data.method](Object.create(ws.context), data.params);
+
+      if (id && ws.context.isConnected) {
+        ws.sendMessage({ id, result });
+      }
+    }
+  } catch (error) {
+    if (error) {
+      if (isObject(error) === false) {
+        error = { type: 'Error', message: error };
+      }
+
+      const status = error.status || 500;
+      const type = error.type || error.constructor?.name || 'Error';
+
+      if (ws.context.isConnected) {
+        if (id) {
+          ws.sendMessage({ id, error: { status, type, message: error.message, ...error } });
+        } else {
+          ws.end(status, error.message);
+        }
+      }
+
+      if (status === 500) {
+        console.error(error);
+      }
+    } else if (id && ws.context.isConnected) {
+      ws.sendMessage({ id });
+    }
+  }
 }
 
 async function onClose(ws) {
@@ -176,7 +212,7 @@ export function createWebSocketRPC(ctor) {
 
     upgrade: upgrade.bind(ctor),
     open: onOpen.bind(ctor),
-    message: onMessage.bind(ctor),
+    message: onMessage,
     close: onClose.bind(ctor),
   };
 }
