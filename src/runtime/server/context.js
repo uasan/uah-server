@@ -64,18 +64,23 @@ export class ServerContext extends Context {
   static getParamsOfRoute = noop;
 
   static create(req, res) {
-    const context = this.getParamsOfRoute === noop ? new this() : new this(this.getParamsOfRoute(req));
-    res.context = context;
+    try {
+      const context = this.getParamsOfRoute === noop ? new this() : new this(this.getParamsOfRoute(req));
+      res.context = context;
 
-    res.onAborted(() => {
-      context.isConnected = false;
-      context.onAborted();
-    });
+      res.onAborted(() => {
+        context.isConnected = false;
+        context.onAborted();
+      });
 
-    parseCookies(context.request.cookies, req.getHeader('cookie'));
+      parseCookies(context.request.cookies, req.getHeader('cookie'));
 
-    context.request.headers.range = req.getHeader('range') ?? '';
+      context.request.headers.range = req.getHeader('range') ?? '';
 
-    return context;
+      return context;
+    } catch (error) {
+      res.context = { isConnected: true };
+      throw error;
+    }
   }
 }

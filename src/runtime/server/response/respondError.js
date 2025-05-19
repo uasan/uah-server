@@ -1,27 +1,38 @@
+import { isObject } from '#runtime/types/checker.js';
+import { stringify } from '#runtime/types/json.js';
+
 export function respondError(res, error) {
-  if (error == null) return;
+  if (error) {
+    const status = error.status || 500;
 
-  let status = error.status || 500;
+    if (isObject(error) === false) {
+      error = { type: 'Error', message: error };
+    }
 
-  if (res.context?.isConnected) {
-    const type = error.constructor?.name || 'Error';
+    if (res.context.isConnected) {
+      res.cork(() => {
+        const type = error.type || error.constructor?.name || 'Error';
 
+        res
+          .writeStatus(status.toString())
+          .writeHeader('cache-control', 'no-store')
+          .writeHeader('content-type', 'application/json')
+          .end(
+            stringify(
+              status === 500
+                ? { type, status, message: error.message }
+                : { type, status, ...error },
+            ),
+          );
+      });
+    }
+
+    if (status === 500) {
+      console.error(error);
+    }
+  } else if (res.context.isConnected) {
     res.cork(() => {
-      res
-        .writeStatus(status + '')
-        .writeHeader('cache-control', 'no-store')
-        .writeHeader('content-type', 'application/json')
-        .end(
-          JSON.stringify(
-            status === 500
-              ? { type, status, message: error.message }
-              : { type, status, ...error },
-          ),
-        );
+      res.writeStatus('204').end();
     });
-  }
-
-  if (status === 500) {
-    console.error(error);
   }
 }
