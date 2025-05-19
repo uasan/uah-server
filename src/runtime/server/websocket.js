@@ -145,6 +145,12 @@ async function onMessage(ws, buffer) {
       if (id && ws.context.isConnected) {
         ws.sendMessage({ id, result });
       }
+    } else if (ws.context.isConnected) {
+      if (id) {
+        ws.sendMessage({ id, error: { status: 501, message: `Not implemented method ${method}` } });
+      } else {
+        ws.end(501, `Not implemented method ${method}`);
+      }
     }
   } catch (error) {
     if (error) {
