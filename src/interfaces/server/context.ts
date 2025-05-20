@@ -14,10 +14,6 @@ export interface CookieOptions {
 
 type ID = string | number | bigint;
 
-interface User {
-  id: ID;
-}
-
 interface Request {
   cookies: Map<string, string>;
 }
@@ -38,7 +34,6 @@ export declare abstract class ServerContext extends Context {
 
   abstract auth(): Promise<void>;
 
-  user: User;
   request: Request;
   response: Response;
 
