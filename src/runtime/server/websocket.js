@@ -131,44 +131,28 @@ function onOpen(ws) {
   }
 }
 
-async function onMessage(ws, buffer) {
-  let id = 0;
-
+async function callMethod(ws, promise, id) {
   try {
-    const data = parse(textDecoder.decode(new Uint8Array(buffer)));
+    if (id) {
+      const result = await promise;
 
-    id = data?.id;
-
-    if (hasOwn(ws.context.methods, data?.method)) {
-      const result = await ws.context.methods[data.method](Object.create(ws.context), data.params);
-
-      if (id && ws.context.isConnected) {
+      if (ws.context.isConnected) {
         ws.sendMessage({ id, result });
       }
-    } else if (ws.context.isConnected) {
-      if (id) {
-        ws.sendMessage({
-          id,
-          error: {
-            type: 'Error',
-            status: 501,
-            message: `Not implemented method ${method}`,
-          },
-        });
-      } else {
-        ws.end(501, `Not implemented method ${method}`);
-      }
+    } else {
+      await promise;
     }
   } catch (error) {
     if (error) {
       if (isObject(error) === false) {
-        error = { type: 'Error', message: error };
+        error = new Error(error);
       }
 
       const status = error.status || 500;
-      const type = error.type || error.constructor?.name || 'Error';
 
       if (ws.context.isConnected) {
+        const type = error.type || error.constructor?.name || 'Error';
+
         if (id) {
           ws.sendMessage({ id, error: { status, type, message: error.message, ...error } });
         } else {
@@ -182,6 +166,26 @@ async function onMessage(ws, buffer) {
     } else if (id && ws.context.isConnected) {
       ws.sendMessage({ id });
     }
+  }
+}
+
+function onMessage(ws, data) {
+  try {
+    data = parse(textDecoder.decode(new Uint8Array(data)));
+
+    if (hasOwn(ws.context.methods, data?.method)) {
+      callMethod(ws, ws.context.methods[data.method](Object.create(ws.context), data.params), data.id);
+    } else if (ws.context.isConnected) {
+      const message = `Not implemented method ${method}`;
+
+      if (data?.id) {
+        ws.sendMessage({ id, error: { status: 501, type: 'Error', message } });
+      } else {
+        ws.end(501, message);
+      }
+    }
+  } catch (error) {
+    ws.end(500, error?.message || String(error));
   }
 }
 
