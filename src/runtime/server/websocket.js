@@ -176,15 +176,16 @@ function onMessage(ws, data) {
     if (hasOwn(ws.context.methods, data?.method)) {
       callMethod(ws, ws.context.methods[data.method](Object.create(ws.context), data.params), data.id);
     } else if (ws.context.isConnected) {
-      const message = `Not implemented method ${method}`;
+      const message = `Not implemented method: ${data?.method}`;
 
       if (data?.id) {
-        ws.sendMessage({ id, error: { status: 501, type: 'Error', message } });
+        ws.sendMessage({ id: data.id, error: { status: 501, message } });
       } else {
         ws.end(501, message);
       }
     }
   } catch (error) {
+    console.error(error);
     ws.end(500, error?.message || String(error));
   }
 }
