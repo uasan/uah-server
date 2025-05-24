@@ -1,6 +1,7 @@
 export * from './src/interfaces/server/cache.ts';
 export * from './src/interfaces/server/context.ts';
 export * from './src/interfaces/server/server.ts';
+export * from './src/interfaces/server/sessions.ts';
 export * from './src/interfaces/server/websocket.ts';
 
 export * from './src/interfaces/migration/context.js';

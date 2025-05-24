@@ -86,6 +86,12 @@ async function upgrade(res, req, ctx) {
     res.cork(() => {
       res.upgrade(meta, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, ctx);
     });
+  } else {
+    try {
+      await context.onClose();
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
