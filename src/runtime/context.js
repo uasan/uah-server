@@ -10,13 +10,13 @@ export class Context {
 
   async startTransaction(action, payload) {
     try {
-      await this.postgres.begin();
+      this.postgres = await this.postgres.begin();
       const result = await action(this, payload);
-      await this.postgres.commit();
+      this.postgres = await this.postgres.commit();
 
       return result;
     } catch (error) {
-      await this.postgres.rollback();
+      this.postgres = await this.postgres.rollback();
       throw error;
     }
   }
