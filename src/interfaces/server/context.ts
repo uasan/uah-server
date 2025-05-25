@@ -1,4 +1,4 @@
-import { Context } from '../context';
+import { Context } from '../context.ts';
 
 export interface CookieOptions {
   name: string;
@@ -13,6 +13,11 @@ export interface CookieOptions {
 }
 
 type ID = string | number | bigint;
+
+interface User {
+  id: ID;
+  [key: string]: any;
+}
 
 interface Request {
   cookies: Map<string, string>;
@@ -32,10 +37,11 @@ interface Server {
 export declare abstract class ServerContext extends Context {
   isConnected: boolean;
 
-  abstract auth(): Promise<void>;
-
   request: Request;
   response: Response;
+
+  createSession(user: User): Promise<void>;
+  deleteSession(): Promise<void>;
 
   subscribeToChannel(name: string): void;
   unsubscribeFromChannel(name: string): void;

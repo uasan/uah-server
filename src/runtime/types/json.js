@@ -20,3 +20,5 @@ export function decodeJSON(buffer) {
     throw new JsonError(error.message);
   }
 }
+
+export const stringifyBase64Url = data => Buffer.from(stringify(data)).toString('base64Url');

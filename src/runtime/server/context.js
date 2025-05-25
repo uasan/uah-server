@@ -4,9 +4,12 @@ import { noop } from '../utils/native.js';
 import { deleteCookie, parseCookies, setCookie } from './cookies.js';
 
 export class ServerContext extends Context {
-  socket = null;
-  permission = null;
   isConnected = true;
+
+  user = null;
+  socket = null;
+  session = null;
+  permission = null;
 
   request = {
     cookies: new Map(),
@@ -24,6 +27,18 @@ export class ServerContext extends Context {
   };
 
   onAborted() {}
+
+  auth() {
+    throw new Exception('Not implemented auth method');
+  }
+
+  createSession() {
+    throw new Exception('Not implemented create session');
+  }
+
+  deleteSession() {
+    throw new Exception('Not implemented delete session');
+  }
 
   sendMessageToSocket(payload) {
     if (this.socket) {

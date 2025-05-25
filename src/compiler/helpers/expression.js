@@ -38,6 +38,8 @@ export const {
   AmpersandAmpersandToken,
 } = ts.SyntaxKind;
 
+export const factoryThis = () => host.factory.createThis();
+
 export const factoryToken = kind => (tokens[kind] ??= host.factory.createToken(kind));
 export const factoryStaticToken = () => factoryToken(StaticKeyword);
 
@@ -46,9 +48,7 @@ export const factoryNumber = number => (numbers[number] ??= Number(number) < 0
   : host.factory.createNumericLiteral(number));
 
 export const factoryString = string => (strings[string] ??= host.factory.createStringLiteral(string));
-
 export const factoryBigInt = string => (bigints[string] ??= host.factory.createBigIntLiteral(string));
-
 export const factoryIdentifier = string => (identifiers[string] ??= host.factory.createIdentifier(string));
 
 export const factoryNull = () => host.factory.createNull();

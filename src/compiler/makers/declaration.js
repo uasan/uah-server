@@ -31,6 +31,7 @@ import { Cache } from './decorators/cache.js';
 import { Permission } from './decorators/permission.js';
 import { Postgres } from './decorators/postgres.js';
 import { Server } from './decorators/server.js';
+import { SessionJWT } from './decorators/session.js';
 import { Table } from './decorators/table.js';
 
 import { ServerContext } from '../entities/api/maker.js';
@@ -69,6 +70,7 @@ export const lookup = {
     Server,
     Postgres,
     Permission,
+    SessionJWT,
   },
 
   declarations: {
