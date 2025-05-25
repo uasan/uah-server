@@ -65,16 +65,10 @@ async function upgrade(res, req, ctx) {
 
   try {
     const payload = this.getPayload?.(req);
-
     await context.auth();
-    const result = await context.onOpen(payload);
 
-    if (result?.sid) {
-      meta.sid = result.sid;
-    }
-    if (result?.uid) {
-      meta.uid = result.uid;
-    }
+    meta.sid = await context.onOpen(payload);
+    meta.uid = context.user?.id;
   } catch (error) {
     context.error = error || { status: 400, message: 'Cancel' };
   }
@@ -120,7 +114,6 @@ function onOpen(ws) {
 
         ws.end(error.status, error.message);
         console.error(error);
-
         return;
       } else {
         this.sockets.set(ws.sid, ws);

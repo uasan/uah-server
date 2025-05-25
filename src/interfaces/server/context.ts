@@ -40,6 +40,7 @@ export declare abstract class ServerContext extends Context {
   request: Request;
   response: Response;
 
+  auth(): Promise<void>;
   createSession(user: User): Promise<void>;
   deleteSession(): Promise<void>;
 

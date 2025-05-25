@@ -1,8 +1,3 @@
-interface SocketIdentifier {
-  sid?: number | bigint | string;
-  uid?: number | bigint | string;
-}
-
 export interface WebSocket {
   onOpen(): Promise<void>;
   onMessage(): Promise<void>;
@@ -10,6 +5,6 @@ export interface WebSocket {
 }
 
 export interface WebSocketRPC {
-  onOpen(payload?: unknown): Promise<SocketIdentifier | void>;
+  onOpen(payload?: unknown): Promise<number | bigint | string | void>;
   onClose(): Promise<void>;
 }
