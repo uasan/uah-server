@@ -44,7 +44,7 @@ export function makeMigrations() {
   let index = 0;
   let source = `import { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
 
-  source += `import { Migration } from '../${DIR_LIB}/Migration.js';\n`;
+  source += `import { Migration } from '../${DIR_LIB}/context/Migration.js';\n`;
 
   for (const meta of presetMigrations.values()) {
     if (meta.isValid) {
