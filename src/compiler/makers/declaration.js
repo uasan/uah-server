@@ -28,7 +28,7 @@ import { Uint8Array } from './types/validators/Uint8Array.js';
 import { UUID } from './types/validators/UUID.js';
 
 import { Cache } from './decorators/cache.js';
-import { Permission } from './decorators/permission.js';
+import { Access } from './decorators/permission.js';
 import { Postgres } from './decorators/postgres.js';
 import { Server } from './decorators/server.js';
 import { SessionJWT } from './decorators/session.js';
@@ -68,8 +68,8 @@ export const lookup = {
     Cache,
     Table,
     Server,
+    Access,
     Postgres,
-    Permission,
     SessionJWT,
   },
 

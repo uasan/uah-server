@@ -2,7 +2,6 @@ import { SQL } from '@uah/postgres';
 
 export class Context {
   error = null;
-  postgres = null;
 
   sql(strings, ...params) {
     return new SQL(strings, params, this.postgres);

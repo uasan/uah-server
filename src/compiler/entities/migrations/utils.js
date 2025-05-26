@@ -24,7 +24,7 @@ export function createFileMigration(migration) {
   migration.className = toPascalCase(migration.className);
 
   let source = 'import { Migration } from ';
-  source += `'${toRelativeURL(migration.url, DIR_LIB + '/Migration.js')}';`;
+  source += `'${toRelativeURL(migration.url, DIR_LIB + '/context/Migration.js')}';`;
 
   source += '\n\n';
   source += `export class ${migration.className} extends Migration {\n`;
