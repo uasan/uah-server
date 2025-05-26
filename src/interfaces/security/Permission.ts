@@ -1,7 +1,10 @@
 import type { ServerContext } from '../server/context.ts';
 
 type Payload = Record<string, any>;
-type RuleAccess = (context: ServerContext, payload?: Payload) => boolean | Promise<boolean>;
+type RuleAccess = <T extends ServerContext>(
+  context: T,
+  payload?: Payload,
+) => boolean | Promise<boolean>;
 
 interface PermissionOptions {
   parent?: Permission;
