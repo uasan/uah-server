@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class Timeout extends Exception {
+export class Timeout extends Error {
   status = 504;
 }

@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class BadRequest extends Exception {
+export class BadRequest extends Error {
   status = 400;
 }

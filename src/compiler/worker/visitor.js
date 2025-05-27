@@ -1,13 +1,14 @@
 import ts from 'typescript';
 import { host, transformers } from '../host.js';
-import { makeImportDeclaration } from '../makers/import.js';
-import { makeDecorator } from '../makers/declaration.js';
-import { makeEnumDeclaration } from '../makers/enum.js';
 import {
   makeClassDeclaration,
   makeFunctionDeclaration,
+  makeMethodDeclaration,
   makePropertyDeclaration,
 } from '../makers/class.js';
+import { makeDecorator } from '../makers/declaration.js';
+import { makeEnumDeclaration } from '../makers/enum.js';
+import { makeImportDeclaration } from '../makers/import.js';
 
 const { SyntaxKind, visitEachChild, nullTransformationContext } = ts;
 
@@ -15,10 +16,10 @@ const returnUndefined = () => undefined;
 const returnExpression = node => host.visit(node.expression);
 
 function makeParameter(node) {
-  node.questionToken = undefined;
-  return node.name.escapedText !== 'this'
-    ? host.visitEachChild(node)
-    : undefined;
+  if (node.name.escapedText !== 'this') {
+    node.questionToken = undefined;
+    return host.visitEachChild(node);
+  }
 }
 
 const makers = {
@@ -28,6 +29,7 @@ const makers = {
   [SyntaxKind.ClassExpression]: makeClassDeclaration,
   [SyntaxKind.ClassDeclaration]: makeClassDeclaration,
   [SyntaxKind.ImportDeclaration]: makeImportDeclaration,
+  [SyntaxKind.MethodDeclaration]: makeMethodDeclaration,
   [SyntaxKind.PropertyDeclaration]: makePropertyDeclaration,
   [SyntaxKind.FunctionDeclaration]: makeFunctionDeclaration,
 
@@ -62,10 +64,9 @@ const makers = {
 export function visit(node) {
   const action = makers[node.kind];
 
-  let result =
-    action !== undefined
-      ? action(node)
-      : visitEachChild(node, visit, nullTransformationContext);
+  let result = action !== undefined
+    ? action(node)
+    : visitEachChild(node, visit, nullTransformationContext);
 
   if (transformers.has(node)) {
     for (const transform of transformers.get(node)) {

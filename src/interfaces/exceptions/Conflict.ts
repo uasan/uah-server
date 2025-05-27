@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class Conflict extends Exception {
+export class Conflict extends Error {
   status = 409;
 }

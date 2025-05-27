@@ -14,8 +14,8 @@ export class Permission {
     this.rules.push(...rules);
   }
 
-  async check(context, payload) {
-    if (this.isParent === false || await this.parent.check(context, payload)) {
+  async get(context, payload) {
+    if (this.isParent === false || await this.parent.get(context, payload)) {
       for (let i = 0; i < this.rules.length; i++) {
         const rule = this.rules[i];
 
@@ -28,7 +28,7 @@ export class Permission {
 }
 
 export async function Access(context, permission, payload) {
-  context.access = await permission.check(context, payload);
+  context.access = await permission.get(context, payload);
 
   if (!context.access) {
     throw new Forbidden();

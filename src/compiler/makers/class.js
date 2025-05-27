@@ -80,15 +80,27 @@ export function makeClassDeclaration(node) {
   );
 }
 
-export function makePropertyDeclaration(node) {
-  const modifiers = node.modifiers && host.visit(node.modifiers)?.filter(isNativeModifier);
+export function makeMethodDeclaration(node) {
+  return host.factory.updateMethodDeclaration(
+    node,
+    node.modifiers && node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
+    undefined,
+    node.name,
+    undefined,
+    undefined,
+    node.parameters?.length ? [host.visit(node.parameters[0])] : undefined,
+    undefined,
+    node.body && host.visit(node.body),
+  );
+}
 
+export function makePropertyDeclaration(node) {
   const initializer = node.initializer && host.visit(node.initializer);
 
   return initializer
     ? host.factory.updatePropertyDeclaration(
       node,
-      modifiers,
+      node.modifiers && node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
       node.name,
       undefined,
       undefined,

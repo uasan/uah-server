@@ -29,6 +29,7 @@
     "esModuleInterop": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
+    "noImplicitOverride": true,
     "noImplicitReturns": false,
     "emitDeclarationOnly": false,
     "jsx": "preserve",

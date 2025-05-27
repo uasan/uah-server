@@ -1,22 +1,24 @@
-import type { ServerContext } from '../server/context.ts';
-
 type Payload = Record<string, any>;
-type RuleAccess = <T extends ServerContext>(
-  context: T,
+
+type RuleAccess = (
+  context: any,
   payload?: Payload,
 ) => boolean | Promise<boolean>;
 
+type Rules = [RuleAccess, ...RuleAccess[]];
+
 interface PermissionOptions {
   parent?: Permission;
-  rules: RuleAccess[];
+  rules: Rules;
 }
 
 export declare class Permission {
+  rules: Rules;
   parent?: Permission;
-  rules: RuleAccess[];
+  isParent: boolean;
 
   constructor(options: PermissionOptions);
-  check(context: ServerContext, payload?: Payload): Promise<RuleAccess>;
+  get(context: any, payload?: Payload): Promise<RuleAccess>;
 }
 
 export declare function Access(

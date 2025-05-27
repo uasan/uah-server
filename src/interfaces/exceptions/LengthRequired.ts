@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class LengthRequired extends Exception {
+export class LengthRequired extends Error {
   status = 411;
 }

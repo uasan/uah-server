@@ -3,6 +3,7 @@ import { hasOwn, isObject } from '#runtime/types/checker.js';
 import { parse, stringify } from '#runtime/types/json.js';
 import { textDecoder } from '#runtime/types/text.js';
 import { SHARED_COMPRESSOR } from 'uWebSockets.js';
+import { respondError } from './response/respondError.js';
 
 function sendMessageToSocket(id, payload) {
   if (this.sockets.has(id)) {
@@ -70,7 +71,10 @@ async function upgrade(res, req, ctx) {
     meta.sid = await context.onOpen(payload);
     meta.uid = context.user?.id;
   } catch (error) {
-    context.error = error || { status: 400, message: 'Cancel' };
+    if (context.isConnected) {
+      respondError(res, error);
+    }
+    return;
   }
 
   if (context.isConnected) {
@@ -90,42 +94,38 @@ async function upgrade(res, req, ctx) {
 }
 
 function onOpen(ws) {
-  if (ws.context.error) {
-    ws.end(ws.context.error.status || 500, String(ws.context.error.message || ''));
-  } else {
-    const { messages, channels } = ws.context.socket;
-    ws.context.socket = ws;
+  const { messages, channels } = ws.context.socket;
+  ws.context.socket = ws;
 
-    if (channels.size) {
-      for (const name of channels) {
-        ws.subscribe(name);
-      }
+  if (channels.size) {
+    for (const name of channels) {
+      ws.subscribe(name);
     }
+  }
 
-    if (messages.length) {
-      for (const message of messages) {
-        ws.send(message);
-      }
+  if (messages.length) {
+    for (const message of messages) {
+      ws.send(message);
     }
+  }
 
-    if (ws.sid) {
-      if (this.sockets.has(ws.sid)) {
-        const error = new Conflict(`Duplicate socket id "${ws.sid}"`);
+  if (ws.sid) {
+    if (this.sockets.has(ws.sid)) {
+      const error = new Conflict(`Duplicate socket id "${ws.sid}"`);
 
-        ws.end(error.status, error.message);
-        console.error(error);
-        return;
-      } else {
-        this.sockets.set(ws.sid, ws);
-      }
+      ws.end(error.status, error.message);
+      console.error(error);
+      return;
+    } else {
+      this.sockets.set(ws.sid, ws);
     }
+  }
 
-    if (ws.uid) {
-      if (this.users.has(ws.uid)) {
-        this.users.get(ws.uid).add(ws);
-      } else {
-        this.users.set(ws.uid, new Set().add(ws));
-      }
+  if (ws.uid) {
+    if (this.users.has(ws.uid)) {
+      this.users.get(ws.uid).add(ws);
+    } else {
+      this.users.set(ws.uid, new Set().add(ws));
     }
   }
 }

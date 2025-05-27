@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class UnProcessable extends Exception {
+export class UnProcessable extends Error {
   status = 422;
 }
