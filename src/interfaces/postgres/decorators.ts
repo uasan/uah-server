@@ -33,7 +33,6 @@ interface TableOptions {
   references?: Record<string, Reference>;
   constrains?: Record<string, any>;
   indexes?: Record<string, any>;
-  isAutoCreate?: boolean;
 }
 
 export declare function Table(

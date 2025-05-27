@@ -40,6 +40,7 @@ export function setSchema(name) {
 export function makeMigrations() {
   const classes = [];
   const imports = new Set();
+  const ownMigrations = new Set(migrations.values());
 
   let index = 0;
   let source = `import { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
@@ -48,11 +49,24 @@ export function makeMigrations() {
 
   for (const meta of presetMigrations.values()) {
     if (meta.isValid) {
-      imports.add(meta);
+      if (ownMigrations.has(meta)) {
+        for (const ownMeta of ownMigrations) {
+          if (ownMeta.isValid) {
+            imports.add(ownMeta);
+            ownMigrations.delete(ownMeta);
+
+            if (meta === ownMeta) {
+              break;
+            }
+          }
+        }
+      } else {
+        imports.add(meta);
+      }
     }
   }
 
-  for (const meta of migrations.values()) {
+  for (const meta of ownMigrations) {
     if (meta.isValid) {
       imports.add(meta);
     }
