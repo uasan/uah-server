@@ -7,7 +7,7 @@ export * from './src/interfaces/server/websocket.ts';
 export * from './src/interfaces/migration/context.js';
 
 export * from './src/interfaces/security/Challenge.ts';
-export * from './src/interfaces/security/decorators.ts';
+export * from './src/interfaces/security/Permission.ts';
 export * from './src/interfaces/security/WebAuthn.js';
 
 export * from './src/interfaces/types/Blob.ts';

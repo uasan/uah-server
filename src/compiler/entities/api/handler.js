@@ -50,7 +50,7 @@ export function makeRouteMethodHTTP(route, members, node) {
 
   const isPrivate = node.modifiers?.some(
     hasDecorator,
-    lookup.decorators.Permission,
+    lookup.decorators.Access,
   );
 
   const cache = makeCache(

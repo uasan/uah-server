@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class NotFound extends Exception {
+export class NotFound extends Error {
   status = 404;
 }

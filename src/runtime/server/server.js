@@ -66,13 +66,10 @@ function onListen(token) {
     this.token = token;
 
     console.log(
-      style.bgGreenBright(style.bold(' LISTEN '))
-        + ' '
-        + style.blueBright(this.url)
-        + '\n',
+      `${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.url)}\n`,
     );
   } else {
     this.app = null;
-    console.error(new Error(style.red('Server start ' + this.url)));
+    console.error(new Error(style.red(`Port ${this.port} in ${this.host} not available for listen`)));
   }
 }

@@ -28,15 +28,15 @@ export class ServerContext extends Context {
 
   onAborted() {}
 
-  auth() {
+  async auth() {
     throw new Exception('Not implemented auth method');
   }
 
-  createSession() {
+  async createSession() {
     throw new Exception('Not implemented create session');
   }
 
-  deleteSession() {
+  async deleteSession() {
     throw new Exception('Not implemented delete session');
   }
 

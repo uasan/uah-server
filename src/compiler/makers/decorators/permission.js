@@ -1,8 +1,8 @@
-import { host } from '../../host.js';
 import { factoryAwaitCall } from '../../helpers/call.js';
 import { decorMethodStatements } from '../../helpers/decorators.js';
+import { host } from '../../host.js';
 
-export function Permission(node, original, decor) {
+export function Access(node, original, decor) {
   const self = host.factory.createThis();
   const args = [self, decor.arguments[0]];
 

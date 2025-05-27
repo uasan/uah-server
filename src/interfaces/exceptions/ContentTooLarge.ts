@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class ContentTooLarge extends Exception {
+export class ContentTooLarge extends Error {
   status = 413;
 }

@@ -138,6 +138,7 @@ export const hasDeclareModifier = node => some(node.modifiers, isDeclareKeyword)
 export function isNativeModifier({ kind }) {
   switch (kind) {
     case Decorator:
+    case AsyncKeyword:
     case ExportKeyword:
     case StaticKeyword:
     case DefaultKeyword:

@@ -1,5 +1,3 @@
-import { Exception } from './Exception.js';
-
-export class Unavailable extends Exception {
+export class Unavailable extends Error {
   status = 503;
 }
