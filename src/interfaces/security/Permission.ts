@@ -2,7 +2,7 @@ type Payload = Record<string, any>;
 
 type RuleAccess = (
   context: any,
-  payload?: Payload,
+  payload: any,
 ) => boolean | Promise<boolean>;
 
 type Rules = [RuleAccess, ...RuleAccess[]];
