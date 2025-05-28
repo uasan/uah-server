@@ -1,5 +1,3 @@
-import { Forbidden } from '../exceptions/Forbidden.js';
-
 export class Permission {
   rules = [];
 
@@ -27,10 +25,22 @@ export class Permission {
   }
 }
 
+const getName = ({ name }) => name;
+
+class AccessDenied extends Error {
+  status = 403;
+  expected = nullArray;
+
+  constructor({ rules }) {
+    super();
+    this.expected = rules.map(getName);
+  }
+}
+
 export async function Access(context, permission, payload) {
   context.access = await permission.get(context, payload);
 
   if (!context.access) {
-    throw new Forbidden();
+    throw new AccessDenied(permission);
   }
 }
