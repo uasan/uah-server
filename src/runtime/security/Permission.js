@@ -1,19 +1,23 @@
 export class Permission {
   rules = [];
-
   parent = null;
-  isParent = false;
 
-  constructor({ parent, rules }) {
+  isParent = false;
+  disabled = false;
+
+  constructor({ parent, rules, disabled }) {
     if (parent) {
       this.parent = parent;
       this.isParent = true;
+    }
+    if (disabled) {
+      this.disabled = true;
     }
     this.rules.push(...rules);
   }
 
   async get(context, payload) {
-    if (this.isParent === false || await this.parent.get(context, payload)) {
+    if (this.disabled === false && (this.isParent === false || await this.parent.get(context, payload))) {
       for (let i = 0; i < this.rules.length; i++) {
         const rule = this.rules[i];
 

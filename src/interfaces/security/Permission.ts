@@ -8,14 +8,17 @@ type RuleAccess = (
 type Rules = [RuleAccess, ...RuleAccess[]];
 
 interface PermissionOptions {
-  parent?: Permission;
   rules: Rules;
+  parent?: Permission;
+  disabled?: boolean;
 }
 
 export declare class Permission {
   rules: Rules;
   parent?: Permission;
+
   isParent: boolean;
+  disabled: boolean;
 
   constructor(options: PermissionOptions);
   get(context: any, payload?: Payload): Promise<RuleAccess>;
