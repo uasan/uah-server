@@ -1,10 +1,12 @@
 import { entities, host } from '../host.js';
 
 export class Entity {
+  unlinks = null;
+
   constructor(path) {
     this.path = path;
     entities.set(path, this);
-    //console.log(this.constructor.name, path);
+    // console.log(this.constructor.name, path);
   }
 
   emitting(file) {
@@ -24,6 +26,7 @@ export class Entity {
   }
 
   delete() {
+    this.unlinks?.purge();
     entities.delete(this.path);
     host.hooks.deleteFile(this.url);
     return this;
@@ -39,8 +42,8 @@ export class Entity {
     }
 
     this.path = new RegExp(
-      path.replaceAll('.', '\\.').replaceAll('**', '.+').replaceAll('*', '.+') +
-        '$'
+      path.replaceAll('.', '\\.').replaceAll('**', '.+').replaceAll('*', '.+')
+        + '$',
     );
   }
 }

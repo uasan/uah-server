@@ -15,6 +15,32 @@ export const beforeEmit = new Set();
 export const afterEmit = new Set();
 export const emitEntities = new Set();
 
+export class Unlinks extends Map {
+  hook = null;
+
+  constructor(hook) {
+    super();
+
+    if (hook) {
+      this.hook = hook;
+      afterEmit.add(hook);
+    }
+  }
+
+  purge() {
+    if (this.size) {
+      for (const [key, map] of this) {
+        map.delete(key);
+      }
+      this.clear();
+    }
+
+    if (this.hook) {
+      afterEmit.add(this.hook);
+    }
+  }
+}
+
 export const host = {
   hooks: null,
 

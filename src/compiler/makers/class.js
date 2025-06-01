@@ -1,5 +1,6 @@
 import {
   getOriginSymbol,
+  getOriginSymbolClass,
   getOriginSymbolOfNode,
   getPropertiesOfTypeNode,
   getTypeOfSymbol,
@@ -40,15 +41,16 @@ function makeInternalClassOfExtends(node, extend = node) {
       const symbol = getOriginSymbolOfNode(type.expression);
 
       if (symbol) {
-        if (declarations.has(symbol)) {
-          const maker = declarations.get(symbol);
-
+        const maker = declarations.get(symbol);
+        if (maker?.make) {
           if (maker.make.length === 1) {
             return maker.make(node);
           } else {
+            const symbol = getOriginSymbolClass(extend);
             return maker.make(node, {
+              symbol,
               arg: getTypeArgument(type),
-              meta: metaSymbols.get(getOriginSymbol(extend.symbol)),
+              meta: metaSymbols.get(symbol),
             });
           }
         } else {

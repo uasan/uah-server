@@ -1,25 +1,39 @@
-import { URL_BUILD } from '../../config.js';
 import { notImplemented } from './errors.js';
+import { respondNoContent } from './response/respondError.js';
 import { createWebSocketRPC } from './websocket.js';
 
-export const Router = {
-  pathname: '',
-  instance: null,
+export class Router {
+  app = null;
 
-  async init({ app, pathname }) {
-    this.instance = app;
-    this.pathname = pathname;
+  url = '';
+  path = '';
 
-    await import(URL_BUILD + 'api.js');
+  constructor({ app }, { href, pathname }, preset) {
+    this.app = app;
+    this.url = href;
+    this.path = pathname;
+
+    if (pathname.endsWith('/') === false) {
+      this.url += '/';
+      this.path += '/';
+    }
+
+    if (preset) {
+      this.url += ':' + preset + '/';
+      this.path += ':' + preset + '/';
+    }
 
     app.any('/*', notImplemented);
-  },
+    app.get('/favicon.ico', respondNoContent);
+  }
 
   set(path, method) {
-    this.instance[method.name](this.pathname + path, method);
-  },
+    this.app[method.name](this.path + path, method);
+    return this;
+  }
 
   setWebSocketRPC(path, ctor) {
-    this.instance.ws(this.pathname + path, createWebSocketRPC(ctor));
-  },
-};
+    this.app.ws(this.path + path, createWebSocketRPC(ctor));
+    return this;
+  }
+}

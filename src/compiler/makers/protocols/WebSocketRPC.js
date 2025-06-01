@@ -2,23 +2,22 @@ import { makePayloadFromQuery } from '#compiler/entities/api/payload.js';
 import { factoryNew } from '#compiler/helpers/call.js';
 import { getTypeOfNode, isNotThisParameter } from '#compiler/helpers/checker.js';
 import { factoryStaticProperty } from '#compiler/helpers/class.js';
-import { factoryIdentifier, factoryStaticToken } from '#compiler/helpers/expression.js';
-import { factoryArrowFunction, factoryBodyFunction, factoryParameter } from '#compiler/helpers/function.js';
+import { factoryIdentifier, factoryString, factoryThis } from '#compiler/helpers/expression.js';
+import { factoryArrowFunction, factoryParameter } from '#compiler/helpers/function.js';
 import { makePayloadValidator } from '#compiler/helpers/validator.js';
-import { host } from '#compiler/host.js';
 import { HTTP } from './HTTP.js';
 
-function makeOnOpen(route, members, node) {
+function makeOnOpen(meta, members, node) {
   const req = factoryIdentifier('req');
 
-  let path = route.path;
+  let path = meta.path;
   let payloadNode = node.parameters.find(isNotThisParameter);
   let payloadType = payloadNode && getTypeOfNode(payloadNode);
 
   if (payloadType) {
     makePayloadValidator(node, payloadType);
 
-    const query = makePayloadFromQuery(payloadType, route.meta.countRoutParams);
+    const query = makePayloadFromQuery(payloadType, meta.countRoutParams);
 
     path += query.path;
 
@@ -38,7 +37,10 @@ function makeOnOpen(route, members, node) {
     factoryNew(factoryIdentifier('Map')),
   ));
 
-  route.methods.push(`Router.setWebSocketRPC('${path}', m.${route.class})`);
+  meta.setRouteAST('setWebSocketRPC', [
+    factoryString(path),
+    factoryThis(),
+  ]);
 }
 
 export class WebSocketRPC {

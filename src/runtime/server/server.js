@@ -5,40 +5,34 @@ import { signal } from '../process.js';
 import { Router } from './router.js';
 
 export class Server {
-  url = '';
   host = '';
-  pathname = '';
-
   port = 80;
 
   app = null;
+  init = null;
   token = null;
+  router = null;
+  context = null;
+  deferred = null;
 
-  constructor(options, preset) {
+  constructor(context, options, preset) {
     const url = new URL(options.url);
 
-    this.url = url.href;
     this.host = url.hostname;
-    this.pathname = url.pathname;
     this.port = Number(url.port);
 
-    if (this.url.endsWith('/') === false) {
-      this.url += '/';
-      this.pathname += '/';
-    }
+    this.init = options.init;
+    this.context = context.prototype;
 
-    if (preset) {
-      this.url += ':' + preset + '/';
-      this.pathname += ':' + preset + '/';
-    }
+    this.app = App();
+    this.router = new Router(this, url, preset);
 
-    signal.addEventListener('abort', this.stop.bind(this));
+    signal.addEventListener('abort', this.destroy.bind(this));
   }
 
   async start() {
-    this.app = App();
-
-    await Router.init(this);
+    await this.init?.(this.context);
+    this.deferred = Promise.withResolvers();
 
     this.app.listen(
       this.host,
@@ -46,6 +40,12 @@ export class Server {
       LIBUS_LISTEN_EXCLUSIVE_PORT,
       onListen.bind(this),
     );
+
+    try {
+      console.log(await this.deferred.promise);
+    } finally {
+      this.deferred = null;
+    }
   }
 
   async stop() {
@@ -53,23 +53,21 @@ export class Server {
       us_listen_socket_close(this.token);
       this.token = null;
     }
+  }
 
-    if (this.app) {
-      this.app.close();
-      this.app = null;
-    }
+  async destroy() {
+    await this.stop();
+
+    this.app.close();
+    this.app = null;
   }
 }
 
 function onListen(token) {
   if (token) {
     this.token = token;
-
-    console.log(
-      `${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.url)}\n`,
-    );
+    this.deferred.resolve(`${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.router.url)}\n`);
   } else {
-    this.app = null;
-    console.error(new Error(style.red(`Port ${this.port} in ${this.host} not available for listen`)));
+    this.deferred.reject(new Error(`Port ${this.port} in ${this.host} not available for listen`));
   }
 }

@@ -1,59 +1,86 @@
 import ts from 'typescript';
 
+import { factoryCallMethod } from '#compiler/helpers/call.js';
+import { factoryIdentifier, factoryThis } from '#compiler/helpers/expression.js';
+import { factoryPropertyAccess } from '#compiler/helpers/object.js';
 import { getImplement } from '#compiler/makers/class.js';
 import { HTTP } from '#compiler/makers/protocols/HTTP.js';
-import { URL_LIB_RUNTIME } from '../../../config.js';
+import { DIR_BIN } from '../../../config.js';
 import { isExportNode, isStaticKeyword } from '../../helpers/checker.js';
-import { updateClass } from '../../helpers/class.js';
-import { getNodeTextName } from '../../helpers/var.js';
-import { host } from '../../host.js';
-import { makeRouteMethodHTTP } from './handler.js';
+import { factoryClassStaticBlock, updateClass } from '../../helpers/class.js';
+import { host, metaSymbols, Unlinks } from '../../host.js';
+import { services } from '../services/maker.js';
 
 const { MethodDeclaration } = ts.SyntaxKind;
 
-export const routes = new Set();
+export const routes = new Map();
 
-export function makeImportRoutes() {
-  let source = `import { Router } from '${URL_LIB_RUNTIME}server/router.js';\n`;
+export function makeBinServer() {
+  let source = '';
+  let awaits = '';
 
-  source += 'await Promise.all([';
+  if (services.size) {
+    source += `import './service.js';\n`;
+  }
 
-  for (const route of routes) {
-    if (route.methods.length) {
-      source += `import ('./${route.url}').then(m => {`;
-      source += route.methods.join(';');
-      source += '}),\n';
+  for (const [symbol, entities] of routes) {
+    if (entities.size) {
+      const { url, className } = metaSymbols.get(symbol);
+
+      source += `import { ${className} } from '../${url}';\n`;
+      awaits += `await ${className}.server.start();\n`;
+
+      for (const entity of entities) {
+        source += `import '../${entity.url}';\n`;
+      }
     }
   }
-  source += ']);';
-  host.hooks.saveFile('api.js', source);
+
+  source += '\n' + awaits;
+
+  host.hooks.saveFile(DIR_BIN + '/server.js', source);
 }
 
-export function ServerContext(node, { meta }) {
-  const { route } = host.entity;
+function setRouteAST(method, params) {
+  this.routeAST ??= factoryPropertyAccess(
+    factoryPropertyAccess(factoryThis(), factoryIdentifier('server')),
+    factoryIdentifier('router'),
+  );
+  this.routeAST = factoryCallMethod(this.routeAST, factoryIdentifier(method), params);
+}
 
-  if (!route || !isExportNode(node)) {
+export function ServerContext(node, extend) {
+  const { entity } = host;
+
+  if (!entity.isRoute || !extend.meta.isServer || !isExportNode(node)) {
     return host.visitEachChild(node);
   }
 
-  if (route.methods.length) {
-    route.methods.length = 0;
-  }
-
-  route.meta = meta;
-  route.class = getNodeTextName(node);
-  route.protocol = getImplement(node) ?? HTTP;
+  const meta = {
+    setRouteAST,
+    routeAST: null,
+    path: makeRoutePath(entity),
+    protocol: getImplement(node) ?? HTTP,
+    countRoutParams: extend.meta.countRoutParams,
+  };
 
   const members = [];
 
   for (const member of node.members) {
     if (
       member.kind === MethodDeclaration
-      && route.protocol.methods.has(member.name.escapedText)
+      && meta.protocol.methods.has(member.name.escapedText)
       && !member.modifiers?.some(isStaticKeyword)
     ) {
-      route.protocol.methods.get(member.name.escapedText).make(route, members, member);
+      meta.protocol.methods.get(member.name.escapedText).make(meta, members, member);
     }
+  }
+
+  if (meta.routeAST) {
+    members.push(factoryClassStaticBlock([meta.routeAST]));
+
+    entity.unlinks ??= new Unlinks(makeBinServer);
+    entity.unlinks.set(entity, extend.meta.relations.add(entity));
   }
 
   node = host.visitEachChild(node);

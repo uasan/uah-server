@@ -37,6 +37,7 @@ import { Table } from './decorators/table.js';
 import { ServerContext } from '../entities/api/maker.js';
 import { MigrationContext } from '../entities/migrations/maker.js';
 import { TableModel } from '../entities/models/table.js';
+import { SchedulerContext } from '../entities/schedulers/maker.js';
 import { WebSocketRPC } from './protocols/WebSocketRPC.js';
 
 export const lookup = {
@@ -76,6 +77,7 @@ export const lookup = {
   declarations: {
     TableModel,
     ServerContext,
+    SchedulerContext,
     MigrationContext,
   },
 };
@@ -92,6 +94,7 @@ export function setDeclarations() {
 
     if (symbol.valueDeclaration) {
       declarations.set(symbol, {
+        name,
         url: toRuntimeUrl(symbol.valueDeclaration.getSourceFile().resolvedPath),
         make: hasOwn(lookup.declarations, name)
           ? lookup.declarations[name]

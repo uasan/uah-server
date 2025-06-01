@@ -59,7 +59,9 @@ export function emit() {
         host.entity = entity;
         const file = program.getSourceFileByPath(entity.path);
 
-        entity.emitted(entity.emit(entity.emitting(file)));
+        if (file) {
+          entity.emitted(entity.emit(entity.emitting(file)));
+        }
       }
 
       if (afterEmit.size) {

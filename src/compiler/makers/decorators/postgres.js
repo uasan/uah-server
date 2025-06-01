@@ -1,12 +1,14 @@
-import { factoryCallStatement } from '../../helpers/call.js';
-import { addToStaticBlock } from '../../helpers/class.js';
-import { host } from '../../host.js';
+import { factoryIdentifier, factoryThis } from '#compiler/helpers/expression.js';
+import { factoryCall } from '../../helpers/call.js';
+import { addToStaticProperty } from '../../helpers/class.js';
 
 export function Postgres(node, original, decor) {
-  return addToStaticBlock(node, [
-    factoryCallStatement(decor.expression, [
-      host.factory.createThis(),
+  return addToStaticProperty(
+    node,
+    factoryIdentifier('postgres'),
+    factoryCall(decor.expression, [
+      factoryThis(),
       decor.arguments[0],
     ]),
-  ]);
+  );
 }

@@ -5,6 +5,7 @@ export * from './src/interfaces/server/session/jwt.ts';
 export * from './src/interfaces/server/websocket.ts';
 
 export * from './src/interfaces/migration/context.js';
+export * from './src/interfaces/services/scheduler.ts';
 
 export * from './src/interfaces/security/Challenge.ts';
 export * from './src/interfaces/security/Permission.ts';

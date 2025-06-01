@@ -13,6 +13,7 @@ export const DIR_MIGRATIONS = 'migrations';
 
 export const PATH_SRC = CWD + '/src/';
 export const PATH_SRC_APP = PATH_SRC + DIR_APP + '/';
+export const PATH_SRC_LIB = PATH_SRC + DIR_LIB + '/';
 
 export const PATH_BUILD = CWD + '/' + DIR_BUILD + '/';
 

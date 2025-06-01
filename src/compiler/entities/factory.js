@@ -2,18 +2,22 @@ import { CWD, PATH_NODE_MODULES } from '../../config.js';
 import { entities } from '../host.js';
 
 import { AppRouteEntity } from './api/entity.js';
+import { LibContextEntity } from './context/entity.js';
 import { MigrationEntity } from './migrations/entity.js';
 import { ModelEntity } from './models/entity.js';
+import { SchedulerEntity } from './schedulers/entity.js';
 import { TypeScriptEntity } from './typescript/entity.js';
 
 const classes = [
   AppRouteEntity,
   ModelEntity,
   MigrationEntity,
+  SchedulerEntity,
+  LibContextEntity,
   TypeScriptEntity,
 ];
 
-export const factoryEntity = path => {
+export function factoryEntity(path) {
   if (entities.has(path)) {
     return entities.get(path);
   } else if (path.startsWith(CWD) === false) {
@@ -25,4 +29,4 @@ export const factoryEntity = path => {
       if (classes[i].path.test(path)) return new classes[i](path);
     }
   }
-};
+}

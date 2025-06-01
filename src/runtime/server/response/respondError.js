@@ -36,3 +36,9 @@ export function respondError(res, error) {
     });
   }
 }
+
+export function respondNoContent(res) {
+  res.cork(() => {
+    res.writeStatus('204').end();
+  });
+}

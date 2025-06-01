@@ -9,7 +9,7 @@ interface PostgresOptions {
 
 export declare function Postgres(
   options: PostgresOptions,
-): (target: new(preset?: any) => object, context: ClassDecoratorContext) => void;
+): (target: any, context: ClassDecoratorContext) => void;
 
 type Deferrable = 'not' | 'immediate' | 'deferred';
 type ReferenceAction =

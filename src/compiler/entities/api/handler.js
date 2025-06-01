@@ -1,5 +1,4 @@
 import { internals } from '../../helpers/internals.js';
-import { host } from '../../host.js';
 import { makePayloadFromBody, makePayloadFromQuery } from './payload.js';
 
 import { factoryCall, factoryCallMethod, factoryCallThisMethod } from '../../helpers/call.js';
@@ -22,6 +21,8 @@ import {
   factoryAwaitStatement,
   factoryIdentifier,
   factoryPropertyParenthesized,
+  factoryString,
+  factoryThis,
 } from '../../helpers/expression.js';
 import { factoryRouteFunction } from '../../helpers/function.js';
 import { factoryTryStatement } from '../../helpers/statements.js';
@@ -29,11 +30,12 @@ import { makePayloadValidator } from '../../helpers/validator.js';
 import { factoryConstant } from '../../helpers/var.js';
 import { lookup } from '../../makers/declaration.js';
 
+import { factoryPropertyAccess } from '#compiler/helpers/object.js';
 import { makeCache } from '#compiler/makers/decorators/cache.js';
 import { BinaryData } from '../../makers/types/validators/BinaryData.js';
 import { File } from '../../makers/types/validators/File.js';
 
-export function makeRouteMethodHTTP(route, members, node) {
+export function makeRouteMethodHTTP(meta, members, node) {
   const statements = [];
   const name = node.name.escapedText;
 
@@ -84,7 +86,7 @@ export function makeRouteMethodHTTP(route, members, node) {
 
     if (name === 'get' || name === 'head') {
       payload = factoryIdentifier('data');
-      const query = makePayloadFromQuery(payloadType, route.meta.countRoutParams);
+      const query = makePayloadFromQuery(payloadType, meta.countRoutParams);
 
       pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));
@@ -140,5 +142,8 @@ export function makeRouteMethodHTTP(route, members, node) {
     ]),
   ));
 
-  route.methods.push(`Router.set('${route.path + pathParameters}', m.${route.class + '.' + this.name})`);
+  meta.setRouteAST('set', [
+    factoryString(meta.path + pathParameters),
+    factoryPropertyAccess(factoryThis(), name),
+  ]);
 }

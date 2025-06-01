@@ -1,4 +1,5 @@
 import { Context } from '../context.ts';
+import type { SchedulerContext } from '../services/scheduler.ts';
 
 export interface CookieOptions {
   name: string;
@@ -49,6 +50,8 @@ export declare abstract class ServerContext extends Context {
   sendMessageToSocket(payload: any, isBinary?: boolean): boolean;
 
   static server: Server;
+  static services: Record<string, SchedulerContext>;
+
   static sendMessageToUser(uid: ID, payload: any): boolean;
   static sendMessageToSocket(sid: ID, payload: any): boolean;
   static sendMessageToChannel(name: string, payload: any): boolean;

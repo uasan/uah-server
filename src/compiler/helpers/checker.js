@@ -157,6 +157,7 @@ export const getOriginSymbol = symbol =>
     : symbol;
 
 export const getOriginSymbolOfNode = node => getOriginSymbol(host.checker.getSymbolAtLocation(node));
+export const getOriginSymbolClass = node => getOriginSymbol(node.symbol);
 
 export const getFullName = symbol =>
   host.checker.getFullyQualifiedName(
