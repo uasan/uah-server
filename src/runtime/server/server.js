@@ -31,8 +31,19 @@ export class Server {
   }
 
   async start() {
-    await this.init?.(this.context);
+    if (this.deferred) {
+      await this.deferred.promise;
+    }
+
+    if (this.token) {
+      return;
+    }
+
     this.deferred = Promise.withResolvers();
+
+    if (this.init) {
+      await this.init(this.context);
+    }
 
     this.app.listen(
       this.host,
@@ -49,6 +60,10 @@ export class Server {
   }
 
   async stop() {
+    if (this.deferred) {
+      await this.deferred.promise;
+    }
+
     if (this.token) {
       us_listen_socket_close(this.token);
       this.token = null;
