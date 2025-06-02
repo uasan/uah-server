@@ -1,10 +1,10 @@
+import { existsSync, rmSync } from 'node:fs';
 import process from 'node:process';
 import { Worker } from 'node:worker_threads';
-import { rmSync, existsSync } from 'node:fs';
 
-import { writeFile } from './system.js';
 import { PATH_BUILD } from '../../config.js';
 import { toBuildPath } from '../helpers/link.js';
+import { writeFile } from './system.js';
 
 export class BuilderHooks {
   worker = {
@@ -63,7 +63,7 @@ export class BuilderHooks {
       this.worker.instance?.terminate();
       this.worker.instance = new Worker(
         this.worker.filename,
-        this.worker.options
+        this.worker.options,
       ).on('error', console.error);
     }
   }

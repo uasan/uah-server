@@ -53,7 +53,7 @@ export class Server {
     );
 
     try {
-      console.log(await this.deferred.promise);
+      await this.deferred.promise;
     } finally {
       this.deferred = null;
     }
@@ -81,7 +81,8 @@ export class Server {
 function onListen(token) {
   if (token) {
     this.token = token;
-    this.deferred.resolve(`${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.router.url)}\n`);
+    console.log(`${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.router.url)}\n`);
+    this.deferred.resolve();
   } else {
     this.deferred.reject(new Error(`Port ${this.port} in ${this.host} not available for listen`));
   }

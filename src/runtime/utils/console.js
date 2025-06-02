@@ -1,116 +1,112 @@
 import { styleText } from 'node:util';
 
-const options = {
-  validateStream: false
-};
-
 export const style = {
   bold(text) {
-    return styleText('bold', text, options);
+    return styleText('bold', text);
   },
   italic(text) {
-    return styleText('italic', text, options);
+    return styleText('italic', text);
   },
   underline(text) {
-    return styleText('underline', text, options);
+    return styleText('underline', text);
   },
 
   cyan(text) {
-    return styleText('cyan', text, options);
+    return styleText('cyan', text);
   },
   magenta(text) {
-    return styleText('magenta', text, options);
+    return styleText('magenta', text);
   },
   white(text) {
-    return styleText('white', text, options);
+    return styleText('white', text);
   },
   gray(text) {
-    return styleText('gray', text, options);
+    return styleText('gray', text);
   },
   yellow(text) {
-    return styleText('yellow', text, options);
+    return styleText('yellow', text);
   },
   red(text) {
-    return styleText('red', text, options);
+    return styleText('red', text);
   },
   blue(text) {
-    return styleText('blue', text, options);
+    return styleText('blue', text);
   },
   green(text) {
-    return styleText('green', text, options);
+    return styleText('green', text);
   },
   black(text) {
-    return styleText('black', text, options);
+    return styleText('black', text);
   },
 
   yellowBright(text) {
-    return styleText('yellowBright', text, options);
+    return styleText('yellowBright', text);
   },
   magentaBright(text) {
-    return styleText('magentaBright', text, options);
+    return styleText('magentaBright', text);
   },
   cyanBright(text) {
-    return styleText('cyanBright', text, options);
+    return styleText('cyanBright', text);
   },
   whiteBright(text) {
-    return styleText('whiteBright', text, options);
+    return styleText('whiteBright', text);
   },
   redBright(text) {
-    return styleText('redBright', text, options);
+    return styleText('redBright', text);
   },
   blueBright(text) {
-    return styleText('blueBright', text, options);
+    return styleText('blueBright', text);
   },
   greenBright(text) {
-    return styleText('greenBright', text, options);
+    return styleText('greenBright', text);
   },
 
   bgBlack(text) {
-    return styleText('bgBlack', text, options);
+    return styleText('bgBlack', text);
   },
   bgYellow(text) {
-    return styleText('bgYellow', text, options);
+    return styleText('bgYellow', text);
   },
   bgBlue(text) {
-    return styleText('bgBlue', text, options);
+    return styleText('bgBlue', text);
   },
   bgMagenta(text) {
-    return styleText('bgMagenta', text, options);
+    return styleText('bgMagenta', text);
   },
   bgCyan(text) {
-    return styleText('bgCyan', text, options);
+    return styleText('bgCyan', text);
   },
   bgWhite(text) {
-    return styleText('bgWhite', text, options);
+    return styleText('bgWhite', text);
   },
   bgGray(text) {
-    return styleText('bgGray', text, options);
+    return styleText('bgGray', text);
   },
   bgRedBright(text) {
-    return styleText('bgRedBright', text, options);
+    return styleText('bgRedBright', text);
   },
   bgRed(text) {
-    return styleText('bgRed', text, options);
+    return styleText('bgRed', text);
   },
   bgGreen(text) {
-    return styleText('bgGreen', text, options);
+    return styleText('bgGreen', text);
   },
   bgGreenBright(text) {
-    return styleText('bgGreenBright', text, options);
+    return styleText('bgGreenBright', text);
   },
   bgYellowBright(text) {
-    return styleText('bgYellowBright', text, options);
+    return styleText('bgYellowBright', text);
   },
   bgBlueBright(text) {
-    return styleText('bgBlueBright', text, options);
+    return styleText('bgBlueBright', text);
   },
   bgMagentaBright(text) {
-    return styleText('bgMagentaBright', text, options);
+    return styleText('bgMagentaBright', text);
   },
   bgCyanBright(text) {
-    return styleText('bgCyanBright', text, options);
+    return styleText('bgCyanBright', text);
   },
   bgWhiteBright(text) {
-    return styleText('bgWhiteBright', text, options);
+    return styleText('bgWhiteBright', text);
   },
 };
