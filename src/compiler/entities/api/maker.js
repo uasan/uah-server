@@ -6,7 +6,7 @@ import { factoryPropertyAccess } from '#compiler/helpers/object.js';
 import { getImplement } from '#compiler/makers/class.js';
 import { HTTP } from '#compiler/makers/protocols/HTTP.js';
 import { DIR_BIN } from '../../../config.js';
-import { isExportNode, isStaticKeyword } from '../../helpers/checker.js';
+import { isStaticKeyword } from '../../helpers/checker.js';
 import { factoryClassStaticBlock, updateClass } from '../../helpers/class.js';
 import { host, metaSymbols, Unlinks } from '../../host.js';
 import { services } from '../services/maker.js';
@@ -52,7 +52,7 @@ function setRouteAST(method, params) {
 export function ServerContext(node, extend) {
   const { entity } = host;
 
-  if (!entity.isRoute || !extend.meta.isServer || !isExportNode(node)) {
+  if (!entity.isRoute || !extend.meta.isServer) {
     return host.visitEachChild(node);
   }
 
