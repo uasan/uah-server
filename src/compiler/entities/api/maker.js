@@ -5,7 +5,7 @@ import { factoryIdentifier, factoryThis } from '#compiler/helpers/expression.js'
 import { factoryPropertyAccess } from '#compiler/helpers/object.js';
 import { getImplement } from '#compiler/makers/class.js';
 import { HTTP } from '#compiler/makers/protocols/HTTP.js';
-import { DIR_BIN } from '../../../config.js';
+import { DIR_BIN, URL_LIB_RUNTIME } from '../../../config.js';
 import { isStaticKeyword } from '../../helpers/checker.js';
 import { factoryClassStaticBlock, updateClass } from '../../helpers/class.js';
 import { host, metaSymbols, Unlinks } from '../../host.js';
@@ -14,32 +14,6 @@ import { services } from '../services/maker.js';
 const { MethodDeclaration } = ts.SyntaxKind;
 
 export const routes = new Map();
-
-export function makeBinServer() {
-  let source = '';
-  let awaits = '';
-
-  if (services.size) {
-    source += `import './service.js';\n`;
-  }
-
-  for (const [symbol, entities] of routes) {
-    if (entities.size) {
-      const { url, className } = metaSymbols.get(symbol);
-
-      source += `import { ${className} } from '../${url}';\n`;
-      awaits += `await ${className}.server.start();\n`;
-
-      for (const entity of entities) {
-        source += `import '../${entity.url}';\n`;
-      }
-    }
-  }
-
-  source += '\n' + awaits;
-
-  host.hooks.saveFile(DIR_BIN + '/server.js', source);
-}
 
 function setRouteAST(method, params) {
   this.routeAST ??= factoryPropertyAccess(
@@ -101,4 +75,30 @@ export function makeRoutePath({ url }) {
   return names.length
     ? moduleName + '/' + submoduleName + '/' + names.join('/')
     : moduleName + '/' + submoduleName;
+}
+
+export function makeBinServer() {
+  let source = `import '${URL_LIB_RUNTIME}process.js';\n`;
+  let awaits = '';
+
+  if (services.size) {
+    source += `import './service.js';\n`;
+  }
+
+  for (const [symbol, entities] of routes) {
+    if (entities.size) {
+      const { url, className } = metaSymbols.get(symbol);
+
+      source += `import { ${className} } from '../${url}';\n`;
+      awaits += `await ${className}.server.start();\n`;
+
+      for (const entity of entities) {
+        source += `import '../${entity.url}';\n`;
+      }
+    }
+  }
+
+  source += '\n' + awaits;
+
+  host.hooks.saveFile(DIR_BIN + '/server.js', source);
 }
