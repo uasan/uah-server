@@ -1,16 +1,5 @@
-import {
-  isUUID,
-  isArray,
-  isEmail,
-  isNumber,
-  isBigInt,
-  isObject,
-  isString,
-  isBoolean,
-  isInteger,
-  nullArray,
-  nullObject,
-} from './checker.js';
+import { nullArray, nullObject } from '#utils/native.js';
+import { isArray, isBigInt, isBoolean, isEmail, isInteger, isNumber, isObject, isString, isUUID } from './checker.js';
 import { ValidationErrors as Errors } from './errors.js';
 
 export const Validator = new (class Validator {
@@ -129,11 +118,11 @@ export const Validator = new (class Validator {
     return this.skip || this.data[this.key].length === length
       ? this
       : this.setError(
-          this.data[this.key].length < length
-            ? Errors.tooShort
-            : Errors.tooLong,
-          length
-        );
+        this.data[this.key].length < length
+          ? Errors.tooShort
+          : Errors.tooLong,
+        length,
+      );
   }
 
   isMinLength(min) {
@@ -161,8 +150,8 @@ export const Validator = new (class Validator {
   }
 
   isEmail() {
-    return this.isString().skip ||
-      isEmail((this.data[this.key] = this.data[this.key].trim().toLowerCase()))
+    return this.isString().skip
+        || isEmail(this.data[this.key] = this.data[this.key].trim().toLowerCase())
       ? this
       : this.setError(Errors.typeMismatch, 'email');
   }
@@ -208,8 +197,7 @@ export const Validator = new (class Validator {
 
   setParent() {
     this.data = this.data[this.key];
-    this.parent =
-      this.parent === nullArray ? [this.key] : [...this.parent, this.key];
+    this.parent = this.parent === nullArray ? [this.key] : [...this.parent, this.key];
 
     return this;
   }

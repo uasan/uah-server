@@ -1,4 +1,4 @@
-import { nullObject } from '../types/checker.js';
+import { nullObject } from '../utils/native.js';
 import { Patch } from './patch/Patch.js';
 
 export class TableModel {

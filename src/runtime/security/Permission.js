@@ -1,3 +1,5 @@
+import { nullArray } from '#utils/native.js';
+
 export class Permission {
   rules = [];
   parent = null;
