@@ -33,5 +33,5 @@ export function setCookie(options, value) {
 }
 
 export function deleteCookie(options) {
-  setCookie({ ...options, maxAge: 0 }, '');
+  this.setCookie({ ...options, maxAge: 0 }, '');
 }
