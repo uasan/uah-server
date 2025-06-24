@@ -50,7 +50,7 @@ const { Readonly: CheckFlagReadonly } = ts.CheckFlags;
 const { Readonly: ModifierFlagReadonly } = ts.ModifierFlags;
 const { Const } = ts.NodeFlags;
 const { SignatureConstruct } = ts.SignatureKind;
-const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } = ts;
+export const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } = ts;
 
 export const { isLiteralExpression, isStringLiteralLike, isConstructorDeclaration } = ts;
 

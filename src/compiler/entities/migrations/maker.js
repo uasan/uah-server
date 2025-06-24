@@ -1,5 +1,6 @@
+import { factoryCallThisMethod } from '#compiler/helpers/call.js';
 import { DIR_BIN, DIR_LIB, URL_LIB_RUNTIME } from '../../../config.js';
-import { isExportNode } from '../../helpers/checker.js';
+import { isExportNode, isStaticKeyword, some } from '../../helpers/checker.js';
 import { factoryStaticProperty, updateClass } from '../../helpers/class.js';
 import { factoryString } from '../../helpers/expression.js';
 import { getNodeTextName } from '../../helpers/var.js';
@@ -84,6 +85,8 @@ export function makeMigrations() {
   host.hooks.saveFile(DIR_BIN + '/migrate.js', source);
 }
 
+const hasVersion = (node) => some(node.modifiers, isStaticKeyword) && node.name?.escapedText === 'version';
+
 export function MigrationContext(node) {
   const { migration } = host.entity;
 
@@ -101,8 +104,14 @@ export function MigrationContext(node) {
     afterEmit.add(makeMigrations);
   }
 
-  return updateClass(node, node.modifiers, node.name, node.heritageClauses, [
+  const members = [
     factoryStaticProperty('path', factoryString(migration.url.slice(11, -3))),
     ...node.members,
-  ]);
+  ];
+
+  if (some(members, hasVersion)) {
+    members.push(factoryStaticProperty('hash', factoryCallThisMethod('getHash')));
+  }
+
+  return updateClass(node, node.modifiers, node.name, node.heritageClauses, members);
 }
