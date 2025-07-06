@@ -12,6 +12,7 @@
   },
   "bin": {
     "UAH.server": "./bin/dev.mjs",
+    "UAH.test": "./bin/test.mjs",
     "UAH.migrate": "./bin/migrate.mjs"
   },
   "imports": {

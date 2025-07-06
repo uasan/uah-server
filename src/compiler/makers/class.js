@@ -42,6 +42,7 @@ function makeInternalClassOfExtends(node, extend = node) {
 
       if (symbol) {
         const maker = declarations.get(symbol);
+
         if (maker?.make) {
           if (maker.make.length === 1) {
             return maker.make(node);
@@ -90,7 +91,7 @@ export function makeMethodDeclaration(node) {
     node.name,
     undefined,
     undefined,
-    node.parameters?.length ? [host.visit(node.parameters[0])] : undefined,
+    node.parameters?.length ? node.parameters.map(host.visit).filter(Boolean) : undefined,
     undefined,
     node.body && host.visit(node.body),
   );

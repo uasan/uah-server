@@ -11,6 +11,8 @@ export * from './src/interfaces/security/Challenge.ts';
 export * from './src/interfaces/security/Permission.ts';
 export * from './src/interfaces/security/WebAuthn.js';
 
+export * from './src/interfaces/testing/context.ts';
+
 export * from './src/interfaces/types/Blob.ts';
 export * from './src/interfaces/types/File.ts';
 export * from './src/interfaces/types/Validators.ts';

@@ -52,6 +52,7 @@ const makers = {
   [SyntaxKind.BooleanKeyword]: returnUndefined,
   [SyntaxKind.UnknownKeyword]: returnUndefined,
   [SyntaxKind.IntersectionType]: returnUndefined,
+  [SyntaxKind.ConstructorType]: returnUndefined,
   [SyntaxKind.ModuleDeclaration]: returnUndefined,
   [SyntaxKind.TypeAliasDeclaration]: returnUndefined,
   [SyntaxKind.InterfaceDeclaration]: returnUndefined,

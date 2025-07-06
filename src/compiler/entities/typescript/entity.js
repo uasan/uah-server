@@ -14,6 +14,7 @@ export class TypeScriptEntity extends Entity {
   model = null;
   migration = null;
 
+  isTest = false;
   isRoute = false;
   isService = false;
   isContext = false;

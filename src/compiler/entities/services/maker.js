@@ -1,10 +1,10 @@
 import { host, metaSymbols } from '#compiler/host.js';
-import { DIR_BIN } from '#config';
+import { DIR_BIN, URL_LIB_RUNTIME } from '#config';
 
 export const services = new Map();
 
 export function makeBinService() {
-  let source = '';
+  let source = `import '${URL_LIB_RUNTIME}process.js';\n\n`;
   let awaits = '';
 
   for (const [symbol, entities] of services) {

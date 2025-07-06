@@ -78,7 +78,7 @@ export function makeRoutePath({ url }) {
 }
 
 export function makeBinServer() {
-  let source = `import '${URL_LIB_RUNTIME}process.js';\n`;
+  let source = `import '${URL_LIB_RUNTIME}process.js';\n\n`;
   let awaits = '';
 
   if (services.size) {

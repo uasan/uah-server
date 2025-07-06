@@ -6,9 +6,11 @@ import { LibContextEntity } from './context/entity.js';
 import { MigrationEntity } from './migrations/entity.js';
 import { ModelEntity } from './models/entity.js';
 import { SchedulerEntity } from './schedulers/entity.js';
+import { TestEntity } from './tests/entity.js';
 import { TypeScriptEntity } from './typescript/entity.js';
 
 const classes = [
+  TestEntity,
   AppRouteEntity,
   ModelEntity,
   MigrationEntity,

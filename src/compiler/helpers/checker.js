@@ -52,7 +52,7 @@ const { Const } = ts.NodeFlags;
 const { SignatureConstruct } = ts.SignatureKind;
 export const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } = ts;
 
-export const { isLiteralExpression, isStringLiteralLike, isConstructorDeclaration } = ts;
+export const { isLiteralExpression, isStringLiteralLike, isConstructorDeclaration, isTypeReferenceNode } = ts;
 
 export const isVarConst = ({ flags }) => (flags & Const) !== 0;
 export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;

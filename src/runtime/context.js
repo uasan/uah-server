@@ -17,4 +17,8 @@ export class Context {
       throw error;
     }
   }
+
+  static mock(preset) {
+    return Object.assign(new this(preset), preset);
+  }
 }

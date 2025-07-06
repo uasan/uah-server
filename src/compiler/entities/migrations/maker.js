@@ -44,7 +44,8 @@ export function makeMigrations() {
   const ownMigrations = new Set(migrations.values());
 
   let index = 0;
-  let source = `import { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
+  let source =
+    `import '${URL_LIB_RUNTIME}process.js';\nimport { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
 
   source += `import { Migration } from '../${DIR_LIB}/context/Migration.js';\n`;
 
