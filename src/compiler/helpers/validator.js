@@ -1,38 +1,29 @@
 import { host } from '../host.js';
-import { File } from '../makers/types/validators/File.js';
-import { Blob } from '../makers/types/validators/Blob.js';
 import { BinaryData } from '../makers/types/validators/BinaryData.js';
+import { Blob } from '../makers/types/validators/Blob.js';
+import { File } from '../makers/types/validators/File.js';
 import { printNode } from '../worker/printer.js';
 import { addTransformer } from './ast.js';
 import { factoryCallMethod } from './call.js';
 import {
+  getConstructIdentifier,
+  getIndexTypeOfType,
+  getPropertiesOfType,
+  hasAnyType,
   isArrayLikeType,
+  isBigIntType,
   isBooleanType,
+  isNonPrimitiveType,
   isNumberType,
   isObjectType,
   isStringType,
-  getConstructIdentifier,
-  hasAnyType,
-  isTypeAsValues,
-  getIndexTypeOfType,
-  getPropertiesOfType,
-  isNonPrimitiveType,
   isTupleType,
-  isBigIntType,
+  isTypeAsValues,
 } from './checker.js';
-import {
-  factoryIdentifier,
-  factoryNumber,
-  factoryString,
-  factoryTrue,
-} from './expression.js';
-import {
-  ensureArgument,
-  factoryArrowFunction,
-  updateMethodStatements,
-} from './function.js';
+import { factoryIdentifier, factoryNumber, factoryString, factoryTrue } from './expression.js';
+import { ensureArgument, factoryArrowFunction, updateMethodStatements } from './function.js';
 import { internals } from './internals.js';
-import { getRefValue, getRefForLiteralTypes } from './refs.js';
+import { getRefForLiteralTypes, getRefValue } from './refs.js';
 import { factoryStatement } from './statements.js';
 import { MetaType } from './types.js';
 
@@ -80,7 +71,7 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
     const methodAst = makeValidatorsByType(
       childAst,
       meta.children[0],
-      getIndexTypeOfType(type)
+      getIndexTypeOfType(type),
     );
 
     if (childAst === methodAst) {
@@ -91,7 +82,7 @@ function makeValidatorsByType(ast, meta, type = meta.type) {
       ]);
     }
   } else if (isObjectType(type)) {
-    const ctor = getConstructIdentifier(meta.node);
+    const ctor = meta.node && getConstructIdentifier(meta.node);
 
     if (ctor) {
       ast = factoryCallMethod(ast, 'toInstance', [ctor]);
@@ -189,5 +180,5 @@ export function makePayloadValidator(node, type) {
 export const makeFieldValidate = meta =>
   factoryArrowFunction(
     factoryIdentifier('_'),
-    makeValidatorsByMeta(factoryIdentifier('_'), meta)
+    makeValidatorsByMeta(factoryIdentifier('_'), meta),
   );

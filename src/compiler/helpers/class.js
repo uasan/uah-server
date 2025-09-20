@@ -50,9 +50,9 @@ export const updateClass = (node, modifiers, name, heritageClauses, members) =>
       members,
     );
 
-export const isFieldProperty = member =>
-  member.kind === PropertyDeclaration
-  && !member.modifiers?.some(isStaticKeyword);
+export const isFieldProperty = node =>
+  node.kind === PropertyDeclaration
+  && !node.modifiers?.some(isStaticKeyword);
 
 export const addToStaticBlock = (node, statements) =>
   updateClass(node, node.modifiers, node.name, node.heritageClauses, [
