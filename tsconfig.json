@@ -3,6 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
+    "erasableSyntaxOnly": true,
     "allowJs": false,
     "composite": false,
     "incremental": true,
