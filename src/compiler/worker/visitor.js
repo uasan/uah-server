@@ -17,8 +17,17 @@ const returnExpression = node => host.visit(node.expression);
 
 function makeParameter(node) {
   if (node.name.escapedText !== 'this') {
-    node.questionToken = undefined;
-    return host.visitEachChild(node);
+    node = host.visitEachChild(node);
+
+    return host.factory.updateParameterDeclaration(
+      node,
+      undefined,
+      node.dotDotDotToken,
+      node.name,
+      undefined,
+      undefined,
+      node.initializer,
+    );
   }
 }
 
