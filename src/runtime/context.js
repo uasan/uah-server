@@ -2,7 +2,7 @@ import { SQL } from '@uah/postgres';
 
 export class Context {
   sql(strings, ...params) {
-    return new SQL(strings, params, this.postgres);
+    return new SQL(this.postgres).set(strings, params);
   }
 
   async startTransaction(action, payload) {
