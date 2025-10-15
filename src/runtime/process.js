@@ -13,7 +13,6 @@ function handleException(error) {
 }
 
 process
-  .once('disconnect', abort)
   .once('beforeExit', abort)
   .once('uncaughtException', handleException)
   .once('unhandledRejection', handleException);
