@@ -4,6 +4,12 @@ export interface SQL {
   asValue(): this;
   asTuples(): this;
   asObject(): this;
+  asObjects(): this;
+  asArray(): this;
+  asArrays(): this;
+  asLookup(deep: number): this;
+
+  builder(): this;
 
   sql(strings: TemplateStringsArray, ...params: unknown[]): this;
   sql(

@@ -6,3 +6,7 @@ package-lock.json
 # misc
 .DS_Store
 .env*
+
+# ide
+.idea
+.vscode
