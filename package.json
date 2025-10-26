@@ -24,7 +24,7 @@
   "dependencies": {
     "typescript": "latest",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.52.0",
-    "@uah/postgres": "file:../../Postgres"
+    "@uah/postgres": "https://github.com/uasan/postgres.git"
   },
   "devDependencies": {
     "dprint": "latest",
