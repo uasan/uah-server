@@ -2,7 +2,7 @@
   "name": "@uah/server",
   "private": true,
   "author": "UAH",
-  "description": "description",
+  "description": "UAH server",
   "version": "1.0.0",
   "license": "ISC",
   "type": "module",
