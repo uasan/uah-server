@@ -8,7 +8,7 @@
   "type": "module",
   "typings": "index.d.ts",
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=25.0.0"
   },
   "bin": {
     "UAH.server": "./bin/dev.mjs",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "typescript": "latest",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.52.0",
-    "@uah/postgres": "https://github.com/uasan/postgres.git"
+    "@uah/postgres": "github:uasan/postgres",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
   },
   "devDependencies": {
     "dprint": "latest",
