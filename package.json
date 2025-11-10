@@ -22,7 +22,7 @@
     "#compiler/*": "./src/compiler/*"
   },
   "dependencies": {
-    "typescript": "latest",
+    "typescript": "^5.9.3",
     "@uah/postgres": "github:uasan/postgres",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
   },
