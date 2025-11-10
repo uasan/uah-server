@@ -7,7 +7,7 @@ function report(migration, command, index) {
       ' ' +
       command +
       ' ' +
-      migration.constructor.path
+      migration.constructor.path,
   );
 }
 
@@ -27,6 +27,6 @@ export function reportStatusMigrate(migration, index) {
       ' ' +
       style.blue(status) +
       ' ' +
-      style.green(migration.constructor.path)
+      style.green(migration.constructor.path),
   );
 }

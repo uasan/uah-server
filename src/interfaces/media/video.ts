@@ -15,5 +15,5 @@ interface ConvertVideoOptions {
 export declare function convertVideo(
   source: string,
   target: string,
-  options: ConvertVideoOptions
+  options: ConvertVideoOptions,
 ): Promise<VideoInfo>;

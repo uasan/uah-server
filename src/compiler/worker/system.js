@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 
 export const { writeFile } = ts.sys;
 
-export const readFileUrl = (path, options) => readFileSync(fileURLToPath(path, options));
+export const readFileUrl = (path, options) =>
+  readFileSync(fileURLToPath(path, options));
 export const createSHA256Hash = text => hash('sha256', text, 'base64url');
 
 export const system = {

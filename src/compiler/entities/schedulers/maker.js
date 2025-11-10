@@ -1,6 +1,9 @@
 import { factoryNew } from '#compiler/helpers/call.js';
 import { addToStaticProperty } from '#compiler/helpers/class.js';
-import { factoryIdentifier, factoryThis } from '#compiler/helpers/expression.js';
+import {
+  factoryIdentifier,
+  factoryThis,
+} from '#compiler/helpers/expression.js';
 import { host, metaSymbols, Unlinks } from '#compiler/host.js';
 import { makeBinService, services } from '../services/maker.js';
 
@@ -24,7 +27,11 @@ export function SchedulerContext(node, { symbol, meta }) {
     entity.unlinks ??= new Unlinks(makeBinService);
     entity.unlinks.set(entity, meta.relations.add(entity));
 
-    return addToStaticProperty(host.visitEachChild(node), factoryIdentifier('instance'), factoryNew(factoryThis()));
+    return addToStaticProperty(
+      host.visitEachChild(node),
+      factoryIdentifier('instance'),
+      factoryNew(factoryThis()),
+    );
   } else {
     return host.visitEachChild(node);
   }

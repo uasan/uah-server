@@ -17,7 +17,7 @@ export function makeCache(decor, req, res, ctx) {
   if (isTrueKeyword(arg)) {
     return {
       check: factoryIfReturn(
-        factoryCallMethod(name, 'checkImmutable', [req, res])
+        factoryCallMethod(name, 'checkImmutable', [req, res]),
       ),
       preset: factoryCallMethod(name, 'setImmutable', [ctx]),
     };

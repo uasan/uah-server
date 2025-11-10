@@ -27,7 +27,7 @@ export const isMutation = node => {
       case ElementAccessExpression:
         if (node.parent?.kind === CallExpression)
           return isObjectNode(
-            node.parent.expression === node ? node.expression : node
+            node.parent.expression === node ? node.expression : node,
           );
         else continue;
       case BinaryExpression:
@@ -129,5 +129,5 @@ export const factoryIsEqualsExpression = (left, right) =>
   host.factory.createBinaryExpression(
     left,
     factoryToken(EqualsEqualsEqualsToken),
-    right
+    right,
   );

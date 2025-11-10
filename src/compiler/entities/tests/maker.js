@@ -1,5 +1,8 @@
 import { factoryCallThisMethod } from '#compiler/helpers/call.js';
-import { getOriginSymbolClass, getTypeOfNode } from '#compiler/helpers/checker.js';
+import {
+  getOriginSymbolClass,
+  getTypeOfNode,
+} from '#compiler/helpers/checker.js';
 import { addToStaticProperty } from '#compiler/helpers/class.js';
 import { factoryIdentifier } from '#compiler/helpers/expression.js';
 import { factoryArrayLiteral } from '#compiler/helpers/object.js';

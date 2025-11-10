@@ -8,8 +8,15 @@ import {
   isNotUndefinedType,
 } from '#compiler/helpers/checker.js';
 import { addToStaticProperty } from '#compiler/helpers/class.js';
-import { factoryIdentifier, factoryString, factoryThis } from '#compiler/helpers/expression.js';
-import { factoryArrowFunction, factoryParameter } from '#compiler/helpers/function.js';
+import {
+  factoryIdentifier,
+  factoryString,
+  factoryThis,
+} from '#compiler/helpers/expression.js';
+import {
+  factoryArrowFunction,
+  factoryParameter,
+} from '#compiler/helpers/function.js';
 import { host, metaSymbols, Unlinks } from '#compiler/host.js';
 import { isConstructorDeclaration } from 'typescript';
 
@@ -17,7 +24,8 @@ export function Server(node, original, decor) {
   const entity = host.entity;
   const args = [factoryThis(), decor.arguments[0]];
   const symbol = getOriginSymbolClass(original);
-  const preset = original.members?.find(isConstructorDeclaration)?.parameters?.[0];
+  const preset = original.members?.find(isConstructorDeclaration)
+    ?.parameters?.[0];
   const meta = {
     isServer: true,
     url: entity.url,
@@ -34,11 +42,16 @@ export function Server(node, original, decor) {
       node = addToStaticProperty(
         node,
         factoryIdentifier('getParamsOfRoute'),
-        factoryArrowFunction([factoryParameter(factoryIdentifier('req'))], makePayloadFromQuery(type).data),
+        factoryArrowFunction(
+          [factoryParameter(factoryIdentifier('req'))],
+          makePayloadFromQuery(type).data,
+        ),
       );
 
       meta.countRoutParams = props.length;
-      args.push(factoryString(props.map(symbol => symbol.escapedName).join('/:')));
+      args.push(
+        factoryString(props.map(symbol => symbol.escapedName).join('/:')),
+      );
     }
   }
 
@@ -48,5 +61,9 @@ export function Server(node, original, decor) {
   entity.unlinks ??= new Unlinks(makeBinServer);
   entity.unlinks.set(symbol, routes);
 
-  return addToStaticProperty(node, factoryIdentifier('server'), factoryNew(decor.expression, args));
+  return addToStaticProperty(
+    node,
+    factoryIdentifier('server'),
+    factoryNew(decor.expression, args),
+  );
 }

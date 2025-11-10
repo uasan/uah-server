@@ -3,40 +3,40 @@ import type { File } from './File.ts';
 
 type NumberOptions =
   | {
-    min?: number;
-    max?: number;
-    default?: number;
-  }
+      min?: number;
+      max?: number;
+      default?: number;
+    }
   | undefined;
 
 type ArrayOptions =
   | {
-    length?: number;
-    minLength?: number;
-    maxLength?: number;
-  }
+      length?: number;
+      minLength?: number;
+      maxLength?: number;
+    }
   | undefined;
 
 type ArrayBufferOptions =
   | {
-    byteLength?: number;
-    minByteLength?: number;
-    maxByteLength?: number;
-  }
+      byteLength?: number;
+      minByteLength?: number;
+      maxByteLength?: number;
+    }
   | undefined;
 
 type TextOptions =
   | {
-    length?: number;
-    minLength?: number;
-    maxLength?: number;
-    trim?: boolean;
-    digits?: boolean;
-    pattern?: RegExp;
-    default?: string;
-    lowercase?: boolean;
-    uppercase?: boolean;
-  }
+      length?: number;
+      minLength?: number;
+      maxLength?: number;
+      trim?: boolean;
+      digits?: boolean;
+      pattern?: RegExp;
+      default?: string;
+      lowercase?: boolean;
+      uppercase?: boolean;
+    }
   | undefined;
 
 export type Default<T> = T;

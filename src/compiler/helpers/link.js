@@ -1,6 +1,13 @@
-import { CWD, PATH_BUILD, PATH_LIB_TYPES, PATH_SRC, URL_LIB_RUNTIME } from '../../config.js';
+import {
+  CWD,
+  PATH_BUILD,
+  PATH_LIB_TYPES,
+  PATH_SRC,
+  URL_LIB_RUNTIME,
+} from '../../config.js';
 
-export const getDirName = (path, offset) => path.slice(offset, path.indexOf('/', offset));
+export const getDirName = (path, offset) =>
+  path.slice(offset, path.indexOf('/', offset));
 
 export const getFilename = path => path.slice(path.lastIndexOf('/') + 1);
 export const getExtension = path => path.slice(path.lastIndexOf('.'));
@@ -29,4 +36,5 @@ export const getTsUrlFromPath = path => path.slice(CWD.length + 1);
 
 export const toBuildPath = url => PATH_BUILD + url;
 
-export const toRuntimeUrl = path => URL_LIB_RUNTIME + path.slice(PATH_LIB_TYPES.length, -3) + '.js';
+export const toRuntimeUrl = path =>
+  URL_LIB_RUNTIME + path.slice(PATH_LIB_TYPES.length, -3) + '.js';

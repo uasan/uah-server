@@ -21,7 +21,7 @@ function getInternalImport(url, name) {
   const spec = host.factory.createImportSpecifier(
     false,
     keyName === propertyName ? undefined : keyName,
-    propertyName
+    propertyName,
   );
 
   if (host.module.imports.has(keyUrl)) {
@@ -44,25 +44,25 @@ export const internals = {
   respondNoContent: (...args) =>
     factoryCallStatement(
       getInternalImport('server/response', 'respondNoContent'),
-      args
+      args,
     ),
 
   respondJson: (...args) =>
     factoryCallStatement(
       getInternalImport('server/response', 'respondJson'),
-      args
+      args,
     ),
 
   respondBinary: (...args) =>
     factoryCallStatement(
       getInternalImport('server/response', 'respondBinary'),
-      args
+      args,
     ),
 
   respondFile: (...args) =>
     factoryCallStatement(
       getInternalImport('server/response/respondFile', 'respondFile'),
-      args
+      args,
     ),
 
   respondError: (...args) =>
@@ -84,6 +84,6 @@ export const internals = {
     factoryCallMethod(
       getInternalImport('types/validator', 'Validator'),
       'set',
-      args
+      args,
     ),
 };

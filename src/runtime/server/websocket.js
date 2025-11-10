@@ -82,7 +82,13 @@ async function upgrade(res, req, ctx) {
     context.response = null;
 
     res.cork(() => {
-      res.upgrade(meta, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, ctx);
+      res.upgrade(
+        meta,
+        secWebSocketKey,
+        secWebSocketProtocol,
+        secWebSocketExtensions,
+        ctx,
+      );
     });
   } else {
     try {
@@ -153,7 +159,10 @@ async function callMethod(ws, promise, id) {
         const type = error.type || error.constructor?.name || 'Error';
 
         if (id) {
-          ws.sendMessage({ id, error: { status, type, message: error.message, ...error } });
+          ws.sendMessage({
+            id,
+            error: { status, type, message: error.message, ...error },
+          });
         } else {
           ws.end(status, error.message);
         }
@@ -173,7 +182,11 @@ function onMessage(ws, data) {
     data = parse(textDecoder.decode(new Uint8Array(data)));
 
     if (hasOwn(ws.context.methods, data?.method)) {
-      callMethod(ws, ws.context.methods[data.method](Object.create(ws.context), data.params), data.id);
+      callMethod(
+        ws,
+        ws.context.methods[data.method](Object.create(ws.context), data.params),
+        data.id,
+      );
     } else if (ws.context.isConnected) {
       const message = `Not implemented method: ${data?.method}`;
 

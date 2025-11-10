@@ -9,7 +9,7 @@ export function notImplemented(response, request) {
         type: 'NotImplemented',
         url: request.getUrl(),
         method: request.getMethod(),
-      })
+      }),
     );
 }
 
@@ -22,7 +22,7 @@ export function respondContentTooLarge(response) {
       JSON.stringify({
         status: 413,
         type: 'ContentTooLarge',
-      })
+      }),
     );
 }
 

@@ -1,9 +1,18 @@
 import { factoryThis } from '#compiler/helpers/expression.js';
-import { getMigration, hasMigration, presetMigrations, setSchema } from '../../entities/migrations/maker.js';
+import {
+  getMigration,
+  hasMigration,
+  presetMigrations,
+  setSchema,
+} from '../../entities/migrations/maker.js';
 import { createTableMigration } from '../../entities/migrations/table.js';
 import { tableModels } from '../../entities/models/table.js';
 import { factoryCall, factoryCallStatement } from '../../helpers/call.js';
-import { factoryClassStaticBlock, factoryStaticProperty, updateClass } from '../../helpers/class.js';
+import {
+  factoryClassStaticBlock,
+  factoryStaticProperty,
+  updateClass,
+} from '../../helpers/class.js';
 import { getValueOfLiteral } from '../../helpers/values.js';
 import { host } from '../../host.js';
 
@@ -25,7 +34,10 @@ export function Table(node, original, decor) {
     }
 
     return updateClass(node, node.modifiers, node.name, node.heritageClauses, [
-      factoryStaticProperty('table', factoryCall(decor.expression, [factoryThis(), options])),
+      factoryStaticProperty(
+        'table',
+        factoryCall(decor.expression, [factoryThis(), options]),
+      ),
       ...node.members,
     ]);
   }

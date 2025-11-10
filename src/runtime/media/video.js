@@ -7,8 +7,8 @@ const PATH_FFPROBE = env.PATH_FFPROBE || 'ffprobe';
 export async function getVideoInfo(path) {
   const { streams } = JSON.parse(
     await IO.exec(
-      `${PATH_FFPROBE} -v error -print_format json -show_streams -select_streams v "${path}"`
-    )
+      `${PATH_FFPROBE} -v error -print_format json -show_streams -select_streams v "${path}"`,
+    ),
   );
 
   if (streams?.length) {
@@ -57,7 +57,7 @@ export async function convertVideo(source, target, options) {
     const time = duration / 10;
 
     await IO.exec(
-      `${PATH_FFMPEG} -y -v error -ss ${time} -i "${target}" -frames:v 1 "${options.poster}"`
+      `${PATH_FFMPEG} -y -v error -ss ${time} -i "${target}" -frames:v 1 "${options.poster}"`,
     );
   }
 

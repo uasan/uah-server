@@ -1,7 +1,10 @@
 import ts from 'typescript';
 
 import { factoryCallMethod } from '#compiler/helpers/call.js';
-import { factoryIdentifier, factoryThis } from '#compiler/helpers/expression.js';
+import {
+  factoryIdentifier,
+  factoryThis,
+} from '#compiler/helpers/expression.js';
 import { factoryPropertyAccess } from '#compiler/helpers/object.js';
 import { getImplement } from '#compiler/makers/class.js';
 import { HTTP } from '#compiler/makers/protocols/HTTP.js';
@@ -20,7 +23,11 @@ function setRouteAST(method, params) {
     factoryPropertyAccess(factoryThis(), factoryIdentifier('server')),
     factoryIdentifier('router'),
   );
-  this.routeAST = factoryCallMethod(this.routeAST, factoryIdentifier(method), params);
+  this.routeAST = factoryCallMethod(
+    this.routeAST,
+    factoryIdentifier(method),
+    params,
+  );
 }
 
 export function ServerContext(node, extend) {
@@ -42,11 +49,13 @@ export function ServerContext(node, extend) {
 
   for (const member of node.members) {
     if (
-      member.kind === MethodDeclaration
-      && meta.protocol.methods.has(member.name.escapedText)
-      && !member.modifiers?.some(isStaticKeyword)
+      member.kind === MethodDeclaration &&
+      meta.protocol.methods.has(member.name.escapedText) &&
+      !member.modifiers?.some(isStaticKeyword)
     ) {
-      meta.protocol.methods.get(member.name.escapedText).make(meta, members, member);
+      meta.protocol.methods
+        .get(member.name.escapedText)
+        .make(meta, members, member);
     }
   }
 

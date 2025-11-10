@@ -1,6 +1,7 @@
 import { Reporter } from './reporter.js';
 
-const compareParents = ({ meta: a }, { meta: b }) => (a.level - b.level) || (a.id - b.id);
+const compareParents = ({ meta: a }, { meta: b }) =>
+  a.level - b.level || a.id - b.id;
 
 export class MetaLink {
   id = 0;
@@ -97,7 +98,7 @@ class LevelSorter extends Map {
       const { parents } = list[i].meta;
 
       if (parents) {
-        for (let i = 0; i < parents.length;) {
+        for (let i = 0; i < parents.length; ) {
           const a = parents[i];
           const b = parents[++i];
 
@@ -122,7 +123,7 @@ class LevelSorter extends Map {
     //   ),
     // );
 
-    return (a, b) => (a.meta.level - b.meta.level) || map.compare(a, b);
+    return (a, b) => a.meta.level - b.meta.level || map.compare(a, b);
   }
 }
 
@@ -148,7 +149,7 @@ export class Tree extends Map {
     const tree = new this([]);
     const sort = LevelSorter.make(list);
 
-    for (let i = list.length; i--;) {
+    for (let i = list.length; i--; ) {
       const test = list[i];
 
       if (used.has(test)) {

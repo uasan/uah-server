@@ -1,5 +1,11 @@
 import { factoryEntity } from '../entities/factory.js';
-import { afterEmit, beforeEmit, emitEntities, entities, host } from '../host.js';
+import {
+  afterEmit,
+  beforeEmit,
+  emitEntities,
+  entities,
+  host,
+} from '../host.js';
 import { setDeclarations } from '../makers/declaration.js';
 
 const emitResult = {

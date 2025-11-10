@@ -10,7 +10,7 @@ export function getSQLValueOfNode(node) {
   let value = getValueOfLiteral(node);
 
   if (typeof value === 'string') {
-    value = '\'' + value.replaceAll('\'', '\'\'') + '\'';
+    value = "'" + value.replaceAll("'", "''") + "'";
   }
 
   return value;

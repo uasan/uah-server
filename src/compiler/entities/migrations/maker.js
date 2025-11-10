@@ -44,8 +44,7 @@ export function makeMigrations() {
   const ownMigrations = new Set(migrations.values());
 
   let index = 0;
-  let source =
-    `import '${URL_LIB_RUNTIME}process.js';\nimport { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
+  let source = `import '${URL_LIB_RUNTIME}process.js';\nimport { migrate } from '${URL_LIB_RUNTIME}migration/app.js';\n\n`;
 
   source += `import { Migration } from '../${DIR_LIB}/context/Migration.js';\n`;
 
@@ -86,7 +85,8 @@ export function makeMigrations() {
   host.hooks.saveFile(DIR_BIN + '/migrate.js', source);
 }
 
-const hasVersion = (node) => some(node.modifiers, isStaticKeyword) && node.name?.escapedText === 'version';
+const hasVersion = node =>
+  some(node.modifiers, isStaticKeyword) && node.name?.escapedText === 'version';
 
 export function MigrationContext(node) {
   const { migration } = host.entity;
@@ -111,8 +111,16 @@ export function MigrationContext(node) {
   ];
 
   if (some(members, hasVersion)) {
-    members.push(factoryStaticProperty('hash', factoryCallThisMethod('getHash')));
+    members.push(
+      factoryStaticProperty('hash', factoryCallThisMethod('getHash')),
+    );
   }
 
-  return updateClass(node, node.modifiers, node.name, node.heritageClauses, members);
+  return updateClass(
+    node,
+    node.modifiers,
+    node.name,
+    node.heritageClauses,
+    members,
+  );
 }

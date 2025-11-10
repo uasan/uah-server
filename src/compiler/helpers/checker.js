@@ -50,9 +50,19 @@ const { Readonly: CheckFlagReadonly } = ts.CheckFlags;
 const { Readonly: ModifierFlagReadonly } = ts.ModifierFlags;
 const { Const } = ts.NodeFlags;
 const { SignatureConstruct } = ts.SignatureKind;
-export const { every, some, getCheckFlags, getDeclarationModifierFlagsFromSymbol } = ts;
+export const {
+  every,
+  some,
+  getCheckFlags,
+  getDeclarationModifierFlagsFromSymbol,
+} = ts;
 
-export const { isLiteralExpression, isStringLiteralLike, isConstructorDeclaration, isTypeReferenceNode } = ts;
+export const {
+  isLiteralExpression,
+  isStringLiteralLike,
+  isConstructorDeclaration,
+  isTypeReferenceNode,
+} = ts;
 
 export const isVarConst = ({ flags }) => (flags & Const) !== 0;
 export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;
@@ -72,55 +82,70 @@ export const isBooleanType = ({ flags }) => (flags & flagBooleanLike) !== 0;
 export const isBigIntType = ({ flags }) => (flags & flagBigIntLike) !== 0;
 export const isUndefinedType = ({ flags }) => (flags & flagUndefined) !== 0;
 export const isNotUndefinedType = ({ flags }) => (flags & flagUndefined) === 0;
-export const isNonPrimitiveType = ({ flags }) => (flags & flagNonPrimitive) !== 0;
+export const isNonPrimitiveType = ({ flags }) =>
+  (flags & flagNonPrimitive) !== 0;
 
 export const isObjectType = ({ flags, types }) =>
-  (flags & ObjectFlagsType) !== 0
-  && (flags & flagUndefined) === 0
-  && (flags & flagNull) === 0
-  && (flags & flagAny) === 0
-  && (flags & flagUnknown) === 0
-  && (flags & flagNever) === 0
-  && (flags & flagVoidLike) === 0
-  && (!types || every(types, isObjectType));
+  (flags & ObjectFlagsType) !== 0 &&
+  (flags & flagUndefined) === 0 &&
+  (flags & flagNull) === 0 &&
+  (flags & flagAny) === 0 &&
+  (flags & flagUnknown) === 0 &&
+  (flags & flagNever) === 0 &&
+  (flags & flagVoidLike) === 0 &&
+  (!types || every(types, isObjectType));
 
-export const isLiteralTypeOrNullType = type => isLiteralType(type) || isNullType(type);
+export const isLiteralTypeOrNullType = type =>
+  isLiteralType(type) || isNullType(type);
 
-export const hasAnyType = type => isAnyType(type) || some(type.types, hasAnyType);
-export const hasNullType = type => isNullType(type) || some(type.types, hasNullType);
-export const hasNumberType = type => isNumberType(type) || some(type.types, hasNumberType);
-export const hasStringType = type => isStringType(type) || some(type.types, hasStringType);
-export const hasBigIntType = type => isBigIntType(type) || some(type.types, hasBigIntType);
-export const hasBooleanType = type => isBooleanType(type) || some(type.types, hasBooleanType);
-export const hasUndefinedType = type => isUndefinedType(type) || some(type.types, hasUndefinedType);
+export const hasAnyType = type =>
+  isAnyType(type) || some(type.types, hasAnyType);
+export const hasNullType = type =>
+  isNullType(type) || some(type.types, hasNullType);
+export const hasNumberType = type =>
+  isNumberType(type) || some(type.types, hasNumberType);
+export const hasStringType = type =>
+  isStringType(type) || some(type.types, hasStringType);
+export const hasBigIntType = type =>
+  isBigIntType(type) || some(type.types, hasBigIntType);
+export const hasBooleanType = type =>
+  isBooleanType(type) || some(type.types, hasBooleanType);
+export const hasUndefinedType = type =>
+  isUndefinedType(type) || some(type.types, hasUndefinedType);
 
-export const isTypeAsValues = ({ types }) => !!types && every(types, isLiteralTypeOrNullType);
+export const isTypeAsValues = ({ types }) =>
+  !!types && every(types, isLiteralTypeOrNullType);
 export const isTupleType = type => host.checker.isTupleType(type);
 export const isArrayLikeType = type => host.checker.isArrayLikeType(type);
 
-export const isObjectNode = node => isObjectType(host.checker.getTypeAtLocation(node));
+export const isObjectNode = node =>
+  isObjectType(host.checker.getTypeAtLocation(node));
 
 export const isNullableType = type =>
-  (type.flags & flagUndefined) !== 0
-  || (type.flags & flagNull) !== 0
-  || (type.flags & flagVoidLike) !== 0
-  || (type.flags & flagAny) !== 0
-  || (type.flags & flagUnknown) !== 0
-  || (type.flags & flagNever) !== 0
-  || type !== host.checker.getNonNullableType(type);
+  (type.flags & flagUndefined) !== 0 ||
+  (type.flags & flagNull) !== 0 ||
+  (type.flags & flagVoidLike) !== 0 ||
+  (type.flags & flagAny) !== 0 ||
+  (type.flags & flagUnknown) !== 0 ||
+  (type.flags & flagNever) !== 0 ||
+  type !== host.checker.getNonNullableType(type);
 
-export const isDefiniteType = type => !(type.flags & flagNever) && !(type.flags & flagAny);
+export const isDefiniteType = type =>
+  !(type.flags & flagNever) && !(type.flags & flagAny);
 
 export const isVoidLikeType = type => (type.flags & flagVoidLike) !== 0;
 
 export const isReadonlySymbol = symbol =>
-  (getCheckFlags(symbol) & CheckFlagReadonly) !== 0
-  || (getDeclarationModifierFlagsFromSymbol(symbol) & ModifierFlagReadonly) !== 0;
+  (getCheckFlags(symbol) & CheckFlagReadonly) !== 0 ||
+  (getDeclarationModifierFlagsFromSymbol(symbol) & ModifierFlagReadonly) !== 0;
 
-export const isReadonly = node => isReadonlySymbol(host.checker.getSymbolAtLocation(node));
-export const isDeclareSymbol = symbol => some(symbol.valueDeclaration?.modifiers, isDeclareKeyword);
+export const isReadonly = node =>
+  isReadonlySymbol(host.checker.getSymbolAtLocation(node));
+export const isDeclareSymbol = symbol =>
+  some(symbol.valueDeclaration?.modifiers, isDeclareKeyword);
 export const getSymbolOfNode = node => host.checker.getSymbolAtLocation(node);
-export const isTypeSymbol = ({ flags }) => (flags & TypeAlias) !== 0 || (flags & Interface) !== 0;
+export const isTypeSymbol = ({ flags }) =>
+  (flags & TypeAlias) !== 0 || (flags & Interface) !== 0;
 
 export const isValueSymbol = ({ flags }) => (flags & ValueSymbol) !== 0;
 export const isAliasSymbol = symbol => (symbol.flags & Alias) !== 0;
@@ -133,7 +158,8 @@ export const isNotThisIdentifier = node => node.escapedText !== 'this';
 export const isNotThisParameter = node => isNotThisIdentifier(node.name);
 
 export const hasAsyncModifier = node => some(node.modifiers, isAsyncKeyword);
-export const hasDeclareModifier = node => some(node.modifiers, isDeclareKeyword);
+export const hasDeclareModifier = node =>
+  some(node.modifiers, isDeclareKeyword);
 
 export function isNativeModifier({ kind }) {
   switch (kind) {
@@ -152,11 +178,12 @@ export const getOriginSymbol = symbol =>
     ? isAliasSymbol(symbol)
       ? host.checker.getAliasedSymbol(symbol)
       : isExportSymbol(symbol)
-      ? host.checker.getExportSymbolOfSymbol(symbol)
-      : symbol
+        ? host.checker.getExportSymbolOfSymbol(symbol)
+        : symbol
     : symbol;
 
-export const getOriginSymbolOfNode = node => getOriginSymbol(host.checker.getSymbolAtLocation(node));
+export const getOriginSymbolOfNode = node =>
+  getOriginSymbol(host.checker.getSymbolAtLocation(node));
 export const getOriginSymbolClass = node => getOriginSymbol(node.symbol);
 
 export const getFullName = symbol =>
@@ -177,27 +204,35 @@ export const getIndexInfoOfType = type => host.checker.getIndexInfoOfType(type);
 
 export const typeToString = type => host.checker.typeToString(type);
 
-export const getNonUndefinedType = type => getUnionType(type.types.filter(isNotUndefinedType));
+export const getNonUndefinedType = type =>
+  getUnionType(type.types.filter(isNotUndefinedType));
 
-export const getPropertiesOfType = type => host.checker.getPropertiesOfType(type);
-export const getPropertiesOfNode = node => getPropertiesOfType(getTypeOfNode(node));
-export const getPropertiesOfTypeNode = node => getPropertiesOfType(getTypeOfTypeNode(node));
+export const getPropertiesOfType = type =>
+  host.checker.getPropertiesOfType(type);
+export const getPropertiesOfNode = node =>
+  getPropertiesOfType(getTypeOfNode(node));
+export const getPropertiesOfTypeNode = node =>
+  getPropertiesOfType(getTypeOfTypeNode(node));
 
-export const getExportsOfModule = node => host.checker.getExportsOfModule(getSymbolOfNode(node));
+export const getExportsOfModule = node =>
+  host.checker.getExportsOfModule(getSymbolOfNode(node));
 
 export const getReturnType = node =>
   host.checker.getReturnTypeOfSignature(
     host.checker.getSignatureFromDeclaration(node),
   );
 
-export const getSignaturesConstructOfType = type => host.checker.getSignaturesOfType(type, SignatureConstruct);
+export const getSignaturesConstructOfType = type =>
+  host.checker.getSignaturesOfType(type, SignatureConstruct);
 
-export const getSignaturesConstructOfSymbol = symbol => getSignaturesConstructOfType(getTypeOfSymbol(symbol));
+export const getSignaturesConstructOfSymbol = symbol =>
+  getSignaturesConstructOfType(getTypeOfSymbol(symbol));
 
-export const hasSignatureConstruct = symbol => getSignaturesConstructOfSymbol(symbol).length > 0;
+export const hasSignatureConstruct = symbol =>
+  getSignaturesConstructOfSymbol(symbol).length > 0;
 
 export const getConstructIdentifier = node =>
-  node.kind === TypeReference
-    && hasSignatureConstruct(getSymbolOfNode(node.typeName))
+  node.kind === TypeReference &&
+  hasSignatureConstruct(getSymbolOfNode(node.typeName))
     ? node.typeName
     : null;

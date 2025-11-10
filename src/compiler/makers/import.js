@@ -20,8 +20,8 @@ export function makeImportDeclaration(node) {
         host.factory.createImportSpecifier(
           false,
           factoryIdentifier('default'),
-          importClause.name
-        )
+          importClause.name,
+        ),
       );
     }
 
@@ -38,7 +38,7 @@ export function makeImportDeclaration(node) {
         } else if (entities.has(resolveImportPath(node))) {
           url = toRelativeURL(
             host.entity.url,
-            entities.get(resolveImportPath(node)).url
+            entities.get(resolveImportPath(node)).url,
           );
         } else if (internalSymbols.has(symbol)) {
           console.log('AAAA');
@@ -55,7 +55,7 @@ export function makeImportDeclaration(node) {
   } else if (entities.has(resolveImportPath(node))) {
     url = toRelativeURL(
       host.entity.url,
-      entities.get(resolveImportPath(node)).url
+      entities.get(resolveImportPath(node)).url,
     );
 
     imports.set(url, []);

@@ -22,7 +22,9 @@ export function getImplement(node) {
   if (node.heritageClauses) {
     for (const heritage of node.heritageClauses) {
       if (isImplementsToken(heritage)) {
-        const ctor = types.get(getOriginSymbolOfNode(heritage.types[0].expression));
+        const ctor = types.get(
+          getOriginSymbolOfNode(heritage.types[0].expression),
+        );
 
         if (ctor) {
           return ctor;
@@ -86,12 +88,15 @@ export function makeClassDeclaration(node) {
 export function makeMethodDeclaration(node) {
   return host.factory.updateMethodDeclaration(
     node,
-    node.modifiers && node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
+    node.modifiers &&
+      node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
     undefined,
     node.name,
     undefined,
     undefined,
-    node.parameters?.length ? node.parameters.map(host.visit).filter(Boolean) : undefined,
+    node.parameters?.length
+      ? node.parameters.map(host.visit).filter(Boolean)
+      : undefined,
     undefined,
     node.body && host.visit(node.body),
   );
@@ -102,12 +107,16 @@ export function makePropertyDeclaration(node) {
 
   return initializer
     ? host.factory.updatePropertyDeclaration(
-      node,
-      node.modifiers && node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
-      node.name,
-      undefined,
-      undefined,
-      initializer,
-    )
+        node,
+        node.modifiers &&
+          node.modifiers
+            ?.filter(isNativeModifier)
+            .map(host.visit)
+            .filter(Boolean),
+        node.name,
+        undefined,
+        undefined,
+        initializer,
+      )
     : undefined;
 }

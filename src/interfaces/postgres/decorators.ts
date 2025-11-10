@@ -37,4 +37,4 @@ interface TableOptions {
 
 export declare function Table(
   options: TableOptions,
-): (target: new() => object, context: ClassDecoratorContext) => void;
+): (target: new () => object, context: ClassDecoratorContext) => void;

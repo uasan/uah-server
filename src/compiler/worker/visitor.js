@@ -74,9 +74,10 @@ const makers = {
 export function visit(node) {
   const action = makers[node.kind];
 
-  let result = action !== undefined
-    ? action(node)
-    : visitEachChild(node, visit, nullTransformationContext);
+  let result =
+    action !== undefined
+      ? action(node)
+      : visitEachChild(node, visit, nullTransformationContext);
 
   if (transformers.has(node)) {
     for (const transform of transformers.get(node)) {

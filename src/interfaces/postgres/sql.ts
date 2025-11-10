@@ -13,7 +13,7 @@ export interface SQL {
 
   sql(strings: TemplateStringsArray, ...params: unknown[]): this;
   sql(
-    value: unknown
+    value: unknown,
   ): (strings: TemplateStringsArray, ...params: unknown[]) => this;
 
   then(resolve: () => void, reject: () => void): Promise<unknown>;

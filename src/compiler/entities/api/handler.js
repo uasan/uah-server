@@ -1,7 +1,11 @@
 import { internals } from '../../helpers/internals.js';
 import { makePayloadFromBody, makePayloadFromQuery } from './payload.js';
 
-import { factoryCall, factoryCallMethod, factoryCallThisMethod } from '../../helpers/call.js';
+import {
+  factoryCall,
+  factoryCallMethod,
+  factoryCallThisMethod,
+} from '../../helpers/call.js';
 import {
   getAwaitedType,
   getNonUndefinedType,
@@ -133,14 +137,16 @@ export function makeRouteMethodHTTP(meta, members, node) {
 
   statements.push(ast);
 
-  members.push(factoryStaticProperty(
-    factoryIdentifier(this.name),
-    factoryRouteFunction(isAsyncHandler, [
-      factoryTryStatement(statements, factoryIdentifier('e'), [
-        internals.respondError(res, factoryIdentifier('e')),
+  members.push(
+    factoryStaticProperty(
+      factoryIdentifier(this.name),
+      factoryRouteFunction(isAsyncHandler, [
+        factoryTryStatement(statements, factoryIdentifier('e'), [
+          internals.respondError(res, factoryIdentifier('e')),
+        ]),
       ]),
-    ]),
-  ));
+    ),
+  );
 
   meta.setRouteAST('set', [
     factoryString(meta.path + pathParameters),

@@ -42,8 +42,8 @@ export class Entity {
     }
 
     this.path = new RegExp(
-      path.replaceAll('.', '\\.').replaceAll('**', '.+').replaceAll('*', '.+')
-        + '$',
+      path.replaceAll('.', '\\.').replaceAll('**', '.+').replaceAll('*', '.+') +
+        '$',
     );
   }
 }

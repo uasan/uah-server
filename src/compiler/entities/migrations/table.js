@@ -57,7 +57,7 @@ export function createTableMigration(model) {
   if (model.comment) {
     up += '\nawait this.postgres.query("';
     up += `COMMENT ON TABLE ${model.tableName} IS '`;
-    up += model.comment.replaceAll('\'', '\'\'');
+    up += model.comment.replaceAll("'", "''");
     up += '\'");';
   }
 

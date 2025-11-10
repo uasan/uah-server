@@ -40,16 +40,24 @@ export const {
 
 export const factoryThis = () => host.factory.createThis();
 
-export const factoryToken = kind => (tokens[kind] ??= host.factory.createToken(kind));
+export const factoryToken = kind =>
+  (tokens[kind] ??= host.factory.createToken(kind));
 export const factoryStaticToken = () => factoryToken(StaticKeyword);
 
-export const factoryNumber = number => (numbers[number] ??= Number(number) < 0
-  ? factoryMinusExpression(host.factory.createNumericLiteral(Math.abs(number)))
-  : host.factory.createNumericLiteral(number));
+export const factoryNumber = number =>
+  (numbers[number] ??=
+    Number(number) < 0
+      ? factoryMinusExpression(
+          host.factory.createNumericLiteral(Math.abs(number)),
+        )
+      : host.factory.createNumericLiteral(number));
 
-export const factoryString = string => (strings[string] ??= host.factory.createStringLiteral(string));
-export const factoryBigInt = string => (bigints[string] ??= host.factory.createBigIntLiteral(string));
-export const factoryIdentifier = string => (identifiers[string] ??= host.factory.createIdentifier(string));
+export const factoryString = string =>
+  (strings[string] ??= host.factory.createStringLiteral(string));
+export const factoryBigInt = string =>
+  (bigints[string] ??= host.factory.createBigIntLiteral(string));
+export const factoryIdentifier = string =>
+  (identifiers[string] ??= host.factory.createIdentifier(string));
 
 export const factoryNull = () => host.factory.createNull();
 export const factoryTrue = () => host.factory.createTrue();
@@ -68,7 +76,8 @@ export function factoryLiteral(value) {
   if (value === null) return factoryNull();
 }
 
-export const getConstantLiteral = node => factoryLiteral(host.checker.getConstantValue(node));
+export const getConstantLiteral = node =>
+  factoryLiteral(host.checker.getConstantValue(node));
 
 export function getValueOfLiteral(node) {
   switch (node.kind) {
@@ -114,9 +123,12 @@ export const getLiteralNode = node => {
   }
 };
 
-export const factoryNotExpression = node => host.factory.createPrefixUnaryExpression(ExclamationToken, node);
-export const factoryPlusExpression = node => host.factory.createPrefixUnaryExpression(PlusToken, node);
-export const factoryMinusExpression = node => host.factory.createPrefixUnaryExpression(MinusToken, node);
+export const factoryNotExpression = node =>
+  host.factory.createPrefixUnaryExpression(ExclamationToken, node);
+export const factoryPlusExpression = node =>
+  host.factory.createPrefixUnaryExpression(PlusToken, node);
+export const factoryMinusExpression = node =>
+  host.factory.createPrefixUnaryExpression(MinusToken, node);
 
 export const factoryAwait = node => host.factory.createAwaitExpression(node);
 
@@ -132,14 +144,14 @@ export const factoryPropertyParenthesized = (
 ) =>
   isNullable
     ? host.factory.createPropertyAccessChain(
-      host.factory.createParenthesizedExpression(left),
-      host.factory.createToken(QuestionDotToken),
-      right,
-    )
+        host.factory.createParenthesizedExpression(left),
+        host.factory.createToken(QuestionDotToken),
+        right,
+      )
     : host.factory.createPropertyAccessExpression(
-      host.factory.createParenthesizedExpression(left),
-      right,
-    );
+        host.factory.createParenthesizedExpression(left),
+        right,
+      );
 
 export const factoryAwaitStatement = node =>
   host.factory.createExpressionStatement(

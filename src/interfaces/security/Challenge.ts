@@ -7,6 +7,6 @@ export declare class Challenge {
 
   static verifyFromJSON(
     context: ServerContext,
-    json: Uint8Array
+    json: Uint8Array,
   ): Promise<void>;
 }

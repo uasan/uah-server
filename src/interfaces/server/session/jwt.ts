@@ -12,4 +12,7 @@ interface JwtOptions {
 
 export declare function SessionJWT(
   options: JwtOptions,
-): (target: new(preset?: any) => object, context: ClassDecoratorContext) => void;
+): (
+  target: new (preset?: any) => object,
+  context: ClassDecoratorContext,
+) => void;

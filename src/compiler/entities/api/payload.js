@@ -9,7 +9,12 @@ import {
   isNumberType,
   isStringType,
 } from '../../helpers/checker.js';
-import { factoryAwait, factoryIdentifier, factoryNumber, factoryString } from '../../helpers/expression.js';
+import {
+  factoryAwait,
+  factoryIdentifier,
+  factoryNumber,
+  factoryString,
+} from '../../helpers/expression.js';
 import { internals } from '../../helpers/internals.js';
 import { factoryObjectLiteral, factoryProperty } from '../../helpers/object.js';
 
@@ -51,14 +56,14 @@ function makeDecodeMethod(ast, metaType) {
     return metaType.isFile
       ? factoryCallMethod(ast, 'getFile')
       : metaType.isBlob
-      ? factoryCallMethod(ast, 'getBlob')
-      : metaType.isStream
-      ? factoryCallMethod(ast, 'getStream')
-      : metaType.byteLength
-      ? factoryCallMethod(ast, 'getSlice', [
-        factoryNumber(metaType.byteLength),
-      ])
-      : factoryCallMethod(ast, 'getBuffer');
+        ? factoryCallMethod(ast, 'getBlob')
+        : metaType.isStream
+          ? factoryCallMethod(ast, 'getStream')
+          : metaType.byteLength
+            ? factoryCallMethod(ast, 'getSlice', [
+                factoryNumber(metaType.byteLength),
+              ])
+            : factoryCallMethod(ast, 'getBuffer');
   } else if (metaType.isUUID) {
     return factoryCallMethod(ast, 'getSlice', [factoryNumber(16)]);
   } else if (isNumberType(metaType.type)) {
@@ -93,14 +98,16 @@ function makeDecodeBuffers(data, props) {
   return factoryObjectLiteral(nodes);
 }
 
-const decodeBuffersFrom = data => factoryCallMethod(internals.decodeBuffers(), 'from', [data]);
+const decodeBuffersFrom = data =>
+  factoryCallMethod(internals.decodeBuffers(), 'from', [data]);
 
 export function makePayloadFromBody(metaType) {
   const args = [factoryIdentifier('req'), factoryIdentifier('res')];
 
-  let init = metaType.isBufferStream || metaType.props.some(isBufferStream)
-    ? internals.readBufferStream(args)
-    : internals.readBuffer(args);
+  let init =
+    metaType.isBufferStream || metaType.props.some(isBufferStream)
+      ? internals.readBufferStream(args)
+      : internals.readBuffer(args);
 
   let data = factoryAwait(factoryIdentifier('data'));
 

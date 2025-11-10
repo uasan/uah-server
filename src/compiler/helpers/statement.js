@@ -67,5 +67,5 @@ export const factoryIfReturn = (isValue, returnValue) =>
   host.factory.createIfStatement(
     isValue,
     host.factory.createReturnStatement(returnValue),
-    undefined
+    undefined,
   );

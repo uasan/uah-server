@@ -21,7 +21,7 @@ export const IO = {
 
   hash: async (algorithm, buffer, encoding) =>
     Buffer.from(await crypto.subtle.digest(algorithm, buffer)).toString(
-      encoding
+      encoding,
     ),
 
   getTempFileName: () => join(tmpdir(), randomUUID()),

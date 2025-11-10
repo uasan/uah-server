@@ -10,7 +10,11 @@ import {
   isObjectType,
   isStringType,
 } from '../../helpers/checker.js';
-import { factoryStaticProperty, isFieldProperty, updateClass } from '../../helpers/class.js';
+import {
+  factoryStaticProperty,
+  isFieldProperty,
+  updateClass,
+} from '../../helpers/class.js';
 import { factoryObjectOfMap, factoryProperty } from '../../helpers/object.js';
 import { MetaType } from '../../helpers/types.js';
 import { makeFieldValidate } from '../../helpers/validator.js';
@@ -24,16 +28,16 @@ const getSqlType = meta =>
   meta.sql.type
     ? meta.sql.type
     : isStringType(meta.type)
-    ? 'text'
-    : isBigIntType(meta.type)
-    ? 'bigint'
-    : isNumberType(meta.type)
-    ? 'float8'
-    : isBooleanType(meta.type)
-    ? 'boolean'
-    : isObjectType(meta.type)
-    ? 'jsonb'
-    : 'text';
+      ? 'text'
+      : isBigIntType(meta.type)
+        ? 'bigint'
+        : isNumberType(meta.type)
+          ? 'float8'
+          : isBooleanType(meta.type)
+            ? 'boolean'
+            : isObjectType(meta.type)
+              ? 'jsonb'
+              : 'text';
 
 function getTableReferences(links) {
   let ref = '';

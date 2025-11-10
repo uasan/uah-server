@@ -51,6 +51,6 @@ export function makeUpdate(patch, { path, value, patches }) {
       '\nSET ' +
       set +
       makeWere(patch, path) +
-      makeReturning(patch)
+      makeReturning(patch),
   );
 }

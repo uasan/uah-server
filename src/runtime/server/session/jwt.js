@@ -3,9 +3,12 @@ import { stringifyBase64Url } from '#runtime/types/json.js';
 import { createHmac, randomUUID } from 'crypto';
 
 const algorithms = {
-  HS256: (key, data) => createHmac('sha256', key).update(data).digest('base64Url'),
-  HS384: (key, data) => createHmac('sha384', key).update(data).digest('base64Url'),
-  HS512: (key, data) => createHmac('sha512', key).update(data).digest('base64Url'),
+  HS256: (key, data) =>
+    createHmac('sha256', key).update(data).digest('base64Url'),
+  HS384: (key, data) =>
+    createHmac('sha384', key).update(data).digest('base64Url'),
+  HS512: (key, data) =>
+    createHmac('sha512', key).update(data).digest('base64Url'),
 };
 
 const defaultOptions = {
@@ -52,7 +55,10 @@ async function auth() {
       throw new Unauthorized('Invalid JWT signature');
     }
 
-    if (!data.user.id || data.user.id !== this.request.cookies.get(cookies.uid.name)) {
+    if (
+      !data.user.id ||
+      data.user.id !== this.request.cookies.get(cookies.uid.name)
+    ) {
       throw new Unauthorized('Invalid JWT user');
     }
 
@@ -79,7 +85,10 @@ async function createSession(user) {
   this.session = session;
 
   this.response.setCookie(cookies.uid, user.id);
-  this.response.setCookie(cookies.jwt, hash + '.' + algorithms[algorithm](secret, hash));
+  this.response.setCookie(
+    cookies.jwt,
+    hash + '.' + algorithms[algorithm](secret, hash),
+  );
 }
 
 async function deleteSession() {
@@ -93,7 +102,12 @@ async function deleteSession() {
 
 export function SessionJWT(
   { prototype },
-  { secret, maxAge, algorithm = defaultOptions.algorithm, cookies = defaultOptions.cookies },
+  {
+    secret,
+    maxAge,
+    algorithm = defaultOptions.algorithm,
+    cookies = defaultOptions.cookies,
+  },
 ) {
   prototype.auth = auth;
   prototype.createSession = createSession;

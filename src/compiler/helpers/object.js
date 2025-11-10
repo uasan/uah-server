@@ -18,7 +18,7 @@ export const factoryArrayLiteral = elements =>
 export const factoryThisChain = (...names) =>
   names.reduce(
     host.factory.createPropertyAccessExpression,
-    host.factory.createThis()
+    host.factory.createThis(),
   );
 
 export function factoryObjectOfMap(map) {

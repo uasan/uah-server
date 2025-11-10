@@ -8,7 +8,9 @@ export class Reporter {
     this.stack = {
       length,
       up: this.stack,
-      indent: this.stack.indent + (this.stack.length ? style.gray('│  ') : this.stack.up ? '   ' : ''),
+      indent:
+        this.stack.indent +
+        (this.stack.length ? style.gray('│  ') : this.stack.up ? '   ' : ''),
     };
   }
 
@@ -19,7 +21,10 @@ export class Reporter {
   print({ meta, description }, text) {
     this.count++;
     this.stack.length--;
-    text = this.stack.indent + style.gray(this.stack.length ? '├──' : '└──') + style.bold(text);
+    text =
+      this.stack.indent +
+      style.gray(this.stack.length ? '├──' : '└──') +
+      style.bold(text);
 
     if (description) {
       text += ' ' + description;
@@ -51,13 +56,19 @@ export class Reporter {
       calls++;
 
       console.log(
-        (indents + style.gray(isLast ? '└── ' : '├── '))
-          + test.constructor.name + ' '
-          + style.gray(test.meta.level + ' ' + test.meta.id),
+        indents +
+          style.gray(isLast ? '└── ' : '├── ') +
+          test.constructor.name +
+          ' ' +
+          style.gray(test.meta.level + ' ' + test.meta.id),
       );
 
       if (test.children.length) {
-        calls = showTree(test.children, indents + (isLast ? '   ' : style.gray('│  ')), calls);
+        calls = showTree(
+          test.children,
+          indents + (isLast ? '   ' : style.gray('│  ')),
+          calls,
+        );
       }
     }
 

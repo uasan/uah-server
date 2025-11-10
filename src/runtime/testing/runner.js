@@ -31,7 +31,10 @@ export class TestRunner {
           continue;
         }
 
-        this.results.set(test.meta, await test.test(test.meta.getPayload(this.results)));
+        this.results.set(
+          test.meta,
+          await test.test(test.meta.getPayload(this.results)),
+        );
         this.reporter.pass(test);
       } catch (error) {
         this.reporter.fail(test);

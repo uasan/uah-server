@@ -80,7 +80,10 @@ export class ServerContext extends Context {
 
   static create(req, res) {
     try {
-      const context = this.getParamsOfRoute === noop ? new this() : new this(this.getParamsOfRoute(req));
+      const context =
+        this.getParamsOfRoute === noop
+          ? new this()
+          : new this(this.getParamsOfRoute(req));
       res.context = context;
 
       res.onAborted(() => {

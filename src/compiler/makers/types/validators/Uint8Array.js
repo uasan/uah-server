@@ -13,14 +13,17 @@ export class Uint8Array extends Validator {
     }
 
     if (self.props.has('length')) {
-      meta.byteLength = Number(self.props.get('length').text) * self.bytesPerElement;
+      meta.byteLength =
+        Number(self.props.get('length').text) * self.bytesPerElement;
     } else {
       if (self.props.has('minLength')) {
-        meta.minByteLength = Number(self.props.get('minLength').text) * self.bytesPerElement;
+        meta.minByteLength =
+          Number(self.props.get('minLength').text) * self.bytesPerElement;
       }
 
       if (self.props.has('maxLength')) {
-        meta.maxByteLength = Number(self.props.get('maxLength').text) * self.bytesPerElement;
+        meta.maxByteLength =
+          Number(self.props.get('maxLength').text) * self.bytesPerElement;
       }
     }
   }

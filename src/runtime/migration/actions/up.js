@@ -6,7 +6,7 @@ import { saveMigrations } from '../internals/state.js';
 async function upMigration(ctx, migrations) {
   await lockMigrate(ctx);
 
-  for (let index = 0; index < migrations.length;) {
+  for (let index = 0; index < migrations.length; ) {
     const migration = migrations[index];
 
     reportUpMigrate(migration, ++index);

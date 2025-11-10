@@ -4,7 +4,7 @@ import { factoryIdentifier } from './expression.js';
 export const resolveImportPath = node =>
   host.program.getResolvedModuleFromModuleSpecifier(
     node.moduleSpecifier,
-    host.file
+    host.file,
   )?.resolvedModule?.resolvedFileName;
 
 export const createAssertClause = type =>
@@ -12,10 +12,10 @@ export const createAssertClause = type =>
     [
       host.factory.createImportAttribute(
         factoryIdentifier('type'),
-        host.factory.createStringLiteral(type)
+        host.factory.createStringLiteral(type),
       ),
     ],
-    false
+    false,
   );
 
 export const createImportDeclaration = (importClause, url, type) =>
@@ -23,7 +23,7 @@ export const createImportDeclaration = (importClause, url, type) =>
     undefined,
     importClause,
     host.factory.createStringLiteral(url),
-    type ? createAssertClause(type) : undefined
+    type ? createAssertClause(type) : undefined,
   );
 
 export const createImportsOfMap = map => {
@@ -37,11 +37,11 @@ export const createImportsOfMap = map => {
           ? host.factory.createImportClause(
               false,
               undefined,
-              host.factory.createNamedImports(elements)
+              host.factory.createNamedImports(elements),
             )
           : undefined,
-        host.factory.createStringLiteral(url)
-      )
+        host.factory.createStringLiteral(url),
+      ),
     );
   }
 
@@ -52,7 +52,7 @@ export const createImportClause = (name, elements) =>
   host.factory.createImportClause(
     false,
     name,
-    elements?.length && host.factory.createNamedImports(elements)
+    elements?.length && host.factory.createNamedImports(elements),
   );
 
 export const factoryImportSpecifier = (name, propertyName) =>

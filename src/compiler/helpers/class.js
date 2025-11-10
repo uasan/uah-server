@@ -34,25 +34,24 @@ export const factoryClassStaticBlock = statements =>
 export const updateClass = (node, modifiers, name, heritageClauses, members) =>
   node.kind === ClassDeclaration
     ? host.factory.updateClassDeclaration(
-      node,
-      modifiers,
-      name,
-      undefined,
-      heritageClauses,
-      members,
-    )
+        node,
+        modifiers,
+        name,
+        undefined,
+        heritageClauses,
+        members,
+      )
     : host.factory.updateClassExpression(
-      node,
-      modifiers,
-      name,
-      undefined,
-      heritageClauses,
-      members,
-    );
+        node,
+        modifiers,
+        name,
+        undefined,
+        heritageClauses,
+        members,
+      );
 
 export const isFieldProperty = node =>
-  node.kind === PropertyDeclaration
-  && !node.modifiers?.some(isStaticKeyword);
+  node.kind === PropertyDeclaration && !node.modifiers?.some(isStaticKeyword);
 
 export const addToStaticBlock = (node, statements) =>
   updateClass(node, node.modifiers, node.name, node.heritageClauses, [

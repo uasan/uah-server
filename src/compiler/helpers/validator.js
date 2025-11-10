@@ -20,8 +20,17 @@ import {
   isTupleType,
   isTypeAsValues,
 } from './checker.js';
-import { factoryIdentifier, factoryNumber, factoryString, factoryTrue } from './expression.js';
-import { ensureArgument, factoryArrowFunction, updateMethodStatements } from './function.js';
+import {
+  factoryIdentifier,
+  factoryNumber,
+  factoryString,
+  factoryTrue,
+} from './expression.js';
+import {
+  ensureArgument,
+  factoryArrowFunction,
+  updateMethodStatements,
+} from './function.js';
 import { internals } from './internals.js';
 import { getRefForLiteralTypes, getRefValue } from './refs.js';
 import { factoryStatement } from './statements.js';

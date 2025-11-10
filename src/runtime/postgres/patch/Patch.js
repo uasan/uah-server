@@ -58,7 +58,7 @@ export class Patch {
 
     const values = await this.context.postgres.query(
       makeQuery(this),
-      this.params
+      this.params,
     );
 
     if (this.queries.length > values.length) {

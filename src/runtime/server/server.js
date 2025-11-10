@@ -1,4 +1,8 @@
-import { App, LIBUS_LISTEN_EXCLUSIVE_PORT, us_listen_socket_close } from 'uWebSockets.js';
+import {
+  App,
+  LIBUS_LISTEN_EXCLUSIVE_PORT,
+  us_listen_socket_close,
+} from 'uWebSockets.js';
 
 import { style } from '#utils/console.js';
 import { signal } from '../process.js';
@@ -81,9 +85,13 @@ export class Server {
 function onListen(token) {
   if (token) {
     this.token = token;
-    console.log(`${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.router.url)}\n`);
+    console.log(
+      `${style.bgGreenBright(style.bold(' LISTEN '))} ${style.blueBright(this.router.url)}\n`,
+    );
     this.deferred.resolve();
   } else {
-    this.deferred.reject(new Error(`Port ${this.port} in ${this.host} not available for listen`));
+    this.deferred.reject(
+      new Error(`Port ${this.port} in ${this.host} not available for listen`),
+    );
   }
 }

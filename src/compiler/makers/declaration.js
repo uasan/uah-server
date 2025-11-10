@@ -3,7 +3,13 @@ import { addTransformer } from '../helpers/ast.js';
 import { getExportsOfModule } from '../helpers/checker.js';
 import { getSymbolDecorator } from '../helpers/decorators.js';
 import { toRuntimeUrl } from '../helpers/link.js';
-import { declarations, decorators, host, internalSymbols, types } from '../host.js';
+import {
+  declarations,
+  decorators,
+  host,
+  internalSymbols,
+  types,
+} from '../host.js';
 
 import { Int } from './types/validators/Int.js';
 import { Int16 } from './types/validators/Int16.js';
@@ -123,7 +129,9 @@ export function makeDecorator(node) {
   if (decorators.has(symbol)) {
     const { expression } = node;
 
-    addTransformer(node.parent, (node, original) => decorators.get(symbol)(node, original, expression));
+    addTransformer(node.parent, (node, original) =>
+      decorators.get(symbol)(node, original, expression),
+    );
   } else {
     return host.visitEachChild(node);
   }

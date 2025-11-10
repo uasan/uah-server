@@ -38,7 +38,7 @@ export const BuffersDecoder = new (class BuffersDecoder {
   }
 
   getSlice(length) {
-    return this.uint8.subarray(this.offset, this.offset += length);
+    return this.uint8.subarray(this.offset, (this.offset += length));
   }
 
   getBuffer() {

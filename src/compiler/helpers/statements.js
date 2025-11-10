@@ -11,9 +11,9 @@ export const factoryTryStatement = (tryStatements, varError, catchStatements) =>
         varError,
         undefined,
         undefined,
-        undefined
+        undefined,
       ),
-      host.factory.createBlock(catchStatements, true)
+      host.factory.createBlock(catchStatements, true),
     ),
-    undefined
+    undefined,
   );

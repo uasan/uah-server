@@ -21,6 +21,12 @@
     "#runtime/*": "./src/runtime/*",
     "#compiler/*": "./src/compiler/*"
   },
+  "scripts": {
+    "lint": "biome lint .",
+    "lint:fix": "biome lint . --write",
+    "format": "biome format .",
+    "format:fix": "biome format . --write"
+  },
   "dependencies": {
     "typescript": "^5.9.3",
     "@uah/postgres": "github:uasan/postgres",

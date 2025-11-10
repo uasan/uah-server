@@ -13,7 +13,7 @@ export class Cache {
       'cache-control',
       'max-age=31536000, immutable',
       'etag',
-      '1'
+      '1',
     );
   }
 
@@ -35,7 +35,7 @@ export class Cache {
       'cache-control',
       'max-age=' + age,
       'etag',
-      (Date.now() + age * 1000).toString()
+      (Date.now() + age * 1000).toString(),
     );
   }
 }

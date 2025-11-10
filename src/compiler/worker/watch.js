@@ -23,7 +23,7 @@ const formatHost = {
 function reportDiagnostic(_, code, diagnostics) {
   if (code === 0) {
     console.error(
-      formatDiagnosticsWithColorAndContext(diagnostics, formatHost)
+      formatDiagnosticsWithColorAndContext(diagnostics, formatHost),
     );
   }
 }
@@ -41,7 +41,7 @@ export const createWatchHost = workerFile => {
     system,
     createProgram,
     reportDiagnostic,
-    reportWatchStatus
+    reportWatchStatus,
   );
 
   compilerHost.useCaseSensitiveFileNames = useCaseSensitiveFileNames;
@@ -58,7 +58,7 @@ export const createBuilderHost = workerFile => {
     system,
     createProgram,
     reportDiagnostic,
-    reportWatchStatus
+    reportWatchStatus,
   );
 
   compilerHost.useCaseSensitiveFileNames = useCaseSensitiveFileNames;

@@ -21,4 +21,5 @@ export function decodeJSON(buffer) {
   }
 }
 
-export const stringifyBase64Url = data => Buffer.from(stringify(data)).toString('base64Url');
+export const stringifyBase64Url = data =>
+  Buffer.from(stringify(data)).toString('base64Url');

@@ -51,6 +51,6 @@ export function makeInsert(patch, row) {
       values +
       ')\nRETURNING "' +
       patch.model.table.primary.join('", "') +
-      '"'
+      '"',
   );
 }

@@ -5,5 +5,4 @@ export abstract class TableModel {
   static async patch(ctx: any, payload: any): Promise<any[] | undefined> {
     return [];
   }
-
 }

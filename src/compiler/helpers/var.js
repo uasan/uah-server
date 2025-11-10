@@ -21,13 +21,13 @@ export const {
 export const factoryConstStatement = (params, modifiers) =>
   host.factory.createVariableStatement(
     modifiers,
-    host.factory.createVariableDeclarationList(params, Const)
+    host.factory.createVariableDeclarationList(params, Const),
   );
 
 export const factoryLetStatement = params =>
   host.factory.createVariableStatement(
     undefined,
-    host.factory.createVariableDeclarationList(params, Let)
+    host.factory.createVariableDeclarationList(params, Let),
   );
 
 export const factoryVarDeclaration = (name, value) =>
@@ -48,12 +48,12 @@ export const factoryAssignStatement = (left, right) =>
 export const factoryAssignProperty = (object, key, value) =>
   factoryAssign(
     host.factory.createPropertyAccessExpression(object, key),
-    value
+    value,
   );
 
 export const factoryAssignPropertyStatement = (object, key, value) =>
   host.factory.createExpressionStatement(
-    factoryAssignProperty(object, key, value)
+    factoryAssignProperty(object, key, value),
   );
 
 export const getNodeTextName = node => node.name?.escapedText ?? 'default';

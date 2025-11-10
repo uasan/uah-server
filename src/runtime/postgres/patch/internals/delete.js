@@ -5,6 +5,6 @@ export function makeDelete(patch, path) {
     'DELETE FROM ' +
       patch.model.table.name +
       makeWere(patch, path) +
-      makeReturning(patch)
+      makeReturning(patch),
   );
 }

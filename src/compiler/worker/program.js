@@ -10,7 +10,7 @@ export function createProgram(
   hostBuilder,
   builderProgram,
   configFileParsingDiagnostics,
-  projectReferences
+  projectReferences,
 ) {
   host.builder = hostBuilder;
   host.options = compilerOptions;
@@ -29,7 +29,7 @@ export function createProgram(
     hostBuilder,
     builderProgram,
     configFileParsingDiagnostics,
-    projectReferences
+    projectReferences,
   );
 
   program.emit = emit;

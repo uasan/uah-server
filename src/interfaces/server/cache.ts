@@ -5,5 +5,5 @@ interface CacheOptions {
 }
 
 export declare function Cache(
-  options: boolean | number | CacheOptions
+  options: boolean | number | CacheOptions,
 ): (target: unknown, context: ClassMethodDecoratorContext) => void;

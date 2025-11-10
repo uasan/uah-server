@@ -25,7 +25,7 @@ export async function lockMigrate(ctx) {
 
   if (isLock === false) {
     console.log(
-      style.yellow(`Migrate: `) + style.red(`waiting release lock ${LOCK_ID}`)
+      style.yellow(`Migrate: `) + style.red(`waiting release lock ${LOCK_ID}`),
     );
 
     await ctx.sql`SELECT pg_advisory_lock(${LOCK_ID}::bigint)`;
