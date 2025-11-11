@@ -4,12 +4,12 @@ export class Int32 extends Int {
   byteLength = 4;
   numberType = 'Int32';
 
-  static make(meta) {
+  static make(meta, args) {
     if (meta.sql) {
       meta.sql.length = 4;
       meta.sql.type = 'int';
     }
 
-    super.make(meta);
+    super.make(meta, args);
   }
 }

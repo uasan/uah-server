@@ -8,12 +8,12 @@ export class Float extends Int {
     return super.make(ast, 'isNumber');
   }
 
-  static make(meta) {
+  static make(meta, args) {
     if (meta.sql) {
       meta.sql.length = 8;
       meta.sql.type = 'float8';
     }
 
-    super.make(meta);
+    super.make(meta, args);
   }
 }
