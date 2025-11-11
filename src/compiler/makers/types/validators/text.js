@@ -52,11 +52,11 @@ export class Text extends Validator {
     return this.ast;
   }
 
-  static make(meta) {
+  static make(meta, args) {
     if (meta.sql) {
       meta.sql.type = 'text';
     }
 
-    super.make(meta);
+    super.make(meta, args);
   }
 }
