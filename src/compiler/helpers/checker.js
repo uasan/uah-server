@@ -211,10 +211,10 @@ export const getPropertiesOfType = type =>
   host.checker.getPropertiesOfType(type);
 
 export const getPropertiesOfNode = node =>
-  getPropertiesOfType(getTypeOfNode(node));
+  host.checker.getPropertiesOfType(getTypeOfNode(node));
 
 export const getPropertiesOfTypeNode = node =>
-  getPropertiesOfType(getTypeOfTypeNode(node));
+  host.checker.getPropertiesOfType(getTypeOfTypeNode(node));
 
 export const getExportsOfModule = node =>
   host.checker.getExportsOfModule(getSymbolOfNode(node));
