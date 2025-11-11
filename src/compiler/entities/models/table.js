@@ -1,7 +1,5 @@
-import ts from 'typescript';
-
 import {
-  getTypeOfNode,
+  getPropertiesOfNode,
   hasDeclareModifier,
   isBigIntType,
   isBooleanType,
@@ -75,7 +73,7 @@ export function TableModel(node) {
   model.columns = new Map();
   model.comment = host.entity.path.slice(PATH_SRC.length);
 
-  for (const symbol of getTypeOfNode(node).properties) {
+  for (const symbol of getPropertiesOfNode(node)) {
     if (isFieldProperty(symbol.valueDeclaration)) {
       const meta = MetaTypeSQL.create(symbol.valueDeclaration);
 

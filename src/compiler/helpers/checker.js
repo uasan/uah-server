@@ -209,8 +209,10 @@ export const getNonUndefinedType = type =>
 
 export const getPropertiesOfType = type =>
   host.checker.getPropertiesOfType(type);
+
 export const getPropertiesOfNode = node =>
   getPropertiesOfType(getTypeOfNode(node));
+
 export const getPropertiesOfTypeNode = node =>
   getPropertiesOfType(getTypeOfTypeNode(node));
 
