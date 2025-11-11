@@ -97,9 +97,7 @@ export function makeBinServer() {
   for (const [symbol, entities] of routes) {
     if (entities.size) {
       const { url, className } = metaSymbols.get(symbol);
-
-      source += `import { ${className} } from '../${url}';\n`;
-      awaits += `await ${className}.server.start();\n`;
+      awaits += `await (await import('../${url}')).${className}.server.start();\n`;
 
       for (const entity of entities) {
         source += `import '../${entity.url}';\n`;
