@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "typescript": "^5.9.3",
-    "@uah/postgres": "file:/Users/oleksiiskydan/Desktop/Labs/Postgres",
+    "@uah/postgres": "github:uasan/postgres",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.56.0"
   },
   "devDependencies": {
