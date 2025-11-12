@@ -1,4 +1,4 @@
-#!/usr/bin/env node --env-file=.env
+#!/usr/bin/env node --env-file=.env --watch
 
 import { createWatchHost } from '../src/compiler/worker/watch.js';
 

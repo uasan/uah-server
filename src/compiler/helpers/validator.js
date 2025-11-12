@@ -132,14 +132,10 @@ function makeValidatorsByMeta(ast, meta) {
 }
 
 function makeValidatorsBySymbols(ast, symbols) {
-  let i = 0;
-
-  for (const symbol of symbols) {
-    symbols[i] = MetaType.create(symbol.valueDeclaration);
+  for (let i = 0; i < symbols.length; i++) {
+    symbols[i] = MetaType.create(symbols[i].declarations[0]);
     ast = makeValidatorsByMeta(ast, symbols[i]);
-    i++;
   }
-
   return ast;
 }
 
@@ -164,8 +160,8 @@ export function makePayloadValidator(node, type) {
   } else {
     metaType.props.push(...getPropertiesOfType(type));
 
-    let initAst = host.factory.createIdentifier('_');
-    let ast = makeValidatorsBySymbols(initAst, metaType.props);
+    const initAst = host.factory.createIdentifier('_');
+    const ast = makeValidatorsBySymbols(initAst, metaType.props);
 
     addTransformer(node, node => {
       node = ensureArgument(node);

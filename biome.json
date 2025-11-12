@@ -21,6 +21,12 @@
       "recommended": true,
       "style": {
         "useTemplate": "off"
+      },
+      "complexity": {
+        "noThisInStatic": "off"
+      },
+      "suspicious": {
+        "noThenProperty": "off"
       }
     }
   },
