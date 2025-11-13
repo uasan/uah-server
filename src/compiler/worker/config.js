@@ -47,4 +47,5 @@ export const compilerOptions = {
   resolvePackageJsonExports: true,
   resolvePackageJsonImports: true,
   allowArbitraryExtensions: false,
+  useCaseSensitiveFileNames: true,
 };

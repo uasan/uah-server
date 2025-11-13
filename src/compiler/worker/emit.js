@@ -14,6 +14,26 @@ const emitResult = {
   emittedFiles: undefined,
 };
 
+class Iterator {
+  builder = null;
+
+  constructor(builder) {
+    this.builder = builder;
+  }
+
+  next() {
+    const value =
+      this.builder.getSemanticDiagnosticsOfNextAffectedFile()?.affected
+        ?.resolvedPath;
+
+    return { value, done: !value };
+  }
+
+  [Symbol.iterator]() {
+    return this;
+  }
+}
+
 export function emit() {
   const { state } = this;
   const { program, fileInfos } = state;
@@ -26,8 +46,8 @@ export function emit() {
   //     Object.entries(state).map(([key, value]) => [
   //       key,
   //       value?.size ?? value?.length,
-  //     ])
-  //   )
+  //     ]),
+  //   ),
   // );
 
   try {
@@ -36,10 +56,9 @@ export function emit() {
     setDeclarations();
 
     if (host.bootstrap) {
-      files = state.affectedFilesPendingEmit.keys();
+      files = state.affectedFilesPendingEmit?.keys() ?? new Iterator(this);
     } else {
       files = state.seenAffectedFiles;
-
       for (const key of entities.keys()) {
         if (fileInfos.has(key) === false) entities.get(key).delete();
       }
@@ -47,8 +66,10 @@ export function emit() {
 
     if (files) {
       // path.endsWith('/hello.tsx') &&
+
       for (const path of files) {
-        if ((entity = factoryEntity(path))) emitEntities.add(entity);
+        entity = factoryEntity(path);
+        if (entity) emitEntities.add(entity);
       }
 
       if (beforeEmit.size) {
@@ -78,8 +99,12 @@ export function emit() {
 
     host.emitted();
   } catch (error) {
-    console.error(error);
-    host.reset();
+    if (host.isWatch) {
+      console.error(error);
+      host.reset();
+    } else {
+      throw error;
+    }
   }
 
   return emitResult;

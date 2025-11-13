@@ -1,10 +1,21 @@
-import { existsSync, rmSync } from 'node:fs';
 import process from 'node:process';
 import { Worker } from 'node:worker_threads';
+import { existsSync, rmSync } from 'node:fs';
 
 import { PATH_BUILD } from '../../config.js';
 import { toBuildPath } from '../helpers/link.js';
 import { writeFile } from './system.js';
+import { host } from '#compiler/host.js';
+
+function onErrorWorker(error) {
+  console.error(error);
+}
+
+function onExitWorker(code) {
+  if (code && host.isWatch === false) {
+    process.exitCode = code;
+  }
+}
 
 export class BuilderHooks {
   worker = {
@@ -15,8 +26,6 @@ export class BuilderHooks {
       if (this.worker.instance) {
         this.worker.instance.once('exit', process.exit.bind(process));
         this.worker.instance.postMessage(0);
-      } else {
-        process.exit(0);
       }
     },
   };
@@ -33,7 +42,6 @@ export class BuilderHooks {
         .once('SIGINT', this.worker.close)
         .once('SIGUSR1', this.worker.close)
         .once('SIGUSR2', this.worker.close)
-        .once('disconnect', this.worker.close)
         .once('beforeExit', this.worker.close);
     }
   }
@@ -64,7 +72,9 @@ export class BuilderHooks {
       this.worker.instance = new Worker(
         this.worker.filename,
         this.worker.options,
-      ).on('error', console.error);
+      )
+        .on('error', onErrorWorker)
+        .on('exit', onExitWorker);
     }
   }
 

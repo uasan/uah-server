@@ -1,7 +1,5 @@
-import ts from 'typescript';
+import { factory, visitEachChild, nullTransformationContext } from 'typescript';
 import { initConfig } from '../config.js';
-
-const { visitEachChild, nullTransformationContext } = ts;
 
 export const entities = new Map();
 export const types = new WeakMap();
@@ -42,12 +40,12 @@ export class Unlinks extends Map {
 }
 
 export const host = {
-  hooks: null,
-
+  isWatch: false,
   bootstrap: true,
-  factory: ts.factory,
 
+  factory,
   file: null,
+  hooks: null,
   module: null,
   entity: null,
   builder: null,
@@ -86,7 +84,7 @@ export const host = {
     this.bootstrap = false;
   },
 
-  reset(options) {
+  reset() {
     entities.clear();
     this.hooks.reset();
 

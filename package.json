@@ -11,8 +11,9 @@
     "node": ">=25.0.0"
   },
   "bin": {
-    "UAH.server": "./bin/dev.mjs",
     "UAH.test": "./bin/test.mjs",
+    "UAH.server": "./bin/dev.mjs",
+    "UAH.build": "./bin/build.mjs",
     "UAH.migrate": "./bin/migrate.mjs"
   },
   "imports": {

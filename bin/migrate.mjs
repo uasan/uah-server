@@ -1,6 +1,6 @@
 #!/usr/bin/env node --env-file=.env
 
-import { createBuilderHost } from '../src/compiler/worker/watch.js';
+import { runBuilderHost } from '../src/compiler/worker/program.js';
 
 console.clear();
-createBuilderHost('./build/bin/migrate.js');
+runBuilderHost('./build/bin/migrate.js');

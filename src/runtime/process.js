@@ -2,13 +2,19 @@ import process from 'node:process';
 import { isMainThread, parentPort } from 'node:worker_threads';
 
 const controller = new AbortController();
-const abort = controller.abort.bind(controller);
-
 export const { signal } = controller;
 
+function abort() {
+  controller.abort();
+
+  if (parentPort) {
+    parentPort.close();
+  }
+}
+
 function handleException(error) {
-  console.error(error);
   process.exitCode = 1;
+  console.error(error);
   abort();
 }
 
@@ -28,7 +34,6 @@ if (isMainThread) {
     .once('SIGUSR2', abort);
 } else {
   parentPort.once('message', abort);
-
   process.stderr.isTTY = true;
   process.stdout.isTTY = true;
 }

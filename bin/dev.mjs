@@ -1,6 +1,6 @@
 #!/usr/bin/env node --env-file=.env --watch
 
-import { createWatchHost } from '../src/compiler/worker/watch.js';
+import { runWatchHost } from '../src/compiler/worker/program.js';
 
 console.clear();
-createWatchHost('./build/bin/server.js');
+runWatchHost('./build/bin/server.js');
