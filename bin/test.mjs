@@ -3,4 +3,4 @@
 import { runBuilderHost } from '../src/compiler/worker/program.js';
 
 console.clear();
-runBuilderHost('./build/bin/test.js');
+await runBuilderHost('bin/test.js');

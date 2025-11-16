@@ -22,8 +22,15 @@ export function reportDiagnostic(diagnostics) {
 }
 
 export function reportWatchStatus(diagnostic) {
-  if (diagnostic.code !== 6031) {
-    console.log(formatDiagnosticsWithColorAndContext([diagnostic], formatHost));
+  switch (diagnostic.code) {
+    case 6031:
+    case 6032:
+      break;
+
+    default:
+      console.log(
+        formatDiagnosticsWithColorAndContext([diagnostic], formatHost),
+      );
   }
 }
 

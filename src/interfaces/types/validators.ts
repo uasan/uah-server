@@ -64,11 +64,11 @@ export type ArrayBuffer<T extends ArrayBufferOptions = undefined> =
 export type DataView<T extends ArrayBufferOptions = undefined> =
   globalThis.DataView;
 
-export type Uint8Array<T extends ArrayOptions = undefined> =
-  globalThis.Uint8Array;
+export type Bytes<T extends ArrayOptions = undefined> =
+  globalThis.Uint8Array<ArrayBuffer>;
 
 export type TypedArray =
-  | Uint8Array
+  | Bytes
   | Uint8ClampedArray
   | Uint16Array
   | Uint32Array

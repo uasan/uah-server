@@ -36,7 +36,7 @@ function makeIndexedAccess(meta, node) {
     });
   }
 
-  return symbol.members.get(node.indexType.literal.text).declarations[0];
+  return symbol.members.get(node.indexType.literal.text)?.declarations[0];
 }
 
 function makeMetaType(meta, node) {
@@ -83,7 +83,7 @@ function makeMetaType(meta, node) {
       break;
 
     case IndexedAccessType:
-      makeMetaType(meta, makeIndexedAccess(meta, node).type);
+      makeMetaType(meta, makeIndexedAccess(meta, node)?.type);
       break;
   }
 }

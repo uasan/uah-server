@@ -3,4 +3,4 @@
 import { runBuilderHost } from '../src/compiler/worker/program.js';
 
 console.clear();
-runBuilderHost('./build/bin/migrate.js');
+await runBuilderHost('bin/migrate.js');

@@ -24,7 +24,6 @@ export class BuilderHooks {
     options: { argv: process.argv.slice(2) },
     close: () => {
       if (this.worker.instance) {
-        this.worker.instance.once('exit', process.exit.bind(process));
         this.worker.instance.postMessage(0);
       }
     },
@@ -73,8 +72,8 @@ export class BuilderHooks {
         this.worker.filename,
         this.worker.options,
       )
-        .on('error', onErrorWorker)
-        .on('exit', onExitWorker);
+        .on('exit', onExitWorker)
+        .on('error', onErrorWorker);
     }
   }
 

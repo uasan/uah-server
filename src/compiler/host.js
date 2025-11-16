@@ -87,7 +87,20 @@ export const host = {
   reset() {
     entities.clear();
     this.hooks.reset();
-
     this.bootstrap = true;
+  },
+
+  destroy() {
+    this.file = null;
+    this.entity = null;
+    this.module = null;
+    this.builder = null;
+    this.program = null;
+    this.checker = null;
+
+    entities.clear();
+    afterEmit.clear();
+    beforeEmit.clear();
+    emitEntities.clear();
   },
 };

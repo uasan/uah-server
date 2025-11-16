@@ -20,8 +20,7 @@ function makeBinTest() {
     if (entities.size) {
       const { url, className } = metaSymbols.get(symbol);
 
-      source += `import { ${className} } from '../${url}';\n`;
-      awaits += `await ${className}.run();\n`;
+      awaits += `await (await import('../${url}')).${className}.run();\n`;
 
       for (const entity of entities) {
         source += `import '../${entity.url}';\n`;

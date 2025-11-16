@@ -3,7 +3,7 @@ import { emit } from './emit.js';
 import { host } from '../host.js';
 import { compilerOptions } from './config.js';
 import { BuilderHooks } from './hooks.js';
-import { CWD } from '../../config.js';
+import { CWD, URL_BUILD } from '../../config.js';
 import {
   isErrorDiagnostic,
   reportDiagnostic,
@@ -21,6 +21,7 @@ function createWatchProgram(
   configFileParsingDiagnostics,
   projectReferences,
 ) {
+  console.clear();
   host.isWatch = true;
   host.builder = hostBuilder;
   host.options = compilerOptions;
@@ -71,6 +72,7 @@ function createBuildProgram(parsed, hostBuilder) {
   }
 
   emit.call(program);
+  host.destroy();
 
   return 0;
 }
@@ -93,7 +95,7 @@ export function runWatchHost(workerFile) {
 }
 
 export function runBuilderHost(workerFile) {
-  host.hooks = new BuilderHooks(workerFile);
+  host.hooks = new BuilderHooks();
 
   const parsed = ts.getParsedCommandLineOfConfigFile(
     CWD + '/tsconfig.json',
@@ -106,6 +108,10 @@ export function runBuilderHost(workerFile) {
       parsed,
       ts.createIncrementalCompilerHost(parsed.options, system),
     );
+
+    if (process.exitCode === 0 && workerFile) {
+      return import(URL_BUILD + workerFile);
+    }
   } else {
     process.exitCode = 1;
   }

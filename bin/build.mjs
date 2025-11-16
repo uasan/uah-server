@@ -2,5 +2,4 @@
 
 import { runBuilderHost } from '../src/compiler/worker/program.js';
 
-console.clear();
 runBuilderHost();
