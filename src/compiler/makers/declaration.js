@@ -19,6 +19,7 @@ import { Uint16 } from './types/validators/Uint16.js';
 import { Uint32 } from './types/validators/Uint32.js';
 import { Uint8 } from './types/validators/Uint8.js';
 
+import { IntSerial } from './types/validators/IntSerial.js';
 import { BigIntSerial } from './types/validators/BigIntSerial.js';
 import { BinaryData } from './types/validators/BinaryData.js';
 import { Blob } from './types/validators/Blob.js';
@@ -30,7 +31,7 @@ import { Float } from './types/validators/Float.js';
 import { Float32 } from './types/validators/Float32.js';
 import { Text } from './types/validators/Text.js';
 import { TypedArray } from './types/validators/TypedArray.js';
-import { Uint8Array } from './types/validators/Uint8Array.js';
+import { Bytes } from './types/validators/Bytes.js';
 import { UUID } from './types/validators/UUID.js';
 
 import { Cache } from './decorators/cache.js';
@@ -66,8 +67,9 @@ export const lookup = {
     Default,
     DateLike,
     BinaryData,
-    Uint8Array,
+    Bytes,
     TypedArray,
+    IntSerial,
     BigIntSerial,
     WebSocketRPC,
   },

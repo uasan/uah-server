@@ -43,8 +43,10 @@ export type Default<T> = T;
 
 export type Text<T extends TextOptions = undefined> = string;
 export type Email = string;
-export type UUID = `${string}-${string}-${string}-${string}-${string}`;
+export type Phone = string;
+export type IntSerial = number;
 export type BigIntSerial = bigint;
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type Int<T extends NumberOptions = undefined> = number;
 export type Int8<T extends NumberOptions = undefined> = number;

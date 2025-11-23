@@ -1,6 +1,6 @@
 import { Validator } from '../Validator.js';
 
-export class Uint8Array extends Validator {
+export class Bytes extends Validator {
   bytesPerElement = 1;
 
   static make(meta, args) {
