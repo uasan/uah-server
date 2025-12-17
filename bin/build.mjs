@@ -1,4 +1,4 @@
-#!/usr/bin/env node --env-file=.env
+#!/usr/bin/env -S node --env-file=.env
 
 import { runBuilderHost } from '../src/compiler/worker/program.js';
 
