@@ -15,7 +15,7 @@ export * from './src/interfaces/testing/context.ts';
 
 export * from './src/interfaces/types/Blob.ts';
 export * from './src/interfaces/types/File.ts';
-export * from './src/interfaces/types/Validators.ts';
+export * from './src/interfaces/types/_Validators.ts';
 
 export * from './src/interfaces/postgres/decorators.ts';
 export * from './src/interfaces/postgres/model.ts';
