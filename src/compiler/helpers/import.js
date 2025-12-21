@@ -36,7 +36,10 @@ export const createImportsOfMap = map => {
         elements.length
           ? host.factory.createImportClause(
               undefined,
-              host.factory.createNamedImports(elements),
+              elements.length === 1 &&
+                elements[0].propertyName?.escapedText === 'default'
+                ? elements[0].name
+                : host.factory.createNamedImports(elements),
               undefined,
             )
           : undefined,
