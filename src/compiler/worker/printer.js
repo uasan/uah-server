@@ -7,14 +7,14 @@ const { SourceFileStatements } = ts.ListFormat;
 const writer = ts.createTextWriter('\n');
 const printer = ts.createPrinter(compilerOptions);
 
-export const printNodes = nodes => {
+export function printNodes(nodes) {
   printer.writeList(SourceFileStatements, nodes, host.file, writer);
   try {
     return writer.getText();
   } finally {
     writer.clear();
   }
-};
+}
 
 export const printNode = node => printNodes([node]);
 

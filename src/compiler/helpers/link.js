@@ -13,7 +13,7 @@ export const getFilename = path => path.slice(path.lastIndexOf('/') + 1);
 export const getExtension = path => path.slice(path.lastIndexOf('.'));
 export const capitalize = word => word[0].toUpperCase() + word.slice(1);
 
-export const toRelativeURL = (from, to) => {
+export function toRelativeURL(from, to) {
   if (from === to) return '';
 
   const fromDirs = from.split('/');
@@ -29,12 +29,11 @@ export const toRelativeURL = (from, to) => {
   }
 
   return to;
-};
-
-export const getUrlFromPath = path => path.slice(PATH_SRC.length, -3) + '.js';
-export const getTsUrlFromPath = path => path.slice(CWD.length + 1);
+}
 
 export const toBuildPath = url => PATH_BUILD + url;
+export const getTsUrlFromPath = path => path.slice(CWD.length + 1);
+export const getUrlFromPath = path => path.slice(PATH_SRC.length, -3) + '.js';
 
 export const toRuntimeUrl = path =>
   URL_LIB_RUNTIME + path.slice(PATH_LIB_TYPES.length, -3) + '.js';

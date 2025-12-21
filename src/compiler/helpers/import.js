@@ -7,7 +7,7 @@ export const resolveImportPath = node =>
     host.file,
   )?.resolvedModule?.resolvedFileName;
 
-export const createAssertClause = type =>
+export const createImportAttributes = type =>
   host.factory.createImportAttributes(
     [
       host.factory.createImportAttribute(
@@ -23,7 +23,7 @@ export const createImportDeclaration = (importClause, url, type) =>
     undefined,
     importClause,
     host.factory.createStringLiteral(url),
-    type ? createAssertClause(type) : undefined,
+    type ? createImportAttributes(type) : undefined,
   );
 
 export const createImportsOfMap = map => {
@@ -35,12 +35,13 @@ export const createImportsOfMap = map => {
         undefined,
         elements.length
           ? host.factory.createImportClause(
-              false,
               undefined,
               host.factory.createNamedImports(elements),
+              undefined,
             )
           : undefined,
         host.factory.createStringLiteral(url),
+        url.endsWith('.json') ? createImportAttributes('json') : undefined,
       ),
     );
   }
@@ -50,7 +51,7 @@ export const createImportsOfMap = map => {
 
 export const createImportClause = (name, elements) =>
   host.factory.createImportClause(
-    false,
+    undefined,
     name,
     elements?.length && host.factory.createNamedImports(elements),
   );

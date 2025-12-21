@@ -1,3 +1,4 @@
+import { PATH_SRC } from '#config';
 import { entities, host } from '../host.js';
 
 export class Entity {
@@ -45,5 +46,13 @@ export class Entity {
       path.replaceAll('.', '\\.').replaceAll('**', '.+').replaceAll('*', '.+') +
         '$',
     );
+  }
+}
+
+export class JsonEntity extends Entity {
+  url = this.path.slice(PATH_SRC.length);
+
+  emitted(file) {
+    this.save(file.text);
   }
 }

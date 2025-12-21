@@ -9,7 +9,7 @@ export function makeImportDeclaration(node) {
 
   const { imports } = host.module;
 
-  let { importClause } = node;
+  const { importClause } = node;
   let url = node.moduleSpecifier.text;
 
   if (importClause) {
@@ -25,7 +25,7 @@ export function makeImportDeclaration(node) {
       );
     }
 
-    for (let spec of elements) {
+    for (const spec of elements) {
       if (!spec.isTypeOnly) {
         const symbol = getOriginSymbolOfNode(spec.name);
 
@@ -41,7 +41,7 @@ export function makeImportDeclaration(node) {
             entities.get(resolveImportPath(node)).url,
           );
         } else if (internalSymbols.has(symbol)) {
-          console.log('AAAA');
+          //console.log('AAAA');
           continue;
         }
 
