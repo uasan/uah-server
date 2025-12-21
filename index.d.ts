@@ -1,3 +1,4 @@
+export * from './src/interfaces/process.ts';
 export * from './src/interfaces/server/cache.ts';
 export * from './src/interfaces/server/context.ts';
 export * from './src/interfaces/server/server.ts';
