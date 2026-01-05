@@ -1,7 +1,7 @@
 import { declarations, entities, host, internalSymbols } from '../host.js';
 import { toRelativeURL } from '../helpers/link.js';
 import { resolveImportPath } from '../helpers/import.js';
-import { getOriginSymbolOfNode, isTypeSymbol } from '../helpers/checker.js';
+import { getOriginSymbolOfNode } from '../helpers/checker.js';
 import { factoryIdentifier } from '../helpers/expression.js';
 
 export function makeImportDeclaration(node) {
