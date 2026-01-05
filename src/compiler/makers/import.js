@@ -29,10 +29,6 @@ export function makeImportDeclaration(node) {
       if (!spec.isTypeOnly) {
         const symbol = getOriginSymbolOfNode(spec.name);
 
-        if (isTypeSymbol(symbol)) {
-          continue;
-        }
-
         if (declarations.has(symbol)) {
           url = declarations.get(symbol).url;
         } else if (entities.has(resolveImportPath(node))) {

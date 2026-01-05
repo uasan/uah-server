@@ -1,13 +1,14 @@
 import {
-  getOriginSymbol,
   getOriginSymbolClass,
   getOriginSymbolOfNode,
   getPropertiesOfTypeNode,
   getTypeOfSymbol,
+  isAbstractKeyword,
   isDeclareKeyword,
   isExtendsToken,
   isImplementsToken,
   isNativeModifier,
+  some,
 } from '../helpers/checker.js';
 import { updateClass } from '../helpers/class.js';
 import { declarations, host, metaSymbols, types } from '../host.js';
@@ -65,12 +66,12 @@ function makeInternalClassOfExtends(node, extend = node) {
 }
 
 export const makeFunctionDeclaration = node =>
-  node.modifiers?.some(isDeclareKeyword)
+  some(node.modifiers, isDeclareKeyword)
     ? undefined
     : host.visitEachChild(node);
 
 export function makeClassDeclaration(node) {
-  if (node.modifiers?.some(isDeclareKeyword)) {
+  if (some(node.modifiers, isDeclareKeyword)) {
     return;
   }
 
@@ -85,22 +86,26 @@ export function makeClassDeclaration(node) {
   );
 }
 
-export function makeMethodDeclaration(node) {
-  return host.factory.updateMethodDeclaration(
-    node,
-    node.modifiers &&
-      node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
-    undefined,
-    node.name,
-    undefined,
-    undefined,
-    node.parameters?.length
-      ? node.parameters.map(host.visit).filter(Boolean)
-      : undefined,
-    undefined,
-    node.body && host.visit(node.body),
-  );
-}
+export const makeMethodDeclaration = node =>
+  some(node.modifiers, isDeclareKeyword) ||
+  some(node.modifiers, isAbstractKeyword)
+    ? undefined
+    : host.factory.updateMethodDeclaration(
+        node,
+        node.modifiers
+          ?.filter(isNativeModifier)
+          .map(host.visit)
+          .filter(Boolean),
+        undefined,
+        node.name,
+        undefined,
+        undefined,
+        node.parameters?.length
+          ? node.parameters.map(host.visit).filter(Boolean)
+          : undefined,
+        undefined,
+        node.body && host.visit(node.body),
+      );
 
 export function makePropertyDeclaration(node) {
   const initializer = node.initializer && host.visit(node.initializer);

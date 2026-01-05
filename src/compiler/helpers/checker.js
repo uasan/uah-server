@@ -43,6 +43,7 @@ export const {
   NumericLiteral,
   DeclareKeyword,
   TypeReference,
+  AbstractKeyword,
   ImplementsKeyword,
 } = ts.SyntaxKind;
 
@@ -69,6 +70,7 @@ export const isTrueKeyword = ({ kind }) => kind === TrueKeyword;
 export const isFalseKeyword = ({ kind }) => kind === FalseKeyword;
 export const isStaticKeyword = ({ kind }) => kind === StaticKeyword;
 export const isDeclareKeyword = ({ kind }) => kind === DeclareKeyword;
+export const isAbstractKeyword = ({ kind }) => kind === AbstractKeyword;
 export const isAsyncKeyword = ({ kind }) => kind === AsyncKeyword;
 
 export const isAnyType = ({ flags }) => (flags & flagAny) !== 0;
