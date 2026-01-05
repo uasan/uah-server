@@ -87,7 +87,6 @@ export function makeClassDeclaration(node) {
 }
 
 export const makeMethodDeclaration = node =>
-  some(node.modifiers, isDeclareKeyword) ||
   some(node.modifiers, isAbstractKeyword)
     ? undefined
     : host.factory.updateMethodDeclaration(
@@ -110,18 +109,12 @@ export const makeMethodDeclaration = node =>
 export function makePropertyDeclaration(node) {
   const initializer = node.initializer && host.visit(node.initializer);
 
-  return initializer
-    ? host.factory.updatePropertyDeclaration(
-        node,
-        node.modifiers &&
-          node.modifiers
-            ?.filter(isNativeModifier)
-            .map(host.visit)
-            .filter(Boolean),
-        node.name,
-        undefined,
-        undefined,
-        initializer,
-      )
-    : undefined;
+  return host.factory.updatePropertyDeclaration(
+    node,
+    node.modifiers?.filter(isNativeModifier).map(host.visit).filter(Boolean),
+    node.name,
+    undefined,
+    undefined,
+    initializer,
+  );
 }
