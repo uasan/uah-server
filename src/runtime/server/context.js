@@ -29,7 +29,7 @@ export class ServerContext extends Context {
   onAborted() {}
 
   async auth() {
-    throw new Exception('Not implemented auth method');
+    //throw new Exception('Not implemented auth method');
   }
 
   async createSession() {
