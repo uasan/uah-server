@@ -1,3 +1,4 @@
+import { signal } from '../process.js';
 import { Conflict } from '#runtime/exceptions/Conflict.js';
 import { hasOwn, isObject } from '#runtime/types/checker.js';
 import { parse, stringify } from '#runtime/types/json.js';
@@ -68,7 +69,7 @@ async function upgrade(res, req, ctx) {
     const payload = this.getPayload?.(req);
     await context.auth();
 
-    meta.sid = await context.onOpen(payload);
+    meta.sid = (await context.onOpen(payload)) ?? Symbol('SID');
     meta.uid = context.user?.id;
   } catch (error) {
     if (context.isConnected) {
@@ -229,10 +230,21 @@ async function onClose(ws) {
   }
 }
 
+function onDestroy() {
+  for (const ws of this.sockets.values()) {
+    try {
+      ws.end();
+    } catch {
+      break;
+    }
+  }
+}
+
 export function createWebSocketRPC(ctor) {
   ctor.sendMessageToUser = sendMessageToUser;
   ctor.sendMessageToSocket = sendMessageToSocket;
   ctor.sendMessageToChannel = sendMessageToChannel;
+  signal.addEventListener('abort', onDestroy.bind(ctor));
 
   return {
     idleTimeout: 960,
