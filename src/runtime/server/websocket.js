@@ -247,7 +247,7 @@ export function createWebSocketRPC(ctor) {
   signal.addEventListener('abort', onDestroy.bind(ctor));
 
   return {
-    idleTimeout: 100,
+    idleTimeout: 30,
     sendPingsAutomatically: true,
     compression: SHARED_COMPRESSOR,
     maxPayloadLength: 16 * 1024 * 1024,
