@@ -18,12 +18,14 @@ import {
   factoryParameter,
 } from '#compiler/helpers/function.js';
 import { host, metaSymbols, Unlinks } from '#compiler/host.js';
+import { getValueOfLiteral } from '#compiler/helpers/values.js';
 import { isConstructorDeclaration } from 'typescript';
 
 export function Server(node, original, decor) {
   const entity = host.entity;
   const args = [factoryThis(), decor.arguments[0]];
   const symbol = getOriginSymbolClass(original);
+  const options = getValueOfLiteral(decor.arguments[0]);
   const preset = original.members?.find(isConstructorDeclaration)
     ?.parameters?.[0];
   const meta = {
@@ -32,6 +34,7 @@ export function Server(node, original, decor) {
     countRoutParams: 0,
     relations: new Set(),
     className: original.name?.escapedText,
+    maxPayloadSize: options.maxPayloadSize,
   };
 
   if (preset) {

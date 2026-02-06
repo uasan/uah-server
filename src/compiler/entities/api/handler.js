@@ -95,7 +95,7 @@ export function makeRouteMethodHTTP(meta, members, node) {
       pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));
     } else {
-      const body = makePayloadFromBody(metaType);
+      const body = makePayloadFromBody(metaType, meta);
       payload = body.data;
       statements.push(factoryConstant(factoryIdentifier('data'), body.init));
     }

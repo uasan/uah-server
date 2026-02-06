@@ -2,6 +2,7 @@ import type { ServerContext } from './context';
 
 interface ServerOptions {
   url: string;
+  maxPayloadSize?: number;
   init?: (context?: ServerContext) => Promise<void>;
 }
 
