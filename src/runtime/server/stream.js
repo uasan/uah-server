@@ -27,7 +27,7 @@ export class BufferStreamReader {
 
       this.read = this.readBuffer;
       this.read(chunk.slice(4), done);
-    } else {
+    } else if (chunk.byteLength > 0 || done) {
       this.reject();
     }
   }
