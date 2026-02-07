@@ -21,13 +21,16 @@ export class BufferStreamReader {
   };
 
   read(chunk, done) {
-    if (chunk.byteLength > 4) {
+    if (chunk.byteLength >= 4) {
       this.length = new DataView(chunk).getUint32(0);
       this.buffer = new Uint8Array(this.length);
 
       this.read = this.readBuffer;
-      this.read(chunk.slice(4), done);
-    } else {
+
+      if (chunk.byteLength > 4) {
+        this.read(chunk.slice(4), done);
+      }
+    } else if (done) {
       this.reject();
     }
   }
