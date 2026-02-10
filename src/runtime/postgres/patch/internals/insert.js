@@ -1,4 +1,4 @@
-import { Validator } from '../../../types/Validator.js';
+import { Validator } from '../../../types/validator.js';
 import { isRelations, addRelation } from './relations.js';
 import { hasOwn, isObject } from '../../../types/checker.js';
 import { errorFieldUndefined, errorNotObject } from './errors.js';
