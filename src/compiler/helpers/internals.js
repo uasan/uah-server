@@ -14,6 +14,8 @@ function getInternalImport(url, name) {
     return host.module.internalImports.get(url).get(name);
   }
 
+  if (url === 'types/validator') console.trace(url);
+
   const keyUrl = URL_LIB_RUNTIME + url + '.js';
   const keyName = factoryIdentifier(name);
   const propertyName = factoryIdentifier(host.module.getUniqueName(name));
@@ -82,7 +84,7 @@ export const internals = {
 
   setValidator: (...args) =>
     factoryCallMethod(
-      getInternalImport('types/validator', 'Validator'),
+      getInternalImport('types/Validator', 'Validator'),
       'set',
       args,
     ),
