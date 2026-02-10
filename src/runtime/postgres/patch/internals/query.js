@@ -1,4 +1,4 @@
-import { Validator } from '../../../types/Validator.js';
+import { Validator } from '../../../types/validator.js';
 import { isArray, isObject } from '../../../types/checker.js';
 import { errorNotArray, errorNotObject } from './errors.js';
 import { concatJSONB, deleteJSONB, setJSONB } from './jsonb.js';
