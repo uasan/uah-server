@@ -1,4 +1,4 @@
-import { Validator } from '../Validator.js';
+import { Validator } from '../validator.js';
 
 export class File extends Validator {
   static make(meta) {
