@@ -1,5 +1,5 @@
 import { getValueOfLiteral } from '#compiler/helpers/values.js';
-import { Validator } from '../validator.js';
+import { Validator } from '../Validator.js';
 
 export class Text extends Validator {
   make(ast) {

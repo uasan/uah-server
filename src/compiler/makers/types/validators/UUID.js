@@ -1,4 +1,4 @@
-import { Validator } from '../validator.js';
+import { Validator } from '../Validator.js';
 
 export class UUID extends Validator {
   static make(meta, args) {

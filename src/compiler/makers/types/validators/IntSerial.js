@@ -1,4 +1,4 @@
-import { Validator } from '../validator.js';
+import { Validator } from '../Validator.js';
 
 export class IntSerial extends Validator {
   make(ast) {
