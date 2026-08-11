@@ -54,7 +54,7 @@ export class Patch {
 
     //await this.context.postgres.query('BEGIN');
 
-    console.log(makeQuery(this), this.params);
+    //console.log(makeQuery(this), this.params);
 
     const values = await this.context.postgres.query(
       makeQuery(this),

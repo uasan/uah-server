@@ -24,12 +24,12 @@ export class TestRunner {
 
     for (const test of tests) {
       try {
-        await this.postgres.begin();
-
         if (test.skipped) {
           this.reporter.skip(test);
           continue;
         }
+
+        await this.postgres.begin();
 
         this.results.set(
           test.meta,
