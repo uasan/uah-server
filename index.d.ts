@@ -4,6 +4,7 @@ export * from './src/interfaces/server/context.ts';
 export * from './src/interfaces/server/server.ts';
 export * from './src/interfaces/server/session/jwt.ts';
 export * from './src/interfaces/server/websocket.ts';
+export * from './src/interfaces/server/method.ts';
 
 export * from './src/interfaces/migration/context.js';
 export * from './src/interfaces/services/scheduler.ts';

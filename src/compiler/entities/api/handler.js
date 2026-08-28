@@ -35,6 +35,7 @@ import { factoryConstant } from '../../helpers/var.js';
 import { lookup } from '../../makers/declaration.js';
 
 import { factoryPropertyAccess } from '#compiler/helpers/object.js';
+import { getValueOfLiteral } from '#compiler/helpers/values.js';
 import { makeCache } from '#compiler/makers/decorators/cache.js';
 import { BinaryData } from '../../makers/types/validators/BinaryData.js';
 import { File } from '../../makers/types/validators/File.js';
@@ -58,6 +59,15 @@ export function makeRouteMethodHTTP(meta, members, node) {
     hasDecorator,
     lookup.decorators.Access,
   );
+
+  const methodDecor = node.modifiers?.find(
+    hasDecorator,
+    lookup.decorators.Method,
+  );
+
+  const methodOptions = methodDecor
+    ? getValueOfLiteral(methodDecor.expression.arguments[0])
+    : null;
 
   const cache = makeCache(
     node.modifiers?.find(hasDecorator, lookup.decorators.Cache),
@@ -95,7 +105,10 @@ export function makeRouteMethodHTTP(meta, members, node) {
       pathParameters = query.path;
       statements.push(factoryConstant(payload, query.data));
     } else {
-      const body = makePayloadFromBody(metaType);
+      const body = makePayloadFromBody(
+        metaType,
+        methodOptions?.maxPayloadSize,
+      );
       payload = body.data;
       statements.push(factoryConstant(factoryIdentifier('data'), body.init));
     }

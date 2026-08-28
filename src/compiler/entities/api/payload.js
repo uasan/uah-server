@@ -101,8 +101,12 @@ function makeDecodeBuffers(data, props) {
 const decodeBuffersFrom = data =>
   factoryCallMethod(internals.decodeBuffers(), 'from', [data]);
 
-export function makePayloadFromBody(metaType) {
+export function makePayloadFromBody(metaType, maxPayloadSize) {
   const args = [factoryIdentifier('req'), factoryIdentifier('res')];
+
+  if (maxPayloadSize) {
+    args.push(factoryNumber(maxPayloadSize));
+  }
 
   let init =
     metaType.isBufferStream || metaType.props.some(isBufferStream)

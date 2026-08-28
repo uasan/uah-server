@@ -35,6 +35,7 @@ import { Bytes } from './types/validators/Bytes.js';
 import { UUID } from './types/validators/UUID.js';
 
 import { Cache } from './decorators/cache.js';
+import { Method } from './decorators/method.js';
 import { Access } from './decorators/permission.js';
 import { Postgres } from './decorators/postgres.js';
 import { Server } from './decorators/server.js';
@@ -76,6 +77,7 @@ export const lookup = {
 
   decorators: {
     Cache,
+    Method,
     Table,
     Server,
     Access,
