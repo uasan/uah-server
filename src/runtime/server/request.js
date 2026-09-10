@@ -6,7 +6,7 @@ import { BufferStreamReader } from './stream.js';
 export function readBuffer(req, res, maxLength = 65_535) {
   const length = +req.getHeader('content-length');
 
-  if (isNaN(length)) {
+  if (Number.isNaN(length)) {
     throw new LengthRequired();
   }
 

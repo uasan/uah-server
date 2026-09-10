@@ -15,6 +15,7 @@ export class Server {
   app = null;
   init = null;
   token = null;
+  static = null;
   router = null;
   context = null;
   deferred = null;
@@ -32,6 +33,10 @@ export class Server {
     this.router = new Router(this, url, preset);
 
     signal.addEventListener('abort', this.destroy.bind(this));
+
+    if (Object.hasOwn(options, 'static')) {
+      this.static = options.static;
+    }
   }
 
   async start() {
@@ -47,6 +52,10 @@ export class Server {
 
     if (this.init) {
       await this.init(this.context);
+    }
+
+    if (this.static) {
+      await (await import('./static/init.js')).initStaticServer(this);
     }
 
     this.app.listen(

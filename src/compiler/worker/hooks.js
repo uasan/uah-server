@@ -19,7 +19,7 @@ function onExitWorker(code) {
 
 export class BuilderHooks {
   worker = {
-    filename: '',
+    filename: './',
     instance: null,
     options: { argv: process.argv.slice(2) },
     close: () => {
@@ -31,7 +31,7 @@ export class BuilderHooks {
 
   constructor(filename) {
     if (filename) {
-      this.worker.filename = filename;
+      this.worker.filename += filename;
 
       process
         .once('SIGTSTP', this.worker.close)
