@@ -36,7 +36,9 @@ export function readBuffer(req, res, maxLength = 65_535) {
 }
 
 export function readBufferStream(req, res) {
-  const reader = new BufferStreamReader(res);
+  const length = +req.getHeader('content-length');
+  const maxLength = isNaN(length) ? Infinity : length;
+  const reader = new BufferStreamReader(res, maxLength);
   const { promise, resolve, reject } = Promise.withResolvers();
 
   reader.reject = reject;

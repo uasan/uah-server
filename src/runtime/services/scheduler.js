@@ -84,7 +84,7 @@ export class SchedulerContext extends Context {
   }
 
   static async stop() {
-    for (const timer of timers) {
+    for (const timer of timers.values()) {
       if (timer.timeoutId) {
         clearTimeout(timer.timeoutId);
         timer.timeoutId = null;

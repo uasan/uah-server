@@ -8,12 +8,14 @@ export class BufferStreamReader {
   stream = null;
   context = null;
   controller = null;
+  maxLength = Infinity;
 
   resolve = noop;
   reject = noop;
 
-  constructor(res) {
+  constructor(res, maxLength = Infinity) {
     this.context = res.context;
+    this.maxLength = maxLength;
   }
 
   onData = (chunk, done) => {
@@ -23,6 +25,11 @@ export class BufferStreamReader {
   read(chunk, done) {
     if (chunk.byteLength >= 4) {
       this.length = new DataView(chunk).getUint32(0);
+
+      if (this.length > this.maxLength) {
+        return this.reject();
+      }
+
       this.buffer = new Uint8Array(this.length);
 
       this.read = this.readBuffer;
