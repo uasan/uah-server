@@ -2,4 +2,4 @@
 
 import { runBuilderHost } from '../src/compiler/worker/program.js';
 
-runBuilderHost();
+await runBuilderHost();
