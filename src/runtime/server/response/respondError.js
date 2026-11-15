@@ -5,6 +5,12 @@ export function respondError(res, error) {
   if (error) {
     const status = error.status || 500;
 
+    try {
+      res.context?.onRespondError?.(error, status);
+    } catch {
+      // a failing hook must not break the error response
+    }
+
     if (isObject(error) === false) {
       error = { type: 'Error', message: error };
     }
