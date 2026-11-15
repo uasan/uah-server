@@ -8,6 +8,7 @@ export class BufferStreamReader {
   stream = null;
   context = null;
   controller = null;
+  fileLength = 0;
   maxLength = Infinity;
 
   resolve = noop;
@@ -25,11 +26,6 @@ export class BufferStreamReader {
   read(chunk, done) {
     if (chunk.byteLength >= 4) {
       this.length = new DataView(chunk).getUint32(0);
-
-      if (this.length > this.maxLength) {
-        return this.reject();
-      }
-
       this.buffer = new Uint8Array(this.length);
 
       this.read = this.readBuffer;
@@ -78,6 +74,12 @@ export class BufferStreamReader {
 
   readStream(chunk, done) {
     if (chunk.byteLength) {
+      this.fileLength += chunk.byteLength;
+
+      if (this.fileLength > this.maxLength) {
+        return this.controller.error(new Error('Payload too large'));
+      }
+
       if (this.controller.byobRequest) {
         this.controller.byobRequest.view.set(new Uint8Array(chunk), 0);
         this.controller.byobRequest.respond(chunk.byteLength);

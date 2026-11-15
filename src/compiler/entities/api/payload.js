@@ -104,10 +104,22 @@ const decodeBuffersFrom = data =>
 export function makePayloadFromBody(metaType) {
   const args = [factoryIdentifier('req'), factoryIdentifier('res')];
 
-  let init =
-    metaType.isBufferStream || metaType.props.some(isBufferStream)
-      ? internals.readBufferStream(args)
-      : internals.readBuffer(args);
+  const isStream =
+    metaType.isBufferStream || metaType.props.some(isBufferStream);
+
+  if (isStream) {
+    const streamMeta = metaType.isBufferStream
+      ? metaType
+      : metaType.props.find(isBufferStream);
+
+    if (streamMeta.maxByteLength) {
+      args.push(factoryNumber(streamMeta.maxByteLength));
+    }
+  }
+
+  let init = isStream
+    ? internals.readBufferStream(args)
+    : internals.readBuffer(args);
 
   let data = factoryAwait(factoryIdentifier('data'));
 
