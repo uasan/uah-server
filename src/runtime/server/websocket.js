@@ -156,6 +156,12 @@ async function callMethod(ws, promise, id) {
 
       const status = error.status || 500;
 
+      try {
+        ws.context?.onRespondError?.(error, status);
+      } catch {
+        // a failing hook must not break the error reply
+      }
+
       if (ws.context.isConnected) {
         const type = error.type || error.constructor?.name || 'Error';
 

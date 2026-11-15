@@ -28,6 +28,8 @@ export class ServerContext extends Context {
 
   onAborted() {}
 
+  onRespondError() {}
+
   async auth() {
     //throw new Exception('Not implemented auth method');
   }
